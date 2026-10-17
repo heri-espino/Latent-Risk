@@ -1,8 +1,8 @@
 # AI handoff — Latent Risk
 
 **Last updated:** 2026-10-17  
-**Latest dated journal entry:** [2026-10-17-fred-api-backend.md](journal/2026-10/2026-10-17-fred-api-backend.md)  
-**Current research stage:** live user VM downloads **reported** for 14 market, 3 Banxico and 5 ECB sources; 40-series catalog coverage has been transcribed from CLI output. Raw files/manifests have not been independently read; no forecasting experiment has been executed.
+**Latest dated journal entry:** [2026-10-17-fred-api-live-success.md](journal/2026-10/2026-10-17-fred-api-live-success.md)  
+**Current research stage:** user CLI confirms 14 market + 5 ECB + 3 Banxico + 4 official FRED API successful series. Combined five-manifest source audit: **26 OK, 8 FAILED (previous graph backend), 6 NEVER_REQUESTED**. Raw bytes not independently inspected; no forecasting experiment executed.
 
 ## Project identity and objective
 International assessment of when smoothed forecasts of financial-risk indicators fail and whether exceedances add information about financial stress beyond ordinary time-varying volatility. Mexico is a core country. The early U.S.-only repository is antecedent work, not validated evidence transferred here.
@@ -24,7 +24,7 @@ How should estimated factor uncertainty enter predictive intervals? What common 
 
 - `IMPLEMENTED`: ECB daily CISS parser and downloader entries for US/UK/EA; FRED published STLFSI4/NFCI reference identifiers. Source catalog design explicitly tags `external_stress_benchmark` and excludes these from a proposed latent-input panel.
 
-- `IMPLEMENTED`: optional official FRED API v1 backend `--fred-backend api`, requiring `FRED_API_KEY`, with `--only` identifier filtering and secret redaction. Live VM use is not yet verified. Default Graph CSV unchanged.
+- `IMPLEMENTED`: optional official FRED API v1 backend `--fred-backend api`, requiring `FRED_API_KEY`, with `--only` identifier filtering and secret redaction. **VERIFIED BY USER'S LIVE VM COMMAND OUTPUT** for DGS2, DGS10, STLFSI4 and NFCI: all four fetched via `api.stlouisfed.org`; not independently inspected as raw CSVs. Default Graph CSV remains unchanged.
 
 ## Proposed but unimplemented algorithms
 - `PROPOSED`: country-specific Gaussian DFM, robust factors, Markov-switching index variants.
@@ -32,6 +32,7 @@ How should estimated factor uncertainty enter predictive intervals? What common 
 - `PROPOSED`: rolling-origin pseudo-real-time cross-country evaluation and calibrated forecast exceedance analysis.
 
 ## Observed VM download status (user-reported 2026-10-17)
+- **Latest fifth manifest (20261017T235600038504Z)**: official FRED API with personal key: **4/4 successful**. DGS2/DGS10 each 6,700 rows (2000-01-03 to 2026-10-15); STLFSI4/NFCI each 1,397 rows (2000-01-07 to 2026-10-09). Combined 40 catalog codes: **26 OK / 8 FAILED / 6 NEVER_REQUESTED**. Eight FRED failures are older website Graph CSV attempts and were not tested using new API. Reference: [record](data/audits/2026-10-17-fred-api-live-success.md).
 - New fourth manifest: all **12** FRED Graph CSV requests failed, with `RemoteDisconnected` or `ReadTimeoutError` errors; 40 expected series now **22 OK, 12 FAILED, 6 NEVER_REQUESTED**. Previously successful market/Banxico/ECB snapshots unchanged. Official FRED API alternative newly implemented, but NOT live-tested. Earlier three-manifest transcription remains historically accurate for its run.
 - Three local manifests, 40 expected: **22 OK, 10 failed (FRED), 8 never requested**. ECB all 5 OK; new three CISS series each 6,997 dates Jan 2000–Oct 15 2026, and M1/M2 each 320 monthly dates. Banxico FIX/CETES/reserves 3 OK, newer M1/M2 not requested. All 14 Yahoo tickers OK (Euro Stoxx 50 starts 2007-03-30; several FX tickers start 2003-12-01). BoE/BoJ not requested. Complete statuses/dates: [transcription](data/audits/2026-10-17-user-vm-coverage.md).
 - **Do not claim data validated, point-in-time, or a completed index model.** Raw bytes/hashes not available to assistant; no independently confirmed provider vintages.
@@ -49,7 +50,7 @@ How should estimated factor uncertainty enter predictive intervals? What common 
 - [ADR-0002](journal/decisions/ADR-0002.md): measurement, smoothing, and evaluation are independent stages; no retroactive real-time claims.
 
 ## Known issues and unresolved status
-- All ten FRED series previously failed on user's VM due to ConnectionError; this is unresolved separately from the new official sources. Initial source series are candidates; downloads may fail because of network, vendor changes or incomplete coverage. Any failure gives a nonzero exit status and an auditable manifest. There is **no** complete current Mexican M1/M2 acquisition yet.
+- The original FRED graph endpoint failed on all 12 series; official FRED API later succeeded 4/4 for four selected IDs. Eight other FRED Graph CSV failures remain historic, not current official API failures. Initial source series are candidates; downloads may fail because of network, vendor changes or incomplete coverage. Any failure gives a nonzero exit status and an auditable manifest. There is **no** complete current Mexican M1/M2 acquisition yet.
 - No verified international release-date panel exists; source data must be audited.
 - Final manuscript authorship and source reuse should be discussed with original collaborators.
 - Automated tests must be executed and their outcomes recorded after committing the initial scaffold.
@@ -62,7 +63,7 @@ How should estimated factor uncertainty enter predictive intervals? What common 
 ## Exact next actions
 0. Review [proposed indicator priorities](data/indicator_priorities.md); M1/M2/M4 no longer assumed core stress factors. Core candidate feature domains are market/equity downside, FX volatility, funding/credit spread and banking stress; BIS credit gap/DSR is a different longer-horizon vulnerability experiment. ECB CISS for EA/US/UK and Banxico IEMF are reference comparisons, not factor input variables. US ICE credit-spread FRED data limited to ~3 years since April 2026, not suitable for historical 2008 tests without other sources.
 1. ECB collection already succeeded on VM; do **not** insist on redownloading it. Prototype a clearly labeled exploratory market-based / CISS methodological study using saved local data; separately source credit/bank/funding domains before a full systemic latent-index claim. Optionally collect new Banxico monetary and BoE/BoJ macro data only if motivated by a separate macro research question. Keep user raw data/token private.
-2. Diagnose FRED network separately and build a point-in-time country indicator catalog; start with Mexico, USA.
+2. The alternate official FRED API succeeded; leave website graph failures recorded but do not block. Build a point-in-time country indicator catalog; start with Mexico, USA.
 3. Implement and test likelihood-based trend smoothing, then index candidates, without reading future observations.
 4. Freeze event windows and a common external target before confirming outcomes.
 

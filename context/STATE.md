@@ -24,6 +24,12 @@ Transcribed provenance in `data/audits/2026-10-17-user-vm-coverage.md` and CSV; 
 
 **IMPLEMENTED**, but **not yet verified live**: official API v1 alternative hosted at `api.stlouisfed.org`, activated with `--fred-backend api` and a private `FRED_API_KEY`, plus short-probe `--only` filtering and secret-redacted logs/manifests. The key and API responses remain private; both FRED hostnames could be inaccessible. See `data/README.md` and latest journal.
 
+## Official FRED API live VM success — 2026-10-17
+
+**USER-REPORTED LIVE DOWNLOAD VERIFIED:** `api.stlouisfed.org` TCP port 443 was reachable and FRED `--fred-backend api --only DGS2,DGS10,STLFSI4,NFCI` completed 4/4. Each yield series DGS2/DGS10 has 6,700 rows through 2026-10-15; each weekly benchmark STLFSI4/NFCI has 1,397 rows through 2026-10-09. Five-manifest combined audit: **26 OK, 8 FAILED, 6 NEVER_REQUESTED**. Eight remaining FRED failures refer to earlier `fred.stlouisfed.org` Graph CSV requests; no alternative API attempt made for those eight. See `data/audits/2026-10-17-fred-api-live-success.md`.
+
+**Scientific interpretation:** live transport success does not establish point-in-time financial conditions/stress vintages. The source snapshot includes currently available FRED revisions; NFCI is financial conditions, not identical to STLFSI4/CISS stress. User raw CSV/hash content not independently audited. First method pilot can proceed without the eight monetary/reserve histories; true five-country systemic factor still lacks banking, corporate credit and funding components.
+
 ## Research question
 When and why do forecasts based on smoothed country financial-risk indices fail during financial disturbances? Are unusually large forecast errors informative beyond volatility changes and conventional benchmarks?
 

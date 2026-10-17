@@ -154,3 +154,9 @@ separate research workflow.
 Source: official FRED
 [API keys](https://fred.stlouisfed.org/docs/api/api_key.html) and
 [observations endpoint](https://fred.stlouisfed.org/docs/api/fred/series_observations.html).
+
+### Live FRED API result reported by user (2026-10-17)
+
+The user ran the four-series `--fred-backend api --only DGS2,DGS10,STLFSI4,NFCI` test on the activated Conda VM. **All four returned OK**; the combined catalog now reports **26 OK, 8 FAILED, 6 NEVER_REQUESTED** across five local snapshots. The eight remaining FRED failures are **older website Graph CSV failures** and have not been retried with the working API hostname. This live result is transcribed in [the 2026-10-17 audit](audits/2026-10-17-fred-api-live-success.md); original manifests and raw CSV files remain on the VM.
+
+For a complete optional source archive, enter the FRED key privately as explained above, then run the **eight remaining, not primary financial-stress series** using `--fred-backend api --only M1SL,M2SL,TRESEGUSM052N,TRESEGMXM052N,TRESEGGBM052N,TRESEGJPM052N,MYAGM2MXM189N,MANMM101MXM189S`. Some older series are discontinued and may have short coverage; do not assume a full 2000–2026 span. The first market/CISS pilot need not await these macro series.
