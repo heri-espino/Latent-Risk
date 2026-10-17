@@ -1,0 +1,27 @@
+{
+  "id": "EXP-0001",
+  "status": "PROPOSED_NOT_EXECUTED",
+  "frequency": "monthly",
+  "pilot_countries": ["MEX", "USA", "GBR", "JPN", "EA"],
+  "pilot_start_date": "2005-01-01",
+  "pilot_end_date": "2026-09-30",
+  "minimum_training_months": 120,
+  "forecast_horizons_months": [1, 3, 6],
+  "index_models": ["signed_composite", "pca_one_factor", "gaussian_dfm"],
+  "trend": {
+    "method": "marginal_MLE_constrained_integrated_random_walk",
+    "difference_order": 2,
+    "variance_ratio": "lambda=r/q",
+    "state_initialization": "diffuse",
+    "level_innovation_variance": 0
+  },
+  "comparison_baselines": ["random_walk", "autoregression", "dfm_transition", "fixed_smoothing"],
+  "required_long_data_columns": ["country", "observation_date", "available_date", "variable", "value", "source"],
+  "event_windows": "MUST_BE_FROZEN_BEFORE_CONFIRMATION",
+  "cross_index_external_target": "MUST_BE_SPECIFIED_BEFORE_CONFIRMATION",
+  "outcome_metrics": ["RMSE", "MAE", "empirical_interval_coverage", "standardized_exceedance", "false_alarm_rate"],
+  "run_seed": null,
+  "data_vintage_sha256": null,
+  "git_commit": null,
+  "results": null
+}

@@ -1,0 +1,4 @@
+citation_key,title,authors,year,venue,doi,pdf_path,markdown_path,reference_path,verification_status,redistribution_status
+Guerrero2007,Time series smoothing by penalized least squares,Victor M. Guerrero,2007,Statistics & Probability Letters,10.1016/j.spl.2007.03.006,,,literature/references/Guerrero2007.md,user_pdf_metadata_checked,pdf_restricted_not_committed
+Islas2019,Forecasting Remittances to Mexico with a Multi-State Markov-Switching Model Applied to the Trend with Controlled Smoothness,A. Islas; V. M. Guerrero; E. Silva,2019,Romanian Journal of Economic Forecasting,,,,literature/references/Islas2019.md,user_pdf_metadata_checked,pdf_license_unchecked_not_committed
+Biessy2026,Whittaker-Henderson smoothing revisited: A modern statistical framework for practical use,Guillaume Biessy,2026,ASTIN Bulletin,10.1017/asb.2025.10061,,,literature/references/Biessy2026.md,user_pdf_metadata_checked,CC_BY_4_text_paper_not_committed
