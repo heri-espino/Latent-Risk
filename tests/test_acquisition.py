@@ -7,11 +7,13 @@ import pandas as pd
 import pytest
 
 from latent_risk.data.acquisition import (
+    acquire,
     _parse_dates,
     _slug,
     normalize_market_frame,
     parse_banxico_series,
     parse_fred_csv,
+    parse_fred_api,
 )
 
 
@@ -78,3 +80,86 @@ def test_catalog_contains_all_five_country_equities():
     }
     assert equities == {"MEX", "USA", "GBR", "JPN", "EA"}
     assert catalog["important_gaps"]
+
+
+def test_fred_official_api_parser_filters_missing_and_exclusive_end():
+    response = {
+        "count": 4, "offset": 0,
+        "observations": [
+            {"date": "2019-12-31", "value": "2.3"},
+            {"date": "2020-01-01", "value": "."},
+            {"date": "2020-01-02", "value": "1.8"},
+            {"date": "2020-02-01", "value": "1.9"},
+        ],
+    }
+    frame = parse_fred_api(response, "2020-01-01", "2020-02-01")
+    assert frame["value"].tolist() == [1.8]
+    assert frame.iloc[0]["observation_date"].strftime("%Y-%m-%d") == "2020-01-02"
+
+
+def test_fred_api_rejects_truncation_and_duplicates():
+    with pytest.raises(ValueError, match="truncated"):
+        parse_fred_api(
+            {"count": 2, "offset": 0, "observations": [{"date": "2020-01-01", "value": "1"}]},
+            "2020-01-01", "2021-01-01",
+        )
+    with pytest.raises(ValueError, match="duplicate"):
+        parse_fred_api(
+            {"count": 2, "offset": 0, "observations": [
+                {"date": "2020-01-01", "value": "1"},
+                {"date": "2020-01-01", "value": "2"},
+            ]},
+            "2020-01-01", "2021-01-01",
+        )
+
+
+def test_fred_api_requires_key_before_creating_snapshot(tmp_path):
+    with pytest.raises(ValueError, match="FRED_API_KEY"):
+        acquire(
+            {"fred": [{"series": "DGS10"}]}, start="2020-01-01", end="2021-01-01",
+            snapshot=tmp_path / "none", sources={"fred"}, fred_backend="api",
+        )
+    assert not (tmp_path / "none").exists()
+
+
+def test_fred_api_key_never_persisted_on_request_failure(monkeypatch, tmp_path, capsys):
+    import json
+    import requests
+
+    secret = "secret-test-key-do-not-store"
+    class FakeSession:
+        def get(self, url, *, params, timeout):
+            assert url == "https://api.stlouisfed.org/fred/series/observations"
+            assert params["api_key"] == secret
+            assert params["observation_end"] == "2020-01-31"
+            assert timeout == 45
+            raise requests.exceptions.ConnectionError(f"request failed: ?api_key={secret}")
+        def close(self):
+            pass
+
+    monkeypatch.setattr("latent_risk.data.acquisition._session", FakeSession)
+    snapshot = tmp_path / "snapshot"
+    outcome = acquire(
+        {"fred": [{"series": "DGS10", "country": "USA"}]},
+        start="2020-01-01", end="2020-02-01", snapshot=snapshot,
+        sources={"fred"}, fred_backend="api", fred_api_key=secret,
+        only_ids={"DGS10"},
+    )
+    output = capsys.readouterr()
+    on_disk = (snapshot / "manifest.json").read_text()
+    assert outcome["counts"] == {"success": 0, "failure": 1, "requested": 1}
+    assert secret not in on_disk
+    assert secret not in output.out
+    assert secret not in output.err
+    manifest = json.loads(on_disk)
+    assert "url" not in manifest["records"][0]
+    assert manifest["fred_backend"] == "api"
+
+
+def test_fred_only_unknown_series_rejected_before_snapshot(tmp_path):
+    with pytest.raises(ValueError, match="unknown series"):
+        acquire(
+            {"fred": [{"series": "DGS10"}]}, start="2020-01-01", end="2021-01-01",
+            snapshot=tmp_path / "none", sources={"fred"}, only_ids={"DGS100"},
+        )
+    assert not (tmp_path / "none").exists()

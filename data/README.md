@@ -98,3 +98,59 @@ Possible sources: [Banxico SIE](https://www.banxico.org.mx/SieAPIRest/swagger/in
 The user clarified that M1/M2 were illustrative, not the desired default factors. The economically motivated primary domains are equity downside/realized volatility, FX volatility, credit and funding spreads and bank stress, with slower BIS credit-gap/DSR and M1/M2 as separately evaluated extensions. See [indicator selection and benchmarks](indicator_priorities.md). Three daily ECB CISS indices (EA, US, UK) are now downloaded along with ECB BSI when running `--sources ecb` and **must remain external references**, not factor inputs. Banxico IEMF is another official external comparator, but historical coverage, reproducible scraping and historical publication dates remain unverified.
 
 FRED benchmark identifiers `STLFSI4` and `NFCI` are cataloged; they do not solve the VM's FRED connectivity failures. ICE US corporate OAS is limited to three years of FRED histories from April 2026, so it is not sufficient for 2008 replay.
+
+## Official FRED API fallback (VM connection failures, 2026-10-17)
+
+**Status:** The user's VM consistently times out or receives connection aborts from
+`fred.stlouisfed.org/graph/fredgraph.csv`. Twelve FRED graph CSV series
+failed twice. This does **not** imply a bad series identifier or missing
+Conda package.
+
+A second, official endpoint is now supported with
+`--fred-backend api`: `https://api.stlouisfed.org/fred/series/observations`.
+FRED API v1 requires a user's private API key, requested from
+https://fred.stlouisfed.org/docs/api/api_key.html . A valid key does **not**
+guarantee the VM can reach the separate `api.stlouisfed.org` hostname.
+
+In the **already activated** `(latent-risk)` PowerShell environment:
+
+```powershell
+git pull --ff-only origin main
+python -m pip install -e '.[data,dev,docs]'
+
+# Before acquiring a key, check basic host reachability:
+Test-NetConnection api.stlouisfed.org -Port 443
+
+# After obtaining a personal FRED API key:
+$env:FRED_API_KEY = Read-Host 'Enter your personal FRED API key'
+
+# Probe only two core yield curves and two stress benchmarks first:
+try {
+    python scripts/download_data.py --start 2000-01-01 --end 2026-10-17 --sources fred --fred-backend api --only DGS2,DGS10,STLFSI4,NFCI
+} finally {
+    Remove-Item Env:FRED_API_KEY -ErrorAction SilentlyContinue
+}
+
+python scripts/audit_downloads.py
+```
+
+If the 4-series probe succeeds, set `FRED_API_KEY` again and omit
+`--only` to request all 12 FRED series. `--only` also applies to other
+providers when IDs are known; unrecognized IDs fail before a snapshot is
+created. The legacy graph backend stays the default for reproducibility.
+
+The API key is sent only via HTTPS to the official FRED endpoint and is
+removed from PowerShell by the example. Because FRED API v1 uses URL-query
+authentication, HTTP libraries might temporarily hold the credential
+inside an in-process request URL; downloader logs and manifests explicitly
+redact it and save only a stable URL without query parameters. Do not copy
+HTTP debug traces or publicize the key.
+
+FRED official API returns **current-vintage observation values by default**.
+Historical availability and release dates remain unverified; no
+`available_date` is fabricated. FRED API vintages/ALFRED remain a later
+separate research workflow.
+
+Source: official FRED
+[API keys](https://fred.stlouisfed.org/docs/api/api_key.html) and
+[observations endpoint](https://fred.stlouisfed.org/docs/api/fred/series_observations.html).

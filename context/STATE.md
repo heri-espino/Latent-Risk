@@ -19,6 +19,11 @@ The user clarified that M1/M2 were examples, not preferred core predictors. Per 
 
 Transcribed provenance in `data/audits/2026-10-17-user-vm-coverage.md` and CSV; actual raw snapshots remain on the user's VM and were not reviewed or uploaded. This enables an exploratory market/equity and separately CISS trend-forecast pilot (NOT a completed multi-domain financial-stress model). Credit/funding series and official real-time vintage availability are still essential for confirmatory claims.
 
+## FRED retry and separate-host solution (2026-10-17)
+**USER-REPORTED:** The VM retried all twelve FRED website Graph CSV series and received 0/12 successes, with `RemoteDisconnected` and `ReadTimeoutError`. Fourth manifest changes 40 catalog status to **22 OK, 12 FAILED, 6 NEVER_REQUESTED**. Prior successful Yahoo, Banxico and ECB snapshots are unaffected. Source failure does not diagnose whether a firewall, server, network policy, IP filtering or proxy is at fault.
+
+**IMPLEMENTED**, but **not yet verified live**: official API v1 alternative hosted at `api.stlouisfed.org`, activated with `--fred-backend api` and a private `FRED_API_KEY`, plus short-probe `--only` filtering and secret-redacted logs/manifests. The key and API responses remain private; both FRED hostnames could be inaccessible. See `data/README.md` and latest journal.
+
 ## Research question
 When and why do forecasts based on smoothed country financial-risk indices fail during financial disturbances? Are unusually large forecast errors informative beyond volatility changes and conventional benchmarks?
 

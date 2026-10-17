@@ -1,7 +1,7 @@
 # AI handoff — Latent Risk
 
 **Last updated:** 2026-10-17  
-**Latest dated journal entry:** [2026-10-17-vm-coverage.md](journal/2026-10/2026-10-17-vm-coverage.md)  
+**Latest dated journal entry:** [2026-10-17-fred-api-backend.md](journal/2026-10/2026-10-17-fred-api-backend.md)  
 **Current research stage:** live user VM downloads **reported** for 14 market, 3 Banxico and 5 ECB sources; 40-series catalog coverage has been transcribed from CLI output. Raw files/manifests have not been independently read; no forecasting experiment has been executed.
 
 ## Project identity and objective
@@ -24,12 +24,15 @@ How should estimated factor uncertainty enter predictive intervals? What common 
 
 - `IMPLEMENTED`: ECB daily CISS parser and downloader entries for US/UK/EA; FRED published STLFSI4/NFCI reference identifiers. Source catalog design explicitly tags `external_stress_benchmark` and excludes these from a proposed latent-input panel.
 
+- `IMPLEMENTED`: optional official FRED API v1 backend `--fred-backend api`, requiring `FRED_API_KEY`, with `--only` identifier filtering and secret redaction. Live VM use is not yet verified. Default Graph CSV unchanged.
+
 ## Proposed but unimplemented algorithms
 - `PROPOSED`: country-specific Gaussian DFM, robust factors, Markov-switching index variants.
 - `PROPOSED`: constrained local-linear-trend **marginal** MLE/REML with Kalman filtering.
 - `PROPOSED`: rolling-origin pseudo-real-time cross-country evaluation and calibrated forecast exceedance analysis.
 
 ## Observed VM download status (user-reported 2026-10-17)
+- New fourth manifest: all **12** FRED Graph CSV requests failed, with `RemoteDisconnected` or `ReadTimeoutError` errors; 40 expected series now **22 OK, 12 FAILED, 6 NEVER_REQUESTED**. Previously successful market/Banxico/ECB snapshots unchanged. Official FRED API alternative newly implemented, but NOT live-tested. Earlier three-manifest transcription remains historically accurate for its run.
 - Three local manifests, 40 expected: **22 OK, 10 failed (FRED), 8 never requested**. ECB all 5 OK; new three CISS series each 6,997 dates Jan 2000–Oct 15 2026, and M1/M2 each 320 monthly dates. Banxico FIX/CETES/reserves 3 OK, newer M1/M2 not requested. All 14 Yahoo tickers OK (Euro Stoxx 50 starts 2007-03-30; several FX tickers start 2003-12-01). BoE/BoJ not requested. Complete statuses/dates: [transcription](data/audits/2026-10-17-user-vm-coverage.md).
 - **Do not claim data validated, point-in-time, or a completed index model.** Raw bytes/hashes not available to assistant; no independently confirmed provider vintages.
 

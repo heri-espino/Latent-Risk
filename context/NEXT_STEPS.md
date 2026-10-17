@@ -1,5 +1,9 @@
 # Next steps
 
+- [x] User retried all 12 FRED graph CSV series on 2026-10-17: **0/12**, all `RemoteDisconnected` or `ReadTimeoutError`. Four manifests total: **22 OK, 12 FAILED, 6 NEVER_REQUESTED**; no loss of earlier market/Banxico/ECB snapshots.
+- [x] Implement an **opt-in official FRED API v1 backend** at `api.stlouisfed.org` using `FRED_API_KEY`, `--fred-backend api`, optional `--only` for short probes, safe exception redaction and synthetic offline tests.
+- [ ] Check `api.stlouisfed.org` VM reachability and trial 4 selected FRED series with personal FRED API key; verify live manifest before claiming success.
+
 - [x] User-reported first full download audit: 3 VM manifests, 40 catalog sources = **22 OK (market 14, Banxico 3, ECB 5), 10 FAILED (FRED), 8 NEVER_REQUESTED**. Transcribed non-sensitive statuses in `data/audits/2026-10-17-user-vm-coverage.md`; raw files still on user's VM, not independently checked.
 - [x] ECB daily CISS for EA/US/GBR successfully downloaded (6,997 rows each since Jan 2000); no need to rerun ECB.
 - [ ] Start *descriptive/technical*, not confirmatory, pilot with published CISS and local market inputs; distinguish observed CISS target from factor construction and original-latent-index research.
