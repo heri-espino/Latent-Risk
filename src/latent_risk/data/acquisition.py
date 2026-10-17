@@ -8,16 +8,15 @@ data/raw/downloads/, with a machine-readable per-source manifest.
 from __future__ import annotations
 
 import argparse
-from datetime import date, datetime, timezone
-from hashlib import sha256
-from io import BytesIO
 import json
 import os
-from pathlib import Path
 import re
 import subprocess
 import sys
-import time
+from datetime import date, datetime, timezone
+from hashlib import sha256
+from io import BytesIO
+from pathlib import Path
 
 import pandas as pd
 import requests
