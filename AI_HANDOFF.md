@@ -1,8 +1,8 @@
 # AI handoff — Latent Risk
 
 **Last updated:** 2026-10-17  
-**Latest dated journal entry:** [2026-10-17-indicator-priorities.md](journal/2026-10/2026-10-17-indicator-priorities.md)  
-**Current research stage:** multi-provider source download and audit infrastructure implemented; user reports one VM Banxico download, but no manifests have been inspected by assistant and no international forecasting experiment executed.
+**Latest dated journal entry:** [2026-10-17-vm-coverage.md](journal/2026-10/2026-10-17-vm-coverage.md)  
+**Current research stage:** live user VM downloads **reported** for 14 market, 3 Banxico and 5 ECB sources; 40-series catalog coverage has been transcribed from CLI output. Raw files/manifests have not been independently read; no forecasting experiment has been executed.
 
 ## Project identity and objective
 International assessment of when smoothed forecasts of financial-risk indicators fail and whether exceedances add information about financial stress beyond ordinary time-varying volatility. Mexico is a core country. The early U.S.-only repository is antecedent work, not validated evidence transferred here.
@@ -29,8 +29,12 @@ How should estimated factor uncertainty enter predictive intervals? What common 
 - `PROPOSED`: constrained local-linear-trend **marginal** MLE/REML with Kalman filtering.
 - `PROPOSED`: rolling-origin pseudo-real-time cross-country evaluation and calibrated forecast exceedance analysis.
 
+## Observed VM download status (user-reported 2026-10-17)
+- Three local manifests, 40 expected: **22 OK, 10 failed (FRED), 8 never requested**. ECB all 5 OK; new three CISS series each 6,997 dates Jan 2000–Oct 15 2026, and M1/M2 each 320 monthly dates. Banxico FIX/CETES/reserves 3 OK, newer M1/M2 not requested. All 14 Yahoo tickers OK (Euro Stoxx 50 starts 2007-03-30; several FX tickers start 2003-12-01). BoE/BoJ not requested. Complete statuses/dates: [transcription](data/audits/2026-10-17-user-vm-coverage.md).
+- **Do not claim data validated, point-in-time, or a completed index model.** Raw bytes/hashes not available to assistant; no independently confirmed provider vintages.
+
 ## Experimental results and limitations
-- `UNKNOWN`: no run of the international research design yet. Initial catalog now includes 14 Yahoo tickers, 10 FRED, 5 Banxico, 2 ECB, 2 BoE and 2 BoJ sources. User reports Banxico completed but has not supplied the manifest. Mexico's historical FRED M2 ends in 2017.
+- `UNKNOWN`: no run of the international research design yet. Catalog now includes 14 Yahoo, 12 FRED (including STLFSI4/NFCI), 5 Banxico, 5 ECB (including 3 CISS), 2 BoE and 2 BoJ. Source status is independently detailed in user-reported coverage record. Mexico's historical FRED M2 ends in 2017.
 - `PROPOSED`: point-in-time macro revisions/release-date audit, additional sovereign yields, financial-stress outcomes, and a complete balanced panel. UK M4 is NOT directly equivalent to US/EA/JP/MEX M2.
 - The original 2008 exercise reported very different validation and test RMSEs but used factor parameters/standardization estimated through 2026 and a smoothing choice inconsistent with a better refined candidate. See `context/STATE.md`; **do not treat this as an independent early-warning result**.
 
@@ -54,7 +58,7 @@ How should estimated factor uncertainty enter predictive intervals? What common 
 
 ## Exact next actions
 0. Review [proposed indicator priorities](data/indicator_priorities.md); M1/M2/M4 no longer assumed core stress factors. Core candidate feature domains are market/equity downside, FX volatility, funding/credit spread and banking stress; BIS credit gap/DSR is a different longer-horizon vulnerability experiment. ECB CISS for EA/US/UK and Banxico IEMF are reference comparisons, not factor input variables. US ICE credit-spread FRED data limited to ~3 years since April 2026, not suitable for historical 2008 tests without other sources.
-1. On activated Conda VM, `git pull --ff-only origin main`; install editable package; run `python scripts/download_data.py --start 2000-01-01 --end 2026-10-17 --sources ecb,boe,boj`. Re-run `banxico` with user-held token for NEW M1/M2 codes. Run `python scripts/audit_downloads.py`, share non-secret counts and error strings, and do not push raw data or token.
+1. ECB collection already succeeded on VM; do **not** insist on redownloading it. Prototype a clearly labeled exploratory market-based / CISS methodological study using saved local data; separately source credit/bank/funding domains before a full systemic latent-index claim. Optionally collect new Banxico monetary and BoE/BoJ macro data only if motivated by a separate macro research question. Keep user raw data/token private.
 2. Diagnose FRED network separately and build a point-in-time country indicator catalog; start with Mexico, USA.
 3. Implement and test likelihood-based trend smoothing, then index candidates, without reading future observations.
 4. Freeze event windows and a common external target before confirming outcomes.

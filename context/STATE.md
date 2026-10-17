@@ -13,6 +13,12 @@ FRED is current revised history, **not** available-date vintage history. No rele
 ## Indicator domain reprioritization (2026-10-17)
 The user clarified that M1/M2 were examples, not preferred core predictors. Per `data/indicator_priorities.md` and `ADR-0005` (proposed), prioritize directly market-based stress observables and distinguish slower credit/balance-sheet vulnerability indicators. Exact validated published external references: Banxico IEMF (36 variables, six financial-market domains), ECB daily new CISS for UK/US/EA; STLFSI4 and NFCI are US reference candidates. They are **not** model input data for a concordance experiment. ECB CISS source keys now in downloader. Source coverage in Japan remains a gap. US ICE corporate spreads FRED limit to three-year history since Apr 2026; cannot reconstruct 2008 with FRED now.
 
+## User-reported VM coverage — 2026-10-17
+
+**USER-REPORTED, not independently inspected files:** latest source-audit showed **40 expected series, 22 OK, 10 FAILED (all FRED), 8 NEVER_REQUESTED** across three local manifests. Market 14/14; ECB 5/5 (EA, USA and UK CISS: 6,997 rows each, Jan 2000–Oct 15 2026, plus EA M1/M2: 320 rows each); Banxico 3/5 (FIX, CETES, reserves). Unrequested two Banxico modern M1/M2, two BoE, two BoJ and two FRED indices. Note `^STOXX50E` starts **2007-03-30**, some Yahoo FX 2003-12-01; first available five-equity intersection comes after 2007-03-30. All dates refer to observations, not verified release vintages.
+
+Transcribed provenance in `data/audits/2026-10-17-user-vm-coverage.md` and CSV; actual raw snapshots remain on the user's VM and were not reviewed or uploaded. This enables an exploratory market/equity and separately CISS trend-forecast pilot (NOT a completed multi-domain financial-stress model). Credit/funding series and official real-time vintage availability are still essential for confirmatory claims.
+
 ## Research question
 When and why do forecasts based on smoothed country financial-risk indices fail during financial disturbances? Are unusually large forecast errors informative beyond volatility changes and conventional benchmarks?
 

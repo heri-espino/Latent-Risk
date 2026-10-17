@@ -1,5 +1,11 @@
 # Next steps
 
+- [x] User-reported first full download audit: 3 VM manifests, 40 catalog sources = **22 OK (market 14, Banxico 3, ECB 5), 10 FAILED (FRED), 8 NEVER_REQUESTED**. Transcribed non-sensitive statuses in `data/audits/2026-10-17-user-vm-coverage.md`; raw files still on user's VM, not independently checked.
+- [x] ECB daily CISS for EA/US/GBR successfully downloaded (6,997 rows each since Jan 2000); no need to rerun ECB.
+- [ ] Start *descriptive/technical*, not confirmatory, pilot with published CISS and local market inputs; distinguish observed CISS target from factor construction and original-latent-index research.
+- [ ] Build and test proper dated market panel and trailing equity/FX return/volatility/drawdown features with genuine past-only alignment, noting five-country `^STOXX50E` starts March 30, 2007.
+- [ ] Source multi-domain credit/bank/funding market variables and stable histories before making a cross-country systemic financial-stress measurement claim.
+
 - [x] Review OFR FSI, ECB CISS, Banxico IEMF and BIS vulnerability literature; propose direct stress-factor domains separate from money stocks and external benchmark series (`data/indicator_priorities.md`, `ADR-0005`).
 - [x] Register ECB CISS keys for US/UK/EA, FRED STLFSI4/NFCI for external validation; support daily ECB CSV and date-scoped API requests, with offline tests.
 - [ ] Confirm which market-based indicators can actually be fetched across all five geographies; the user has not uploaded complete download manifests.
