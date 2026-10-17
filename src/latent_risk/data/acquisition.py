@@ -45,7 +45,7 @@ def parse_fred_csv(body: bytes, start: str, end: str) -> pd.DataFrame:
     Returns
     -------
     pandas.DataFrame
-        Columns \`observation_date\` and \`value\` with finite observations.
+        Columns `observation_date` and `value` with finite observations.
 
     Raises
     ------
@@ -91,7 +91,7 @@ def normalize_market_frame(frame: pd.DataFrame, start: str, end: str) -> pd.Data
     Returns
     -------
     pandas.DataFrame
-        Chronologically sorted source fields and \`observation_date\`.
+        Chronologically sorted source fields and `observation_date`.
 
     Raises
     ------
@@ -237,7 +237,7 @@ def acquire(
     snapshot : pathlib.Path
         A new snapshot directory; must not already exist.
     sources : set of str
-        Subset of \`market\`, \`fred\`, and \`banxico\`.
+        Subset of `market`, `fred`, and `banxico`.
     banxico_token : str, optional
         Private token for Banxico via HTTP header; never written to metadata.
 

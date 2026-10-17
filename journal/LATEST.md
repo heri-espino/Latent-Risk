@@ -1,5 +1,5 @@
 # Latest research journal entry
 
-[2026-10-16 — Bootstrap verification and CI repair](2026-10/2026-10-16-bootstrap-verification.md)
+[2026-10-16 — Initial data acquisition workflow](2026-10/2026-10-16-source-acquisition.md)
 
-The journal is chronological: older entries remain available in `journal/2026-10/`. Read the latest dated entry before `AI_HANDOFF.md`.
+Older journal entries remain in `journal/2026-10/`; read the latest dated entry before the AI handoff.
