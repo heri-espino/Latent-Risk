@@ -1,7 +1,7 @@
 # AI handoff — Latent Risk
 
 **Last updated:** 2026-10-16  
-**Latest dated journal entry:** [2026-10-16-repository-foundation.md](journal/2026-10/2026-10-16-repository-foundation.md)  
+**Latest dated journal entry:** [2026-10-16-bootstrap-verification.md](journal/2026-10/2026-10-16-bootstrap-verification.md)  
 **Current research stage:** initial repository construction; no international index or forecasting experiment executed.
 
 ## Project identity and objective
@@ -15,8 +15,8 @@ International assessment of when smoothed forecasts of financial-risk indicators
 How should estimated factor uncertainty enter predictive intervals? What common observable target enables fair cross-index forecasting comparisons? How should the factor be anchored between refits? Can the exact penalized solution be matched by a constrained state-space likelihood implementation?
 
 ## Implemented algorithms and features
-- `IMPLEMENTED`: only tools verified in source and tests (see repository; avoid assuming CI status from this document). Source-level baseline plans include signed composite, PCA and vintage filtering.
-- `IMPLEMENTED`: lightweight repository/journal structure validation and development tests are scheduled for initial verification.
+- `IMPLEMENTED` and **CI VERIFIED**: training-only signed composite and PCA, vintage filtering, and standardized-error utilities, with 12 passing unit tests.
+- `IMPLEMENTED` and **CI VERIFIED**: repository structural validator, Ruff linting and Sphinx docs builder.
 
 ## Proposed but unimplemented algorithms
 - `PROPOSED`: country-specific Gaussian DFM, robust factors, Markov-switching index variants.
@@ -37,8 +37,8 @@ How should estimated factor uncertainty enter predictive intervals? What common 
 - Automated tests must be executed and their outcomes recorded after committing the initial scaffold.
 
 ## Current testing status
-- `UNKNOWN` pending post-commit verification: tests, Ruff, and Sphinx.
-- CI is configured as a proposed automated check; a source file being present does not prove its workflow ran.
+- `VERIFIED COMPUTATIONALLY` on commit `075f9027`: **12 passed**, Ruff **pass**, research structure validator **pass**, Sphinx documentation **pass**. Evidence: https://github.com/heri-espino/Latent-Risk/actions/runs/38994859776.
+- PR-only `check_change_protocol.py` and LaTeX PDF compilation were not executed in the push CI run; original setup bugs and corrections are documented in the latest journal entry.
 
 ## Exact next actions
 1. Verify bootstrap code with pytest, structure validator, Ruff, and Sphinx where installed.

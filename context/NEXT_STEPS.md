@@ -1,6 +1,6 @@
 # Next steps
 
-- [ ] Audit the repository bootstrap: run package tests, Ruff, structure checker, and Sphinx build (or report unavailable tools).
+- [x] Audit the repository bootstrap: 12 tests, Ruff, structural validator and Sphinx passed on commit `075f9027` (https://github.com/heri-espino/Latent-Risk/actions/runs/38994859776); PR-only change checker and LaTeX compilation were not run.
 - [ ] Establish a source/availability-date catalog for Mexico, USA, UK, Japan and euro area. Prefer a small comparable core indicator panel.
 - [ ] Decide point-in-time index identification, sign convention, standardization and missing-data rules.
 - [ ] Implement constrained Gaussian d=2 local-linear trend with marginalized likelihood; derive and verify equivalent PLS optimization.
