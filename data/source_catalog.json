@@ -182,10 +182,30 @@
       "series": "SF43707",
       "frequency": "weekly",
       "role": "reserves"
+    },
+    {
+      "country": "MEX",
+      "name": "Banxico M1 money stock (2018 methodology)",
+      "series": "SF311408",
+      "frequency": "monthly",
+      "role": "money_m1",
+      "units": "thousand MXN",
+      "source_reference": "https://www.banxico.org.mx/SieInternet/consultarDirectorioInternetAction.do?accion=consultarCuadro&idCuadro=CF807&locale=es",
+      "verification_note": "Series identifiers corroborated by sie_banxico, siebanxico, Banxico CF807 table label; runtime API metadata still to confirm"
+    },
+    {
+      "country": "MEX",
+      "name": "Banxico M2 money stock (2018 methodology)",
+      "series": "SF311418",
+      "frequency": "monthly",
+      "role": "money_m2",
+      "units": "thousand MXN",
+      "source_reference": "https://www.banxico.org.mx/SieInternet/consultarDirectorioInternetAction.do?accion=consultarCuadro&idCuadro=CF807&locale=es",
+      "verification_note": "Series identifiers corroborated by sie_banxico, siebanxico, Banxico CF807 table label; runtime API metadata still to confirm"
     }
   ],
   "important_gaps": [
-    "Banxico M1/M2 modern 2018-methodology official table CF807 verified; series IDs need checking before token API integration.",
+    "Banxico M1/M2 modern methodology CF807 identifiers SF311408 and SF311418 are now in catalog; user must verify full historical coverage and API metadata after downloading.",
     "FRED graph downloads failed on user's VM with ConnectionError; must resolve network access or use verified alternate source before counting US yields/M1/M2/reserves.",
     "UK M4 is not equivalent to US/Euro area M2 or Japanese M2; different definitions/units and Euro area changing composition require explicit treatment.",
     "US and Mexico yields and euro-area short-term/sovereign interest-rate sources require additional catalog coverage.",
