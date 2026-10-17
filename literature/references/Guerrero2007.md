@@ -24,7 +24,7 @@ Unobserved `Z_t = tau_t + noise_t`; a dth-difference penalty around reference me
 ## Methods and experiments
 Mathematical derivation and numerical examples; no new Latent-Risk computations executed.
 
-## Relationship to our work
+## Relationship to Latent-Risk
 Existing smoother foundation; likelihood calibration and empirical crisis-failure analysis must have separate aims and not be misrepresented as Guerrero's novel result.
 
 ## Verification status
