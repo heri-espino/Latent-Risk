@@ -1,6 +1,6 @@
 # Latent Risk
 
-**Status:** source acquisition is implemented, but **no actual international source download or empirical study has been executed in this repository**.
+**Status:** download infrastructure supports six providers; the user reports a VM Banxico run, but its manifest has not been audited. **No international empirical experiment has been executed.**
 
 Latent Risk is a research project on financial-stress indices and the reliability of smoothed-trend forecasts across countries and crisis episodes. Initial candidate markets are Mexico, the United States, the United Kingdom, Japan and an explicitly defined euro-area aggregate. The central question is whether unusually large forecast failures contain information about financial disturbances beyond ordinary forecast uncertainty.
 
@@ -23,6 +23,18 @@ conda run -n latent-risk python scripts/download_data.py --start 2000-01-01 --en
 Each series is saved in a separate timestamped snapshot under `data/raw/downloads` with an auditable success/failure `manifest.json`. **This source snapshot is not point-in-time historical data:** the catalog includes legacy macro series with limited coverage. Inspect the manifest before interpreting it.
 
 See [full data acquisition documentation](data/README.md) and [source catalog](data/source_catalog.json).
+
+## Additional official macroeconomic sources (activated Conda environment)
+
+```powershell
+git pull --ff-only origin main
+python -m pip install -e '.[data,dev,docs]'
+python scripts/audit_downloads.py
+python scripts/download_data.py --start 2000-01-01 --end 2026-10-17 --sources ecb,boe,boj
+python scripts/audit_downloads.py
+```
+
+The ECB data are M1/M2; Bank of England data include **M4** (not M2) and SONIA; Bank of Japan adds M1/M2. Banxico now includes modern M1 `SF311408` and M2 `SF311418`, requiring a fresh `--sources banxico` download with a private SIE token. FRED access failed on the user's VM; do not treat US macro data as available until connectivity is repaired and a manifest shows success. This is source collection, not a historical real-time dataset.
 
 ## Development
 

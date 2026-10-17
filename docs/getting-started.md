@@ -19,6 +19,17 @@ python scripts/download_data.py --start 2000-01-01 --end 2026-10-17
 
 The end date is exclusive. Individual CSV files and an auditable manifest are created under gitignored `data/raw/downloads/<UTC timestamp>/`. Source failures are visible and yield a nonzero process exit code. Read the [data-acquisition documentation](https://github.com/heri-espino/Latent-Risk/blob/main/data/README.md) for optional Banxico sources and critical historical-availability limitations. This command does not yet construct the final international panel.
 
+## Official macro data and local audit
+
+Run these in an activated `latent-risk` environment:
+
+```bash
+python scripts/download_data.py --start 2000-01-01 --end 2026-10-17 --sources ecb,boe,boj
+python scripts/audit_downloads.py
+```
+
+This downloads six official ECB/BoE/BoJ sources. The newly registered Banxico M1/M2 require `--sources banxico` and a private `BANXICO_TOKEN`; the audit shows which series actually succeeded. For FRED connection troubleshooting and caveats, see the [data-acquisition documentation](https://github.com/heri-espino/Latent-Risk/blob/main/data/README.md).
+
 ## Index-only example (synthetic)
 
 ```python

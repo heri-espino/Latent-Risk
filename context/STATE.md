@@ -1,4 +1,4 @@
-# Research state (2026-10-16)
+# Research state (2026-10-17)
 
 **Status:** `IMPLEMENTED` baseline source-package infrastructure; CI `VERIFIED COMPUTATIONALLY` on commit `075f9027` (12 tests, Ruff, validator, Sphinx pass: https://github.com/heri-espino/Latent-Risk/actions/runs/38994859776). The international empirical evaluation remains `PROPOSED`, not completed.
 
@@ -6,6 +6,9 @@
 `IMPLEMENTED` source acquisition module: 14 daily Yahoo market tickers, 10 FRED macro/financial series and three optional Banxico token-based series in `data/source_catalog.json`. Local isolated UTC snapshots under `data/raw/downloads/` include CSVs, hashes, historical-coverage ranges and failures. `VERIFIED COMPUTATIONALLY`: 19 offline tests, Ruff, structure and Sphinx pass on `8fb85d0` (https://github.com/heri-espino/Latent-Risk/actions/runs/38998827014). **No live download has been run**, so coverage and actual provider success are `UNKNOWN`.
 
 FRED is current revised history, **not** available-date vintage history. No release dates have been fabricated. The old Mexico M2 FRED code `MYAGM2MXM189N` ends in 2017. Current Mexican M1/M2 and other country monetary aggregates require audited official identifiers. Neither the point-in-time balanced panel nor EXP-0001 exists as completed empirical results.
+
+## Official-source expansion (2026-10-17)
+`IMPLEMENTED` additional candidate source series: ECB M1/M2, BoE sterling M4/SONIA, BOJ M1/M2, modern Banxico M1/M2 (codes `SF311408`/`SF311418`). Retrieval uses source-specific CSV/JSON parsers and independently stored raw snapshots; `scripts/audit_downloads.py` combines status evidence across snapshots. New-provider HTTP requests have not been executed by assistant, and the user reports Banxico ran before these two codes were added. Full manifests have not yet been provided. All FRED downloads previously failed from the VM with HTTPS `ConnectionError`; no claim of complete US macro coverage is justified. ECB euro area changes composition; BoE M4 != US/ECB M2. Historical availability and real-time data vintages remain `UNKNOWN`.
 
 ## Research question
 When and why do forecasts based on smoothed country financial-risk indices fail during financial disturbances? Are unusually large forecast errors informative beyond volatility changes and conventional benchmarks?

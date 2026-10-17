@@ -28,7 +28,7 @@ conda run -n latent-risk python scripts/download_data.py --start 2000-01-01 --en
 Remove-Item Env:BANXICO_TOKEN
 ```
 
-Initially configured SIE series are FX FIX `SF43718`, 28-day CETES `SF60633`, and reserves `SF43707`. Current revised-definition monetary aggregate M1/M2 IDs are **not guessed**: they must be individually identified and audited before being added. Running the optional source makes a separate immutable snapshot. Do not store tokens in files or commands checked into Git.
+Initially configured SIE series are FX FIX `SF43718`, 28-day CETES `SF60633`, and reserves `SF43707`. The updated catalog now also has **Banxico M1 SF311408 and M2 SF311418** (2018 methodology), corroborated against independent SIE API client examples and the official CF807 table. Verify titles, units and observation span using live SIE metadata; no historical release vintages are implied. Running the optional source makes a separate immutable snapshot. Do not store tokens in files or commands checked into Git.
 
 ### Inspection
 
@@ -38,6 +38,45 @@ $latest = Get-ChildItem .\data\raw\downloads -Directory | Sort-Object Name -Desc
 Get-Content (Join-Path $latest.FullName 'manifest.json') | ConvertFrom-Json |
   Select-Object status, counts, period
 ```
+
+## Next VM session: expand the official dataset
+
+Use the already activated `(latent-risk)` shell. All following commands run the Python executable in that environment, without `conda run`:
+
+```powershell
+git pull --ff-only origin main
+python -m pip install -e '.[data,dev,docs]'
+python scripts/audit_downloads.py
+python scripts/download_data.py --start 2000-01-01 --end 2026-10-17 --sources ecb,boe,boj
+python scripts/audit_downloads.py
+```
+
+Six new official-source series are included: ECB monthly euro-area M1 and M2, Bank of England UK monthly M4 and daily SONIA, and Bank of Japan monthly M1 and M2. The existing Banxico source set now includes two additional series, M1 and M2. **Re-run the Banxico source explicitly with your token to get those two**. See the token paragraph above. A series can fail while the rest of its batch is saved; inspect the resulting audit and manifest.
+
+An audit file is generated at `results/acquisition_audit.json` (ignored by Git) combining the latest successes across multiple runs. Its columns distinguish `OK`, `FAILED`, and `NEVER_REQUESTED`. The audit does not infer a historical release date from an observation date and does not establish cross-source comparability.
+
+### Recheck the blocked FRED source
+
+Previously all ten FRED series failed on the user's VM with HTTPS `ConnectionError`. Installing more Python packages or downloading a different provider cannot by itself resolve FRED access. Check it separately before retrying:
+
+```powershell
+Test-NetConnection fred.stlouisfed.org -Port 443
+try {
+    (Invoke-WebRequest -Uri 'https://fred.stlouisfed.org/graph/fredgraph.csv?id=DGS10' -UseBasicParsing -TimeoutSec 30).StatusCode
+} catch {
+    $_.Exception.ToString()
+}
+```
+
+If both succeed, run `python scripts/download_data.py --start 2000-01-01 --end 2026-10-17 --sources fred`; otherwise save the complete error for diagnosing VM/proxy/TLS access. Don't claim those US rates or money stocks were acquired without a successful manifest.
+
+### Source and measurement differences
+
+The official UK series `LPMAUYN` is seasonally adjusted sterling **M4**, not M2. Bank of Japan monthly M1/M2 are average outstanding amounts (in hundred-million yen); ECB M1/M2 are seasonally adjusted stock levels (in millions of euro). Banco de México M1/M2 are in thousands of MXN. Period labels, scaling, seasonal adjustment, and monetary definitions differ and must remain explicit in the measurement plan.
+
+Japan BOJ API gives a JSON status field even on HTTP 200 responses; the downloader checks it. ECB `format=csvdata` monthly periods are represented as first-of-month labels, NOT data availability dates. Bank of England exports raw observation dates. Official API access can still fail; none of these providers were accessed live in the automated CI tests.
+
+Official references: [Banxico CF807](https://www.banxico.org.mx/SieInternet/consultarDirectorioInternetAction.do?accion=consultarCuadro&idCuadro=CF807&locale=es), [ECB monetary aggregates](https://data.ecb.europa.eu/data/publications/BSI01_01), [BoE IADB API syntax](https://www.bankofengland.co.uk/boeapps/database/help.asp), [BoJ series table](https://www.stat-search.boj.or.jp/ssi/mtshtml/md02_m_1_en.html).
 
 ## Critical scientific constraints
 
@@ -50,6 +89,6 @@ Get-Content (Join-Path $latest.FullName 'manifest.json') | ConvertFrom-Json |
 
 ## Next data-collection gap
 
-Identify current, historically comparable M1/M2 data for Mexico, UK, Japan and euro area, country sovereign-yield curves, local volatility measurements, the euro-area reserve definition, official release calendars/vintages, and a common observable validation target. The initial downloader is **stage 0**, not 'all the research data' or a finished international panel.
+Audit the newly included Banxico M1/M2 and official Euro-area M1/M2, Japan M1/M2 and UK M4 observations; acquire UK/Japan/euro area comparable sovereign yields, US failed FRED histories, local volatility measurements, the euro-area reserve definition, official release calendars/vintages, and a common observable validation target. The initial downloader is **stage 0**, not 'all the research data' or a finished international panel.
 
 Possible sources: [Banxico SIE](https://www.banxico.org.mx/SieAPIRest/swagger/index.html), [FRED](https://fred.stlouisfed.org/), [IMF](https://data.imf.org/), [OECD](https://data-explorer.oecd.org/).
