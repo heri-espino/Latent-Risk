@@ -1,0 +1,50 @@
+\section{Measurement and forecasting methods}
+\subsection{Risk index construction}
+Let \(X_{c,t}\) denote a country-specific vector of
+transformed financial indicators, each oriented and scaled under
+a declared convention. Candidate indices include an economically
+signed composite, the first principal component, and a latent state
+\(f_{c,t}\) from a dynamic factor representation
+\begin{equation}
+X_{c,t}=\Lambda_c f_{c,t}+u_{c,t}.
+\end{equation}
+The choice of raw series, transformations, anchor indicators and
+historical availability dates belongs to the measurement stage.
+
+\subsection{Likelihood-calibrated trend}
+Conditionally on an estimated index \(y_t\), the primary proposed
+Gaussian specification is
+\begin{align}
+y_t &= \tau_t+\varepsilon_t,
+&\varepsilon_t&\sim N(0,r),\\
+\Delta^2\tau_t &= \eta_t,
+&\eta_t&\sim N(0,q),\qquad r,q>0.
+\end{align}
+With compatible diffuse treatment of the linear-trend nullspace,
+the corresponding penalized least-squares criterion is
+\begin{equation}
+\widehat{\tau}_{\lambda} =
+\arg\min_{\tau}
+\left\{ \|y-\tau\|^2+
+\lambda\|D_2\tau\|^2\right\},
+\qquad \lambda=r/q.
+\end{equation}
+The two positive variances will be estimated by maximizing
+the \emph{marginal observed-data likelihood}, e.g. through the Kalman
+filter. No such implementation has yet been validated in this project.
+The trend-only transition specification is deliberately narrower than
+a general local-linear-trend model with an additional level innovation.
+
+\subsection{Forecast error}
+For an explicitly defined estimated-factor target at horizon \(h\),
+\begin{equation}
+e_{c,t,h}^{(m)} =
+f_{c,t+h}^{(m),\mathrm{target}} -
+\widehat f_{c,t+h\mid t}^{(m)},
+\quad
+z_{c,t,h}^{(m)}=
+\frac{e_{c,t,h}^{(m)}}{\widehat\sigma_{c,t,h}^{(m)}}.
+\end{equation}
+Large forecast errors may signal misspecified dynamics, heavy tails,
+variance changes, unreliable factor measurement, or structural change.
+They must not be treated automatically as crisis evidence.

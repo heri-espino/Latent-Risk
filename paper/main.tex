@@ -1,0 +1,58 @@
+\documentclass[11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb,booktabs}
+\usepackage[margin=1in]{geometry}
+\usepackage[hidelinks]{hyperref}
+\title{When Do Smoothed Financial Risk Indicators Fail to Forecast?\\
+Evidence Across Countries and Financial Disturbances}
+\author{Working draft --- authorship to be confirmed}
+\date{16 October 2026}
+\begin{document}
+\maketitle
+\begin{abstract}
+We set out a comparative empirical design to study the historical reliability
+of smoothed-trend forecasts for country-specific financial-risk indices.
+Risk measurement and trend extrapolation are treated as separate statistical
+operations. We propose transparent signed aggregates, principal-component
+indices and dynamic-factor alternatives, followed by a Gaussian
+marginal-likelihood-calibrated trend smoother. Both full-sample historical
+description and strictly chronological forecast evaluation will be considered,
+with the latter providing the evidence for predictive claims. The study will
+compare predetermined crisis and non-crisis periods and report interval
+calibration and conventional forecast benchmarks. This document is a
+prospective design; new empirical results are not yet available.
+\end{abstract}
+\input{sections/problem}
+\input{sections/methods}
+\input{sections/experiments}
+\section{Results}
+No cross-country empirical results have yet been computed or validated.
+This section will be completed only after reproducible experiments are run.
+\section{Discussion and limitations}
+An estimated factor is not directly observed financial risk. Factor sign and
+scale are model conventions; alternative index constructions yield distinct
+targets that should not be ranked by unadjusted cross-model factor RMSE.
+Predictive intervals require an uncertainty model that addresses heavy tails,
+heteroskedasticity and estimation uncertainty.
+\section{Conclusions}
+Conclusions will be written after the experimental protocol and analysis have
+been completed. The existence of forecast errors is not in itself proof of
+structural change or early-warning value.
+\begin{thebibliography}{9}
+\bibitem{guerrero2007}
+V.~M. Guerrero (2007).
+Time series smoothing by penalized least squares.
+\emph{Statistics \& Probability Letters}, 77(12), 1225--1234.
+\bibitem{islas2019}
+A. Islas, V.~M. Guerrero, and E. Silva (2019).
+Forecasting remittances to Mexico with a multi-state Markov-switching model
+applied to the trend with controlled smoothness.
+\emph{Romanian Journal of Economic Forecasting}, 22(1).
+\bibitem{biessy2026}
+G. Biessy (2026).
+Whittaker--Henderson smoothing revisited: A modern statistical framework
+for practical use.
+\emph{ASTIN Bulletin}. doi:10.1017/asb.2025.10061.
+\end{thebibliography}
+\end{document}
