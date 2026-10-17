@@ -1,8 +1,8 @@
 """Network-free tests for official-source parsers and acquisition catalog."""
 from __future__ import annotations
 
-from pathlib import Path
 import json
+from pathlib import Path
 
 import pytest
 
