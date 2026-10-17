@@ -4,9 +4,9 @@ from __future__ import annotations
 
 import argparse
 import csv
-from pathlib import Path
 import re
 import sys
+from pathlib import Path
 
 FIELDNAMES = (
     "citation_key", "title", "authors", "year", "venue", "doi",

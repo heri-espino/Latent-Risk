@@ -4,9 +4,9 @@ from __future__ import annotations
 
 import argparse
 import csv
-from pathlib import Path
 import re
 import sys
+from pathlib import Path
 
 DIRECTORIES = (
     "context", "src/latent_risk", "tests", "examples", "notes/results",

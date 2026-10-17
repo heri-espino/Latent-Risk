@@ -7,9 +7,9 @@ or that scientific mathematics is correct.
 from __future__ import annotations
 
 import argparse
-from pathlib import Path
 import subprocess
 import sys
+from pathlib import Path
 
 MANDATORY_UPDATES = (
     "AI_HANDOFF.md", "journal/LATEST.md",
