@@ -328,11 +328,19 @@ def acquire(
                     elif source == "ecb":
                         url = f"https://data-api.ecb.europa.eu/service/data/{identifier.replace('.', '/', 1)}"
                         last_day = date.fromisoformat(end) - timedelta(days=1)
+                        frequency = identifier.split(".")[1]
+                        if frequency not in {"D", "M"}:
+                            raise ValueError("ECB source must be daily or monthly")
+                        first_period = start if frequency == "D" else start[:7]
+                        last_period = (
+                            last_day.isoformat() if frequency == "D"
+                            else last_day.strftime("%Y-%m")
+                        )
                         response = client.get(
                             url,
                             params={
-                                "startPeriod": start[:7],
-                                "endPeriod": last_day.strftime("%Y-%m"),
+                                "startPeriod": first_period,
+                                "endPeriod": last_period,
                                 "format": "csvdata",
                             },
                             headers={"Accept": "text/csv"},

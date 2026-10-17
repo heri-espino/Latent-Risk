@@ -1,7 +1,7 @@
 # AI handoff — Latent Risk
 
 **Last updated:** 2026-10-17  
-**Latest dated journal entry:** [2026-10-17-official-expansion.md](journal/2026-10/2026-10-17-official-expansion.md)  
+**Latest dated journal entry:** [2026-10-17-indicator-priorities.md](journal/2026-10/2026-10-17-indicator-priorities.md)  
 **Current research stage:** multi-provider source download and audit infrastructure implemented; user reports one VM Banxico download, but no manifests have been inspected by assistant and no international forecasting experiment executed.
 
 ## Project identity and objective
@@ -22,6 +22,8 @@ How should estimated factor uncertainty enter predictive intervals? What common 
 
 - `IMPLEMENTED`: official ECB BSI (euro area M1/M2), BoE IADB (UK M4 and SONIA), BoJ API (Japan M1/M2) with source-specific CSV/JSON parsers and offline tests. Modern Banxico M1/M2 (`SF311408`, `SF311418`) added to catalog. `scripts/audit_downloads.py` aggregates latest successful local snapshots separately from network failures. All live new-provider statuses remain `UNKNOWN` until VM run.
 
+- `IMPLEMENTED`: ECB daily CISS parser and downloader entries for US/UK/EA; FRED published STLFSI4/NFCI reference identifiers. Source catalog design explicitly tags `external_stress_benchmark` and excludes these from a proposed latent-input panel.
+
 ## Proposed but unimplemented algorithms
 - `PROPOSED`: country-specific Gaussian DFM, robust factors, Markov-switching index variants.
 - `PROPOSED`: constrained local-linear-trend **marginal** MLE/REML with Kalman filtering.
@@ -33,6 +35,7 @@ How should estimated factor uncertainty enter predictive intervals? What common 
 - The original 2008 exercise reported very different validation and test RMSEs but used factor parameters/standardization estimated through 2026 and a smoothing choice inconsistent with a better refined candidate. See `context/STATE.md`; **do not treat this as an independent early-warning result**.
 
 ## Decisions
+- [ADR-0005](journal/decisions/ADR-0005.md) (`PROPOSED`): stress-first index measurements; separate official benchmark indices from raw factor inputs.
 - [ADR-0004](journal/decisions/ADR-0004.md): official provider integration and non-equivalence of money-stock definitions.
 - [ADR-0003](journal/decisions/ADR-0003.md): acquire raw source snapshots separately from the historically published point-in-time study panel.
 - [ADR-0001](journal/decisions/ADR-0001.md): new separate repository, `src/` architecture, journal-first AI workflow.
@@ -50,6 +53,7 @@ How should estimated factor uncertainty enter predictive intervals? What common 
 - PR-only `check_change_protocol.py` and LaTeX PDF compilation were not executed in the push CI run; original setup bugs and corrections are documented in the latest journal entry.
 
 ## Exact next actions
+0. Review [proposed indicator priorities](data/indicator_priorities.md); M1/M2/M4 no longer assumed core stress factors. Core candidate feature domains are market/equity downside, FX volatility, funding/credit spread and banking stress; BIS credit gap/DSR is a different longer-horizon vulnerability experiment. ECB CISS for EA/US/UK and Banxico IEMF are reference comparisons, not factor input variables. US ICE credit-spread FRED data limited to ~3 years since April 2026, not suitable for historical 2008 tests without other sources.
 1. On activated Conda VM, `git pull --ff-only origin main`; install editable package; run `python scripts/download_data.py --start 2000-01-01 --end 2026-10-17 --sources ecb,boe,boj`. Re-run `banxico` with user-held token for NEW M1/M2 codes. Run `python scripts/audit_downloads.py`, share non-secret counts and error strings, and do not push raw data or token.
 2. Diagnose FRED network separately and build a point-in-time country indicator catalog; start with Mexico, USA.
 3. Implement and test likelihood-based trend smoothing, then index candidates, without reading future observations.

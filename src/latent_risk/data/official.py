@@ -27,7 +27,7 @@ def parse_ecb_csv(body: bytes, start: str, end: str, key: str) -> pd.DataFrame:
     Returns
     -------
     pandas.DataFrame
-        Monthly first-of-month `observation_date` labels and `value`.
+        Daily actual dates or monthly first-of-month `observation_date` labels and `value`.
 
     Raises
     ------
@@ -43,10 +43,20 @@ def parse_ecb_csv(body: bytes, start: str, end: str, key: str) -> pd.DataFrame:
     if "KEY" in frame.columns and frame["KEY"].dropna().ne(key).any():
         raise ValueError("ECB returned a different series key")
     raw_periods = frame["TIME_PERIOD"].astype(str)
-    if not raw_periods.str.fullmatch(r"\d{4}-\d{2}").all():
-        raise ValueError("expected ECB monthly YYYY-MM periods")
+    key_parts = key.split(".")
+    if len(key_parts) < 3 or key_parts[1] not in {"D", "M"}:
+        raise ValueError("expected ECB series key of daily or monthly frequency")
+    frequency = key_parts[1]
+    if frequency == "M":
+        if not raw_periods.str.fullmatch(r"\d{4}-\d{2}").all():
+            raise ValueError("expected ECB monthly YYYY-MM periods")
+        date_strings = raw_periods + "-01"
+    else:
+        if not raw_periods.str.fullmatch(r"\d{4}-\d{2}-\d{2}").all():
+            raise ValueError("expected ECB daily YYYY-MM-DD periods")
+        date_strings = raw_periods
     values = pd.to_numeric(frame["OBS_VALUE"], errors="coerce")
-    dates = pd.to_datetime(raw_periods + "-01", format="%Y-%m-%d", errors="raise")
+    dates = pd.to_datetime(date_strings, format="%Y-%m-%d", errors="raise")
     result = pd.DataFrame({"observation_date": dates, "value": values})
     return _filter_observations(result, start, end, "ECB")
 

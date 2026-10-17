@@ -10,6 +10,9 @@ FRED is current revised history, **not** available-date vintage history. No rele
 ## Official-source expansion (2026-10-17)
 `IMPLEMENTED` additional candidate source series: ECB M1/M2, BoE sterling M4/SONIA, BOJ M1/M2, modern Banxico M1/M2 (codes `SF311408`/`SF311418`). Retrieval uses source-specific CSV/JSON parsers and independently stored raw snapshots; `scripts/audit_downloads.py` combines status evidence across snapshots. New-provider HTTP requests have not been executed by assistant, and the user reports Banxico ran before these two codes were added. Full manifests have not yet been provided. All FRED downloads previously failed from the VM with HTTPS `ConnectionError`; no claim of complete US macro coverage is justified. ECB euro area changes composition; BoE M4 != US/ECB M2. Historical availability and real-time data vintages remain `UNKNOWN`.
 
+## Indicator domain reprioritization (2026-10-17)
+The user clarified that M1/M2 were examples, not preferred core predictors. Per `data/indicator_priorities.md` and `ADR-0005` (proposed), prioritize directly market-based stress observables and distinguish slower credit/balance-sheet vulnerability indicators. Exact validated published external references: Banxico IEMF (36 variables, six financial-market domains), ECB daily new CISS for UK/US/EA; STLFSI4 and NFCI are US reference candidates. They are **not** model input data for a concordance experiment. ECB CISS source keys now in downloader. Source coverage in Japan remains a gap. US ICE corporate spreads FRED limit to three-year history since Apr 2026; cannot reconstruct 2008 with FRED now.
+
 ## Research question
 When and why do forecasts based on smoothed country financial-risk indices fail during financial disturbances? Are unusually large forecast errors informative beyond volatility changes and conventional benchmarks?
 

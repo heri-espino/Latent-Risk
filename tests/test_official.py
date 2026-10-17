@@ -25,6 +25,24 @@ def test_ecb_csv_period_and_key():
     assert out.iloc[0]["observation_date"].strftime("%Y-%m-%d") == "2020-01-01"
 
 
+def test_ecb_daily_ciss_preserves_actual_daily_dates():
+    key = "CISS.D.US.Z0Z.4F.EC.SS_CIN.IDX"
+    body = (
+        f"KEY,TIME_PERIOD,OBS_VALUE\n{key},2020-03-16,0.4\n"
+        f"{key},2020-03-17,0.7\n"
+    ).encode()
+    result = parse_ecb_csv(body, "2020-03-17", "2020-03-18", key)
+    assert result["value"].tolist() == [0.7]
+    assert result.iloc[0]["observation_date"].strftime("%Y-%m-%d") == "2020-03-17"
+
+
+def test_ecb_rejects_incompatible_daily_frequency():
+    key = "CISS.D.US.Z0Z.4F.EC.SS_CIN.IDX"
+    body = f"KEY,TIME_PERIOD,OBS_VALUE\n{key},2020-03,0.4\n".encode()
+    with pytest.raises(ValueError, match="daily"):
+        parse_ecb_csv(body, "2020-01-01", "2020-12-31", key)
+
+
 def test_ecb_rejects_unexpected_series():
     body = b"KEY,TIME_PERIOD,OBS_VALUE\nBSI.other,2020-01,5\n"
     with pytest.raises(ValueError, match="different"):
@@ -69,7 +87,9 @@ def test_boj_non_200_error():
 def test_official_catalog_contains_unique_ids():
     catalog_path = Path(__file__).resolve().parents[1] / "data/source_catalog.json"
     catalog = json.loads(catalog_path.read_text(encoding="utf-8"))
-    assert len(catalog["ecb"]) == 2
+    assert len(catalog["ecb"]) == 5
+    benchmarks = [x for x in catalog["ecb"] if x["role"] == "external_stress_benchmark"]
+    assert {x["country"] for x in benchmarks} == {"EA", "USA", "GBR"}
     assert len(catalog["boe"]) == 2
     assert len(catalog["boj"]) == 2
     for source in ("ecb", "boe", "boj"):

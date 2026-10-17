@@ -92,3 +92,9 @@ Official references: [Banxico CF807](https://www.banxico.org.mx/SieInternet/cons
 Audit the newly included Banxico M1/M2 and official Euro-area M1/M2, Japan M1/M2 and UK M4 observations; acquire UK/Japan/euro area comparable sovereign yields, US failed FRED histories, local volatility measurements, the euro-area reserve definition, official release calendars/vintages, and a common observable validation target. The initial downloader is **stage 0**, not 'all the research data' or a finished international panel.
 
 Possible sources: [Banxico SIE](https://www.banxico.org.mx/SieAPIRest/swagger/index.html), [FRED](https://fred.stlouisfed.org/), [IMF](https://data.imf.org/), [OECD](https://data-explorer.oecd.org/).
+
+## Why M1/M2 are not primary stress-factor inputs
+
+The user clarified that M1/M2 were illustrative, not the desired default factors. The economically motivated primary domains are equity downside/realized volatility, FX volatility, credit and funding spreads and bank stress, with slower BIS credit-gap/DSR and M1/M2 as separately evaluated extensions. See [indicator selection and benchmarks](indicator_priorities.md). Three daily ECB CISS indices (EA, US, UK) are now downloaded along with ECB BSI when running `--sources ecb` and **must remain external references**, not factor inputs. Banxico IEMF is another official external comparator, but historical coverage, reproducible scraping and historical publication dates remain unverified.
+
+FRED benchmark identifiers `STLFSI4` and `NFCI` are cataloged; they do not solve the VM's FRED connectivity failures. ICE US corporate OAS is limited to three years of FRED histories from April 2026, so it is not sufficient for 2008 replay.
