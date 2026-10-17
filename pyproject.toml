@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "latent-risk"
+version = "0.1.0"
+description = "Reproducible tools for country-specific latent financial-risk indices and forecast-failure analysis."
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [{name = "Latent Risk research contributors"}]
+dependencies = ["numpy>=1.24", "pandas>=2.0", "scipy>=1.10"]
+
+[project.optional-dependencies]
+models = ["statsmodels>=0.14"]
+dev = ["pytest>=8", "ruff>=0.7", "sphinx>=8", "myst-parser>=4", "sphinxcontrib-napoleon>=0.7"]
+docs = ["sphinx>=8", "myst-parser>=4"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
+
+[tool.ruff]
+target-version = "py310"
+line-length = 100
+extend-exclude = ["docs/_build", "results", "literature/markdown"]
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "I", "B"]
