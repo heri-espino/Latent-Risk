@@ -3,13 +3,23 @@
 Install Python 3.10 or newer. From the repository root:
 
 ```bash
-python -m pip install -e ".[dev,docs]"
+python -m pip install -e ".[data,dev,docs]"
 python -m pytest
 python scripts/validate_research.py
 sphinx-build -b html docs docs/_build/html
 ```
 
-The initial concrete API constructs model-specific indices **from already transformed, aligned financial measurements**. Training-only preprocessing is required for honest historical forecasts.
+## First data acquisition
+
+The initial source-acquisition command (run after installing the `data` extra) is:
+
+```bash
+python scripts/download_data.py --start 2000-01-01 --end 2026-10-17
+```
+
+The end date is exclusive. Individual CSV files and an auditable manifest are created under gitignored `data/raw/downloads/<UTC timestamp>/`. Source failures are visible and yield a nonzero process exit code. Read the [data-acquisition documentation](https://github.com/heri-espino/Latent-Risk/blob/main/data/README.md) for optional Banxico sources and critical historical-availability limitations. This command does not yet construct the final international panel.
+
+## Index-only example (synthetic)
 
 ```python
 import numpy as np
@@ -22,4 +32,4 @@ pca = fit_pca(train, stress_anchor=0)
 print(signed.transform(future), pca.transform(future))
 ```
 
-**These example numbers are invented toy inputs**, not financial observations. The library does not download country panels, estimate DFM likelihoods, smooth latent trends, or detect crises yet.
+These example numbers are invented toy inputs, not financial observations. The library does not yet fit DFM likelihoods, smooth latent trends or detect crises.

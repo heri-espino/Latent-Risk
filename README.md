@@ -1,47 +1,47 @@
 # Latent Risk
 
-**Status:** research infrastructure established; no international empirical study has yet been run.
+**Status:** source acquisition is implemented, but **no actual international source download or empirical study has been executed in this repository**.
 
-Latent Risk is a research project on financial-stress indices and the reliability of smoothed-trend forecasts across countries and crisis episodes. Initial candidate markets include Mexico, the United States, the United Kingdom, Japan, and a euro-area aggregate. The central question is whether unusually large forecast failures reveal information about financial disturbances beyond ordinary forecast uncertainty.
+Latent Risk is a research project on financial-stress indices and the reliability of smoothed-trend forecasts across countries and crisis episodes. Initial candidate markets are Mexico, the United States, the United Kingdom, Japan and an explicitly defined euro-area aggregate. The central question is whether unusually large forecast failures contain information about financial disturbances beyond ordinary forecast uncertainty.
 
 We distinguish three stages:
 
-1. **Measurement:** construct comparable financial-risk indices from market and macrofinancial indicators (transparent composite, PCA, DFM, and conditional robust alternatives).
-2. **Trend forecasting:** fit a statistically specified trend model, primarily a constrained Gaussian local-linear trend with smoothing chosen by marginal likelihood (planned, not implemented).
-3. **Evaluation:** compare forecast failures across country, event, index method, and forecast horizon, with pseudo-real-time checks and retrospective analysis clearly separated.
+1. **Measurement:** construct comparable indices (signed composite, PCA, DFM and conditional robust/regime alternatives).
+2. **Trend forecasting:** fit a statistically specified trend model, primarily a Gaussian state-space trend with smoothness selected by marginal likelihood (proposed, not implemented).
+3. **Evaluation:** compare forecast failures across countries, market episodes, methods and horizons, separating retrospective descriptions from pseudo-real-time prediction.
 
-## Development stage
+## Setup and initial data download (PowerShell/Conda)
 
-The installable `src/latent_risk/` package will initially provide small, tested index-construction and data-vintage utilities. Neither MLE smoothing nor the international experiment is claimed implemented. Research decisions, implementation status and negative findings are documented in the journal.
+```powershell
+git clone https://github.com/heri-espino/Latent-Risk.git
+Set-Location Latent-Risk
+conda create -n latent-risk python=3.11 -y
+conda run -n latent-risk python -m pip install -e '.[data,dev,docs]'
+conda run -n latent-risk python scripts/download_data.py --start 2000-01-01 --end 2026-10-17
+```
 
-## Quick start
+Each series is saved in a separate timestamped snapshot under `data/raw/downloads` with an auditable success/failure `manifest.json`. **This source snapshot is not point-in-time historical data:** the catalog includes legacy macro series with limited coverage. Inspect the manifest before interpreting it.
+
+See [full data acquisition documentation](data/README.md) and [source catalog](data/source_catalog.json).
+
+## Development
 
 ```bash
-python -m pip install -e ".[dev]"
+python -m pip install -e ".[data,dev,docs]"
 python -m pytest
+ruff check .
 python scripts/validate_research.py
+sphinx-build -b html -W --keep-going docs docs/_build/html
 ```
 
-Minimal API:
+Initial source APIs: training-only PCA, signed-composite estimators, source acquisition, published-date filtering utilities, elementary forecast-error diagnostics. No pseudo-real-time country panel or MLE smoother has been fitted.
 
-```python
-import numpy as np
-from latent_risk.indices import fit_pca, fit_signed_composite
+## AI research continuity
 
-X_train = np.array([[1., 0.], [2., 1.], [0., -1.], [4., 2.]])
-pca = fit_pca(X_train, stress_anchor=0)
-scores = pca.transform(X_train)
-composite = fit_signed_composite(X_train, directions=[1, -1])
-```
+Read `AGENTS.md` first, then `journal/README.md`, `journal/LATEST.md`, its latest dated entry, `AI_HANDOFF.md`, `context/STATE.md`, `context/NEXT_STEPS.md` and `context/DECISION_INDEX.md`. Mathematical notes belong in `notes/`; source PDFs/Docling Markdown/annotated references are separated under `literature/{pdf,markdown,references}/`; experiments and manuscripts are `experiments/` and `paper/`.
 
-## Research and AI collaboration
+Earlier U.S. source is [Estimation of Latent Risk in the U.S. Market Using Representative Variables](https://github.com/heri-espino/Estimation-of-latent-risk-in-the-U.S.-market-using-representative-variables). Its retrospective 2008 experiment is not a validated early-warning result. Theoretical smoothing-methodology research remains in the [Trend-Estimation](https://github.com/heri-espino/Trend-Estimation) repository.
 
-**Start every session by reading `AGENTS.md` and the journal sequence it specifies.** Use `AI_HANDOFF.md` for status after reading the dated history. Mathematical results belong in `notes/`, source materials in `literature/{pdf,markdown,references}/`, research protocols in `experiments/`, manuscript in `paper/`, and generated outputs under `results/`.
+## Attribution and publication
 
-The source of the earlier U.S.-specific pilot is [Estimation of Latent Risk in the U.S. Market Using Representative Variables](https://github.com/heri-espino/Estimation-of-latent-risk-in-the-U.S.-market-using-representative-variables). Its 2008 results are **not** transferred as validated results here: its DFM parameters and standardization used later data, its smoothness selection contained an inconsistency, and diagnostic tests were rejected. See `context/STATE.md`.
-
-See `docs/getting-started.md`, `docs/research-workflow.md`, and `experiments/README.md` for details.
-
-## Attribution and reuse
-
-Earlier project material had additional credited collaborators. Reuse and manuscript authorship require confirmation. No final manuscript authorship is asserted here. Original source code in this repository is not automatically licensed for third-party redistribution; choose a license with collaborators before a public software release.
+Original U.S. pilot materials name additional collaborators. Confirm authorship and permissions before transferring original manuscript or source data. External source licenses and publication rights must be respected.
