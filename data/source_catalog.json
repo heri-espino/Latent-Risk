@@ -1,0 +1,194 @@
+{
+  "schema_version": 1,
+  "description": "Initial raw data acquisition candidates. Availability is not guaranteed; inspect run manifest. Not yet a harmonized comparable country panel.",
+  "market": [
+    {
+      "country": "MEX",
+      "name": "Mexico IPC equity index",
+      "symbol": "^MXX",
+      "role": "local_equity"
+    },
+    {
+      "country": "USA",
+      "name": "US S&P 500 equity index",
+      "symbol": "^GSPC",
+      "role": "local_equity"
+    },
+    {
+      "country": "GBR",
+      "name": "UK FTSE 100 equity index",
+      "symbol": "^FTSE",
+      "role": "local_equity"
+    },
+    {
+      "country": "JPN",
+      "name": "Japan Nikkei 225 equity index",
+      "symbol": "^N225",
+      "role": "local_equity"
+    },
+    {
+      "country": "EA",
+      "name": "Euro Stoxx 50 equity index",
+      "symbol": "^STOXX50E",
+      "role": "regional_equity"
+    },
+    {
+      "country": "MEX",
+      "name": "US dollar to Mexican peso",
+      "symbol": "MXN=X",
+      "role": "fx_usd_mxn"
+    },
+    {
+      "country": "GBR",
+      "name": "British pound in US dollars",
+      "symbol": "GBPUSD=X",
+      "role": "fx_gbp_usd"
+    },
+    {
+      "country": "JPN",
+      "name": "US dollar in Japanese yen",
+      "symbol": "JPY=X",
+      "role": "fx_usd_jpy"
+    },
+    {
+      "country": "EA",
+      "name": "Euro in US dollars",
+      "symbol": "EURUSD=X",
+      "role": "fx_eur_usd"
+    },
+    {
+      "country": "GLOBAL",
+      "name": "US VIX",
+      "symbol": "^VIX",
+      "role": "us_volatility"
+    },
+    {
+      "country": "GLOBAL",
+      "name": "WTI oil front futures",
+      "symbol": "CL=F",
+      "role": "global_oil"
+    },
+    {
+      "country": "GLOBAL",
+      "name": "Gold futures",
+      "symbol": "GC=F",
+      "role": "global_gold"
+    },
+    {
+      "country": "GLOBAL",
+      "name": "US Dollar Index",
+      "symbol": "DX-Y.NYB",
+      "role": "global_dollar_index"
+    },
+    {
+      "country": "GLOBAL",
+      "name": "Gold ETF GLD",
+      "symbol": "GLD",
+      "role": "global_gold_etf"
+    }
+  ],
+  "fred": [
+    {
+      "country": "USA",
+      "name": "US 2-year treasury yield",
+      "series": "DGS2",
+      "frequency": "daily",
+      "role": "rate_2y"
+    },
+    {
+      "country": "USA",
+      "name": "US 10-year treasury yield",
+      "series": "DGS10",
+      "frequency": "daily",
+      "role": "rate_10y"
+    },
+    {
+      "country": "USA",
+      "name": "US M1 money stock",
+      "series": "M1SL",
+      "frequency": "monthly",
+      "role": "money_m1"
+    },
+    {
+      "country": "USA",
+      "name": "US M2 money stock",
+      "series": "M2SL",
+      "frequency": "monthly",
+      "role": "money_m2"
+    },
+    {
+      "country": "USA",
+      "name": "US reserve assets excluding gold",
+      "series": "TRESEGUSM052N",
+      "frequency": "monthly",
+      "role": "reserves_ex_gold"
+    },
+    {
+      "country": "MEX",
+      "name": "Mexico reserve assets excluding gold",
+      "series": "TRESEGMXM052N",
+      "frequency": "monthly",
+      "role": "reserves_ex_gold"
+    },
+    {
+      "country": "GBR",
+      "name": "UK reserve assets excluding gold",
+      "series": "TRESEGGBM052N",
+      "frequency": "monthly",
+      "role": "reserves_ex_gold"
+    },
+    {
+      "country": "JPN",
+      "name": "Japan reserve assets excluding gold",
+      "series": "TRESEGJPM052N",
+      "frequency": "monthly",
+      "role": "reserves_ex_gold"
+    },
+    {
+      "country": "MEX",
+      "name": "Mexico M2 IMF old series ends 2017",
+      "series": "MYAGM2MXM189N",
+      "frequency": "monthly",
+      "role": "money_m2_legacy",
+      "note": "DISCONTINUED 2017; not a current M2 series"
+    },
+    {
+      "country": "MEX",
+      "name": "Mexico M1 OECD historical series",
+      "series": "MANMM101MXM189S",
+      "frequency": "monthly",
+      "role": "money_m1_legacy",
+      "note": "Historical 2018 cutoff; check availability"
+    }
+  ],
+  "banxico": [
+    {
+      "country": "MEX",
+      "name": "Banxico FIX USD/MXN",
+      "series": "SF43718",
+      "frequency": "daily",
+      "role": "fx_fix"
+    },
+    {
+      "country": "MEX",
+      "name": "Banxico CETES 28-day",
+      "series": "SF60633",
+      "frequency": "daily",
+      "role": "short_rate"
+    },
+    {
+      "country": "MEX",
+      "name": "Banxico international reserves",
+      "series": "SF43707",
+      "frequency": "weekly",
+      "role": "reserves"
+    }
+  ],
+  "important_gaps": [
+    "Banco de Mexico current methodology M1/M2 IDs to be independently confirmed before loading.",
+    "Euro-area reserve aggregate and local bond yields for non-US countries to be sourced and validated.",
+    "Per-observation historical release dates and revisions are not delivered by FRED graph CSV.",
+    "Equity and FX tickers are proxies with differing observation calendars and historical coverage.",
+    "Some FRED/IMF series carry reuse restrictions. Do not commit downloaded data to a public repository."
+  ]
+}
