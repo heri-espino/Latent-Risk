@@ -185,10 +185,73 @@
     }
   ],
   "important_gaps": [
-    "Banco de Mexico current methodology M1/M2 IDs to be independently confirmed before loading.",
-    "Euro-area reserve aggregate and local bond yields for non-US countries to be sourced and validated.",
-    "Per-observation historical release dates and revisions are not delivered by FRED graph CSV.",
-    "Equity and FX tickers are proxies with differing observation calendars and historical coverage.",
-    "Some FRED/IMF series carry reuse restrictions. Do not commit downloaded data to a public repository."
+    "Banxico M1/M2 modern 2018-methodology official table CF807 verified; series IDs need checking before token API integration.",
+    "FRED graph downloads failed on user's VM with ConnectionError; must resolve network access or use verified alternate source before counting US yields/M1/M2/reserves.",
+    "UK M4 is not equivalent to US/Euro area M2 or Japanese M2; different definitions/units and Euro area changing composition require explicit treatment.",
+    "US and Mexico yields and euro-area short-term/sovereign interest-rate sources require additional catalog coverage.",
+    "This revision adds ECB BSI, Bank of England IADB and BOJ official data, none yet verified by a live VM download.",
+    "Historical release/availability dates and revisions remain unaudited for all macro sources.",
+    "Source licenses and reproducibility need auditing; raw downloaded data must not be committed."
+  ],
+  "ecb": [
+    {
+      "country": "EA",
+      "name": "Euro area M1 seasonally adjusted nominal stock",
+      "key": "BSI.M.U2.Y.V.M10.X.1.U2.2300.Z01.E",
+      "frequency": "monthly",
+      "role": "money_m1",
+      "units": "million EUR",
+      "source_reference": "https://data.ecb.europa.eu/data/publications/BSI01_01"
+    },
+    {
+      "country": "EA",
+      "name": "Euro area M2 seasonally adjusted nominal stock",
+      "key": "BSI.M.U2.Y.V.M20.X.1.U2.2300.Z01.E",
+      "frequency": "monthly",
+      "role": "money_m2",
+      "units": "million EUR",
+      "source_reference": "https://data.ecb.europa.eu/data/publications/BSI01_01"
+    }
+  ],
+  "boe": [
+    {
+      "country": "GBR",
+      "name": "UK sterling M4 money stock seasonally adjusted",
+      "series": "LPMAUYN",
+      "frequency": "monthly",
+      "role": "money_m4",
+      "units": "million GBP",
+      "note": "M4 != M2; not directly comparable"
+    },
+    {
+      "country": "GBR",
+      "name": "UK sterling overnight index average SONIA",
+      "series": "IUDSOIA",
+      "frequency": "daily",
+      "role": "short_rate",
+      "units": "percent"
+    }
+  ],
+  "boj": [
+    {
+      "country": "JPN",
+      "name": "Japan M1 money stock average monthly amount",
+      "database": "MD02",
+      "series": "MAM1NAM3M1MO",
+      "frequency": "monthly",
+      "role": "money_m1",
+      "units": "100 million JPY",
+      "source_reference": "https://www.stat-search.boj.or.jp/ssi/mtshtml/md02_m_1_en.html"
+    },
+    {
+      "country": "JPN",
+      "name": "Japan M2 money stock average monthly amount",
+      "database": "MD02",
+      "series": "MAM1NAM2M2MO",
+      "frequency": "monthly",
+      "role": "money_m2",
+      "units": "100 million JPY",
+      "source_reference": "https://www.stat-search.boj.or.jp/ssi/mtshtml/md02_m_1_en.html"
+    }
   ]
 }
