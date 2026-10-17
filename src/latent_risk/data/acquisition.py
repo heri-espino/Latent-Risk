@@ -13,7 +13,7 @@ import os
 import re
 import subprocess
 import sys
-from datetime import date, datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 from hashlib import sha256
 from io import BytesIO
 from pathlib import Path
@@ -22,6 +22,8 @@ import pandas as pd
 import requests
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
+
+from latent_risk.data.official import boe_date, parse_boe_csv, parse_boj_json, parse_ecb_csv
 
 
 def _slug(identifier: str) -> str:
@@ -231,13 +233,13 @@ def acquire(
     Parameters
     ----------
     catalog : dict
-        Source catalog with separate market, fred and banxico arrays.
+        Source catalog with market, fred, banxico, ecb, boe and boj arrays.
     start, end : str
         Beginning and exclusive end of requested observations (ISO dates).
     snapshot : pathlib.Path
         A new snapshot directory; must not already exist.
     sources : set of str
-        Subset of `market`, `fred`, and `banxico`.
+        Subset of `market`, `fred`, `banxico`, `ecb`, `boe`, and `boj`.
     banxico_token : str, optional
         Private token for Banxico via HTTP header; never written to metadata.
 
@@ -255,9 +257,9 @@ def acquire(
         If the snapshot already exists.
     """
     _parse_dates(start, end)
-    allowed = {"market", "fred", "banxico"}
+    allowed = {"market", "fred", "banxico", "ecb", "boe", "boj"}
     if not sources or not sources <= allowed:
-        raise ValueError("sources must be a nonempty subset of market,fred,banxico")
+        raise ValueError("sources must be a nonempty subset of market,fred,banxico,ecb,boe,boj")
     if "banxico" in sources and not banxico_token:
         raise ValueError("Banxico requires BANXICO_TOKEN in the environment")
     snapshot.mkdir(parents=True, exist_ok=False)
@@ -273,7 +275,8 @@ def acquire(
         "records": [],
         "limitations": [
             "FRED graph CSV is the currently revised series, not historical publication vintages.",
-            "No historical available_date column is fabricated for FRED/Banxico.",
+            "No historical available_date column is fabricated for any macro source.",
+            "ECB, BoE and BOJ monthly observation labels are NOT public release dates.",
             "Market timestamps are daily trade dates; intraday availability is not established.",
             "All series are vendor-provided and licensing/republication is not automatically granted.",
             "A successful download does not imply cross-country comparability or completeness.",
@@ -281,11 +284,15 @@ def acquire(
     }
     client = _session()
     try:
-        for source in ("market", "fred", "banxico"):
+        for source in ("market", "fred", "banxico", "ecb", "boe", "boj"):
             if source not in sources:
                 continue
             for entry in catalog[source]:
-                identifier = entry.get("symbol") if source == "market" else entry["series"]
+                identifier = (
+                    entry["symbol"] if source == "market"
+                    else entry["key"] if source == "ecb"
+                    else entry["series"]
+                )
                 metadata = dict(entry)
                 metadata.update({"source": source, "id": identifier, "status": "FAILED"})
                 try:
@@ -306,7 +313,7 @@ def acquire(
                         )
                         response.raise_for_status()
                         data = parse_fred_csv(response.content, start, end)
-                    else:
+                    elif source == "banxico":
                         url = (
                             "https://www.banxico.org.mx/SieAPIRest/service/v1/series/"
                             f"{identifier}/datos/{start}/{end}"
@@ -318,6 +325,66 @@ def acquire(
                         data = parse_banxico_series(
                             response.json(), identifier, start, end,
                         )
+                    elif source == "ecb":
+                        url = f"https://data-api.ecb.europa.eu/service/data/{identifier.replace('.', '/', 1)}"
+                        last_day = date.fromisoformat(end) - timedelta(days=1)
+                        response = client.get(
+                            url,
+                            params={
+                                "startPeriod": start[:7],
+                                "endPeriod": last_day.strftime("%Y-%m"),
+                                "format": "csvdata",
+                            },
+                            headers={"Accept": "text/csv"},
+                            timeout=60,
+                        )
+                        response.raise_for_status()
+                        url = response.url
+                        data = parse_ecb_csv(response.content, start, end, identifier)
+                    elif source == "boe":
+                        url = (
+                            "https://www.bankofengland.co.uk/boeapps/database/"
+                            "_iadb-fromshowcolumns.asp"
+                        )
+                        response = client.get(
+                            url,
+                            params={
+                                "csv.x": "yes",
+                                "Datefrom": boe_date(start),
+                                "Dateto": boe_date((date.fromisoformat(end) - timedelta(days=1)).isoformat()),
+                                "SeriesCodes": identifier,
+                                "CSVF": "TN",
+                                "UsingCodes": "Y",
+                                "VPD": "Y",
+                                "VFD": "N",
+                            },
+                            headers={"User-Agent": "Mozilla/5.0 (compatible; LatentRiskAcademic/0.1)"},
+                            timeout=60,
+                        )
+                        response.raise_for_status()
+                        url = response.url
+                        data = parse_boe_csv(response.content, start, end, identifier)
+                    else:  # boj
+                        url = "https://www.stat-search.boj.or.jp/api/v1/getDataCode"
+                        last_day = date.fromisoformat(end) - timedelta(days=1)
+                        response = client.get(
+                            url,
+                            params={
+                                "db": entry["database"],
+                                "code": identifier,
+                                "lang": "en",
+                                "format": "json",
+                                "startDate": start[:7].replace("-", ""),
+                                "endDate": last_day.strftime("%Y%m"),
+                            },
+                            timeout=60,
+                        )
+                        response.raise_for_status()
+                        url = response.url
+                        payload = response.json()
+                        if payload.get("NEXTPOSITION") is not None:
+                            raise ValueError("BOJ paginated response; no partial series is accepted")
+                        data = parse_boj_json(payload, start, end, identifier)
                     path = snapshot / source / f"{_slug(identifier)}.csv"
                     digest = _save_frame(data, path)
                     metadata.update({
@@ -359,7 +426,10 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--start", default="2000-01-01")
     parser.add_argument("--end", required=True, help="Exclusive ISO end date, e.g. 2026-10-17")
-    parser.add_argument("--sources", default="market,fred", help="market,fred[,banxico]")
+    parser.add_argument(
+        "--sources", default="market,fred",
+        help="Comma-separated subset: market,fred,banxico,ecb,boe,boj",
+    )
     parser.add_argument("--catalog", type=Path, default=Path(__file__).resolve().parents[3] / "data/source_catalog.json")
     parser.add_argument("--output", type=Path, default=Path("data/raw/downloads"))
     args = parser.parse_args()
