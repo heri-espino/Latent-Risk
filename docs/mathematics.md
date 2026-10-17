@@ -5,4 +5,4 @@
 - **Likelihood**: under independent Gaussian measurement variance \(r\) and second-difference state variance \(q\), and appropriate initial states, the smoothing coefficient is \(\lambda=r/q\). Its *marginal* likelihood is not the residual-sum-of-squares function.
 - **Forecast assessment**: \(e_{c,t,h}=f_{c,t+h}^{\mathrm{target}}-\widehat f_{c,t+h\mid t}\). Standardized exceedance thresholds require a historically calibrated predictive variance and cannot be justified by Gaussianity alone.
 
-See [definitions](../notes/definitions.md) and [the prospective protocol](../experiments/EXP-0001.md). This documentation describes a proposed mathematical specification; the MLE solver is **not implemented**.
+See [definitions](https://github.com/heri-espino/Latent-Risk/blob/main/notes/definitions.md) and [the prospective protocol](https://github.com/heri-espino/Latent-Risk/blob/main/experiments/EXP-0001.md). This documentation describes a proposed mathematical specification; the MLE solver is **not implemented**.
