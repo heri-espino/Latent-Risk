@@ -7,13 +7,13 @@ import pandas as pd
 import pytest
 
 from latent_risk.data.acquisition import (
-    acquire,
     _parse_dates,
     _slug,
+    acquire,
     normalize_market_frame,
     parse_banxico_series,
-    parse_fred_csv,
     parse_fred_api,
+    parse_fred_csv,
 )
 
 
@@ -124,6 +124,7 @@ def test_fred_api_requires_key_before_creating_snapshot(tmp_path):
 
 def test_fred_api_key_never_persisted_on_request_failure(monkeypatch, tmp_path, capsys):
     import json
+
     import requests
 
     secret = "secret-test-key-do-not-store"
