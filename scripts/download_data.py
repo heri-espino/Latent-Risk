@@ -7,6 +7,5 @@ Run `python scripts/download_data.py --end 2026-10-17` after installing
 
 from latent_risk.data.acquisition import main
 
-
 if __name__ == "__main__":
     raise SystemExit(main())
