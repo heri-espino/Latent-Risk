@@ -4,6 +4,7 @@
 Run `python scripts/download_data.py --end 2026-10-17` after installing
 `pip install -e ".[data]"`. See `data/README.md` for data and leakage limits.
 """
+
 from latent_risk.data.acquisition import main
 
 
