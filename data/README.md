@@ -413,3 +413,58 @@ raw SDMX `OBS_VALUE` markers and dates before changing validation further.
 Do not assume new successful BIS series or that `TIME_PERIOD` implies the
 value was published contemporaneously. Evidence:
 [audit of the failed first BIS request](audits/2026-10-17-bis-first-live-failure.md).
+
+
+## Acquisition-agent read-only coverage and BIS failure diagnostics (2026-10-18)
+
+The BIS missing-cell correction on `main` predates this branch and has **not**
+been verified on the user's live VM. **Do not rerun FRED, Banxico, ECB or market
+downloads.** The new coverage command reads the existing immutable manifests
+and CSV files without downloading, rewriting or publishing them.
+
+In the activated environment, after checking out the reviewed agent branch:
+
+```powershell
+python scripts/audit_source_coverage.py
+python scripts/audit_downloads.py
+python scripts/audit_source_quality.py
+```
+
+The first command writes ignored `results/source_coverage.json` and
+`results/source_coverage.csv`, including every exact catalog series identifier,
+source/catalog frequency, provider-declared units if available (otherwise
+`UNKNOWN`), original observation start/end dates and years, count, source
+snapshot, CSV hash and physical integrity status. The unit and frequency fields
+are *catalog declarations*, not a substitute for live provider metadata.
+`OK_FILE_VERIFIED` means a saved local CSV passed the source quality audit,
+**not** that it represents a first-release historical vintage. An earlier
+successful snapshot remains visible if a later download failed. Corrupt CSV
+hashes never become successful coverage.
+
+The BIS downloader now records `bis_response_sha256` for a completed HTTP
+response **even if the numeric parser subsequently rejects it**. On parser
+failure, `bis_failure_diagnostics` stores only bounded row counts and up to
+five dates for explicit missing cells, malformed nonmissing values, wrong
+dimensions/row widths, invalid dates and nonpositive indices. It stores **no
+raw BIS CSV content, values or full row samples**. This helps distinguish
+legitimate missing `OBS_VALUE` cells from a malformed response while
+preserving strict rejection rules.
+
+A user-held BIS retry is still necessary:
+
+```powershell
+python scripts/download_data.py --start 2000-01-01 --end 2026-10-18 --sources bis
+python scripts/audit_source_coverage.py
+python scripts/audit_source_quality.py
+```
+
+Each downloader invocation creates a new immutable timestamped snapshot; it
+never edits the earlier 34 verified source CSVs or seven historic manifests.
+Do not commit local `results/` outputs, API tokens, vendor raw responses,
+or downloaded source files. The latest reported **actual** BIS attempt
+remains 0/5; the expectation of 39 catalog successes is not empirical evidence.
+
+See [agent source and licensing assessment](audits/2026-10-18-data-agent-status.md)
+and [proposed metadata contract](provider_metadata_contract.proposed.json).
+The contract is **PROPOSED**, not enforced by acquisition code; coordinator
+approval is needed before changing shared record schemas.
