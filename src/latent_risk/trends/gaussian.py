@@ -281,12 +281,14 @@ def forecast_at_origin(
     filtered state. The trend variance adds q sum_{j=1}^h j^2; observed
     variance additionally adds measurement noise r.
     """
-    y = _observations(y)
-    if not isinstance(origin, (int, np.integer)) or not 2 <= origin < y.size:
+    y = np.asarray(y, dtype=float)
+    if y.ndim != 1 or not isinstance(origin, (int, np.integer)) or not 2 <= origin < y.size:
         raise ValueError("origin must be an observed 0-based index >=2")
     if not isinstance(horizon, (int, np.integer)) or horizon < 1:
         raise ValueError("horizon must be a positive integer")
-    filt = filter_local_linear(y[: origin + 1], measurement_variance, curvature_variance)
+    # Validate only the information set available at the requested origin.
+    prefix = _observations(y[: origin + 1])
+    filt = filter_local_linear(prefix, measurement_variance, curvature_variance)
     a = filt.states[-1]
     p = filt.covariances[-1]
     h = int(horizon)
@@ -298,8 +300,10 @@ def forecast_at_origin(
 
 def forecast_with_reml(y: object, origin: int, horizon: int) -> tuple[TrendForecast, REMLFit]:
     """Reestimate variances using only the origin prefix, then forecast causally."""
-    y = _observations(y, minimum=5)
-    if not isinstance(origin, (int, np.integer)) or not 4 <= origin < y.size:
+    y = np.asarray(y, dtype=float)
+    if y.ndim != 1 or not isinstance(origin, (int, np.integer)) or not 4 <= origin < y.size:
         raise ValueError("REML forecast origin must be >=4 and within observed y")
-    fit = fit_reml(y[: origin + 1])
+    # Missing or non-finite observations after the origin are irrelevant.
+    prefix = _observations(y[: origin + 1], minimum=5)
+    fit = fit_reml(prefix)
     return forecast_at_origin(y, origin, horizon, fit.measurement_variance, fit.curvature_variance), fit
