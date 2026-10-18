@@ -9,7 +9,6 @@ from __future__ import annotations
 import numpy as np
 import pandas as pd
 
-
 EQUITY_BY_COUNTRY = {
     "MEX": "^MXX",
     "USA": "^GSPC",
