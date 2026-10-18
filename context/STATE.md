@@ -1,6 +1,10 @@
-# Research state (2026-10-17)
+# Research state (2026-10-18; agent branch only)
 
 **Status:** `IMPLEMENTED` baseline source-package infrastructure; CI `VERIFIED COMPUTATIONALLY` on commit `075f9027` (12 tests, Ruff, validator, Sphinx pass: https://github.com/heri-espino/Latent-Risk/actions/runs/38994859776). The international empirical evaluation remains `PROPOSED`, not completed.
+
+## Independent agent branch: trend likelihood (2026-10-18; unmerged)
+
+**IMPLEMENTED ON agent/trend-likelihood, NOT MAIN:** Gaussian second-difference PLS/Whittaker–Henderson solve without dense inversion, two-dimensional affine nullspace, exact banded effective df, exact diffuse REML via n-2 Kalman innovations (r/q ratio and explicit zero-variance boundary comparison), RTS smoother equivalence, and causally filtered h-step forecasts for a fixed index. **VERIFIED COMPUTATIONALLY locally:** nine synthetic tests pass (see journal/2026-10/2026-10-18-agent-trend-likelihood.md); full-repository CI has not yet been checked. Scientific assumptions and non-novelty are documented in notes/results/trend_likelihood.md. No actual country index or real empirical forecasting was fitted. Earlier dated state records below remain unchanged; the integrator must reconcile simultaneous branches.
 
 ## Initial data collection (2026-10-16)
 `IMPLEMENTED` source acquisition module: 14 daily Yahoo market tickers, 10 FRED macro/financial series and three optional Banxico token-based series in `data/source_catalog.json`. Local isolated UTC snapshots under `data/raw/downloads/` include CSVs, hashes, historical-coverage ranges and failures. `VERIFIED COMPUTATIONALLY`: 19 offline tests, Ruff, structure and Sphinx pass on `8fb85d0` (https://github.com/heri-espino/Latent-Risk/actions/runs/38998827014). **No live download has been run**, so coverage and actual provider success are `UNKNOWN`.
