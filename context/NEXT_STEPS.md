@@ -1,5 +1,14 @@
 # Next steps
 
+## Forecast-evaluation draft branch (2026-10-18)
+- [x] Implement isolated source-free as-of chronological and nested backtesting API, candidate factories and baselines, metrics/uncertainty, adversarial synthetic tests and EXP-0003 preregistration.
+- [ ] Confirm GitHub CI `pytest`, `ruff`, structural validator and Sphinx; record exact run/commit in agent journal.
+- [ ] Coordinator to review narrow forecaster interface and refitting contract before integration; reconcile branch's journal/LATEST, AI_HANDOFF and STATE edits with parallel agents.
+- [ ] Freeze actual CISS snapshot SHA256 and complete time-of-release/vintage audit. Only then schedule independent VM EXP-0003 real-data run; keep forecast performance UNKNOWN before verification.
+- [ ] Research main latent indices and comparable exogenous financial-stress outcomes separately. Do not treat different fitted factor scales as one target.
+
+## Earlier next steps
+
 - [x] **USER BIS first live attempt**: all five daily broad NEER BIS series failed with the same missing/nonfinite observation error. Seven-manifest catalog: **34 OK, 5 BIS FAILED, 6 NEVER_REQUESTED**; preexisting source QA still 34/34 PASS.
 - [x] **Parser repaired offline** to exclude *explicitly missing* SDMX observation rows (not arbitrary bad numeric values), preserving no-fill rules and recording missing count/first dates/fraction in successful new manifest. 88 tests, Ruff, structure and Sphinx green. No real BIS retry yet.
 - [ ] **Next VM command:** `git pull --ff-only origin main`; `python scripts/download_data.py --start 2000-01-01 --end 2026-10-18 --sources bis`; `python scripts/audit_downloads.py`; `python scripts/audit_source_quality.py`. Inspect BIS actual kept row counts/missing source counts/dates. If still failing, inspect a bounded raw SDMX snippet before altering scientific validation further.
