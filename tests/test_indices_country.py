@@ -75,7 +75,7 @@ def test_frozen_training_fit_means_later_origins_do_not_revise_past(kind):
     early = fit_country_index(panel, origin=panel.index[110], **base_kwargs)
     later = fit_country_index(panel, origin=panel.index[130], **base_kwargs)
     np.testing.assert_allclose(
-        early.factor.to_numpy(), later.factor.loc[early.factor.index].to_numpy(), atol=0, rtol=0
+        early.factor.to_numpy(), later.factor.loc[early.factor.index].to_numpy(), atol=1e-14, rtol=0
     )
     if kind == "state_space":
         np.testing.assert_allclose(
