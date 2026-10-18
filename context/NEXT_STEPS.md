@@ -1,5 +1,9 @@
 # Next steps
 
+- [x] **Agent branch only (2026-10-18):** implement classical Gaussian d=2 PLS, exact diffuse REML, RTS equivalence and filtered forecasts; nine synthetic tests passed locally. Draft PR, **not merged**. See notes/results/trend_likelihood.md.
+- [ ] **Trend PR integration gate:** review code/proofs, run full pytest/Ruff/research validator/Sphinx/change protocol in CI, resolve conflicts in shared journal/LATEST/handoff/state, then decide integration. No empirical analysis or forecast-outcome claim until an independently fixed country target and availability-date protocol exist.
+
+
 - [x] **USER BIS first live attempt**: all five daily broad NEER BIS series failed with the same missing/nonfinite observation error. Seven-manifest catalog: **34 OK, 5 BIS FAILED, 6 NEVER_REQUESTED**; preexisting source QA still 34/34 PASS.
 - [x] **Parser repaired offline** to exclude *explicitly missing* SDMX observation rows (not arbitrary bad numeric values), preserving no-fill rules and recording missing count/first dates/fraction in successful new manifest. 88 tests, Ruff, structure and Sphinx green. No real BIS retry yet.
 - [ ] **Next VM command:** `git pull --ff-only origin main`; `python scripts/download_data.py --start 2000-01-01 --end 2026-10-18 --sources bis`; `python scripts/audit_downloads.py`; `python scripts/audit_source_quality.py`. Inspect BIS actual kept row counts/missing source counts/dates. If still failing, inspect a bounded raw SDMX snippet before altering scientific validation further.
