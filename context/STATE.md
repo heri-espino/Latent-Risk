@@ -42,6 +42,12 @@ Transcribed provenance in `data/audits/2026-10-17-user-vm-coverage.md` and CSV; 
 
 **IMPLEMENTED, offline-tested; rerun still needed on VM.** This is an instrument-domain correction, not empirical evidence for the stress forecasting hypothesis. Ordinarily logged returns on CL=F are invalid if negative/zero price ratios; raw data must not be modified to hide the episode. See `data/audits/2026-10-17-source-quality-wti.md` and ADR-0006.
 
+## VM complete source integrity and start of market-feature preparation (2026-10-17)
+
+**USER-REPORTED VERIFIED BY LOCAL AUDIT:** **34/34 PASS**, zero fail, one signed WTI `CL=F` warning. Exact one nonpositive WTI close on 2020-04-20; minimum reported `-37.630001068115234`, i.e. −37.63/barrel. Agrees with CFTC/EIA historical event. All other source files pass physical manifest integrity. Original futures roll contract chain still requires independent review.
+
+**IMPLEMENTED, OFFLINE TESTS:** `src/latent_risk/data/market_features.py` computes five-country local equity daily returns, trailing 21-observation volatility and 63-observation drawdown; optional country FX depreciation and volatility for non-US markets, direction-aware, on present/past observations. `scripts/build_market_pilot.py` checks original source integrity, saves local descriptive market features and an exact matching equity-date panel, but keeps ECB CISS and FRED stress indices in a separate reference CSV. CLI has **not yet run on user's actual VM files**. No retrospective full-sample standardization, fitted stress index or forecast outcomes are claimed. Daily labels and international close times remain unaudited. See `data/audits/2026-10-17-integrity-complete.md` and proposed ADR-0007.
+
 ## Research question
 When and why do forecasts based on smoothed country financial-risk indices fail during financial disturbances? Are unusually large forecast errors informative beyond volatility changes and conventional benchmarks?
 

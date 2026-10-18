@@ -237,3 +237,40 @@ Conventional log-price changes/returns are invalid through sign crossings;
 continuous front-month futures can also jump from contract rolls. This
 series remains an **optional global control** until its price transformation,
 roll convention, and historical observation dates are independently reviewed.
+
+## Source integrity completed; descriptive market features next (2026-10-17)
+
+User VM results: **34 PASS / 0 FAIL / 1 WTI warning**. Its only nonpositive
+`CL=F` observation occurred on **2020-04-20** at approximately **−37.63**
+USD per barrel, matching the documented WTI futures settlement. The audit is
+now closed at the source-file integrity level, not at the publication-time
+information-set level. See [final audit record](audits/2026-10-17-integrity-complete.md).
+
+A separate, **retrospective, end-of-day** preprocessing command is now available
+and intentionally excludes WTI:
+
+```powershell
+git pull --ff-only origin main
+python scripts/build_market_pilot.py
+```
+
+The builder checks input manifest hashes, verifies the five local/regional
+equity and four FX input files and saves timestamped outputs under the
+Git-ignored `data/processed/market_pilot/` directory:
+
+- `country_market_features.csv`: equity one-day log returns, trailing
+  21-return sample volatility (not annualized), 63-observation drawdown; local
+  FX depreciation-direction log returns and trailing 21-return volatility on
+  **same observed calendar date** if available; US FX is missing by design
+- `five_country_common_equity_dates.csv`: complete five-way equity matching
+  dates with explicit country-prefixed feature columns, no forward filling
+- `external_stress_references.csv`: published EA/US/UK ECB CISS and US
+  STLFSI4/NFCI **separate from feature inputs**
+- `manifest.json`: selected source-hash metadata, the code commit, all output
+  hashes, definitions and explicit reproducibility limitations
+
+**Not a historical pseudo-real-time dataset.** A daily market date cannot prove
+simultaneous availability of London/Tokyo/Mexico/New York closes. Today's
+revised historical CISS values cannot be used to demonstrate past published
+vintages. Missing FX dates are not interpolated; no model, scaler or forecast
+is fitted. The output is a technical precursor to EXP-0001.
