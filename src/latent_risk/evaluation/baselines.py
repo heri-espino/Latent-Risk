@@ -31,7 +31,7 @@ class Persistence:
 
     last_: float | None = None
 
-    def fit(self, history: np.ndarray) -> "Persistence":
+    def fit(self, history: np.ndarray, *, cutoff: str) -> "Persistence":
         self.last_ = float(_history(history, 1)[-1])
         return self
 
@@ -51,7 +51,7 @@ class AR1OLS:
     slope_: float | None = None
     last_: float | None = None
 
-    def fit(self, history: np.ndarray) -> "AR1OLS":
+    def fit(self, history: np.ndarray, *, cutoff: str) -> "AR1OLS":
         if self.window < 30:
             raise ValueError("AR(1) window must be >=30")
         z = _history(history, 30)[-self.window:]
@@ -77,7 +77,7 @@ class OneSidedEWMA:
     alpha: float = 0.25
     level_: float | None = None
 
-    def fit(self, history: np.ndarray) -> "OneSidedEWMA":
+    def fit(self, history: np.ndarray, *, cutoff: str) -> "OneSidedEWMA":
         if not 0 < self.alpha <= 1:
             raise ValueError("EWMA alpha must be in (0,1]")
         z = _history(history, 1)
@@ -108,7 +108,7 @@ class VolatilityAdjustedPersistence:
     last_: float | None = None
     vol_: float | None = None
 
-    def fit(self, history: np.ndarray) -> "VolatilityAdjustedPersistence":
+    def fit(self, history: np.ndarray, *, cutoff: str) -> "VolatilityAdjustedPersistence":
         if self.window < 2 or not np.isfinite(self.loading):
             raise ValueError("invalid volatility window or loading")
         z = _history(history, self.window + 1)
