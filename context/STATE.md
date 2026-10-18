@@ -1,4 +1,8 @@
-# Research state (2026-10-17)
+# Research state (2026-10-18, forecast-evaluation draft branch)
+
+**Agent-specific addition (IMPLEMENTED; empirical status UNKNOWN):** source-free `evaluation/backtesting.py` supports as-of retrospective/provided-release-date filtering, strictly nested rolling/expanding origin model selection and refitting; `evaluation/baselines.py` implements persistence, AR1, EWMA, volatility-adjusted persistence; `evaluation/scoring.py` enforces matched origin/target and separated factor scales with block-bootstrap and DM/HAC exploratory uncertainty. Synthetic tests added; `EXP-0003` proposed/unexecuted, all actual CISS/latent-risk forecast performance unknown. The older state below remains historical; shared state to be reconciled at coordinator integration. No changes to EXP-0002 or source acquisition.
+
+## Earlier repository state (2026-10-17)
 
 **Status:** `IMPLEMENTED` baseline source-package infrastructure; CI `VERIFIED COMPUTATIONALLY` on commit `075f9027` (12 tests, Ruff, validator, Sphinx pass: https://github.com/heri-espino/Latent-Risk/actions/runs/38994859776). The international empirical evaluation remains `PROPOSED`, not completed.
 
