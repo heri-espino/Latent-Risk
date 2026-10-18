@@ -38,3 +38,6 @@ Official intervention dates are usually **later than first market stress**. The 
 ## Next steps
 
 Review primary documents and freeze manifest SHA256; audit all historical release dates and eligible country-session calendars; produce genuinely matured rolling-origin forecast-error records; compare warning at identical FPR and controlled independent stress outcomes, preserving false alarms and missed events. Coordinator should integrate shared handoff/state/LATEST changes with other PRs.
+
+## First draft-PR CI attempt and correction (append-only)
+GitHub Actions run 39138883244 on initial branch head: **108 synthetic tests PASS; Ruff PASS; research structure FAIL** because journal/LATEST.md mistakenly contained two dated journal links, while the validator requires exactly one. Sphinx and protocol checks skipped after failure. Corrected LATEST.md in commit c1ee2e2efb15956fe6a572aa8673a6b23b1d8b66 by keeping only the new entry as a Markdown link and retaining the previous entry as plain-text provenance. Await follow-up PR CI. This failure and resolution are preserved rather than omitted.
