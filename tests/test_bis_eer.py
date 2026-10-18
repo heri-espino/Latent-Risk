@@ -52,6 +52,47 @@ def test_bis_rejects_wrong_series_bad_values_dates_html(raw):
         parse_bis_eer_csv(raw, "D.N.B.MX", "2020-01-01", "2020-02-01")
 
 
+def test_bis_missing_calendar_values_are_dropped_with_audit_provenance():
+    """Legitimate blank or missing index cells must not erase good BIS history."""
+    raw = (
+        bis_csv()
+        + b"dataflow,BIS:WS_EER(1.0),I,D,N,B,MX,2020-01-03,\n"
+        + b"dataflow,BIS:WS_EER(1.0),I,D,N,B,MX,2020-01-04,.\n"
+        + b"dataflow,BIS:WS_EER(1.0),I,D,N,B,MX,2020-01-05,NA\n"
+        + b"dataflow,BIS:WS_EER(1.0),I,D,N,B,MX,2020-01-06,100.5\n"
+    )
+    frame = parse_bis_eer_csv(raw, "D.N.B.MX", "2020-01-01", "2020-02-01")
+    assert frame["value"].tolist() == [101.3, 100.5]
+    assert frame["observation_date"].dt.strftime("%Y-%m-%d").tolist() == [
+        "2020-01-02", "2020-01-06",
+    ]
+    assert frame.attrs["bis_source_rows_in_window"] == 5
+    assert frame.attrs["bis_missing_observation_count"] == 3
+    assert frame.attrs["bis_missing_first_dates"] == [
+        "2020-01-03", "2020-01-04", "2020-01-05",
+    ]
+    assert frame.attrs["bis_missing_fraction"] == pytest.approx(0.6)
+
+
+def test_bis_all_missing_rejected():
+    with pytest.raises(ValueError, match="no finite observations"):
+        parse_bis_eer_csv(bis_csv(value=""), "D.N.B.MX",
+                          "2020-01-01", "2020-02-01")
+
+
+@pytest.mark.parametrize("value", ["inf", "-inf", "1e309", "abc", "101,2"])
+def test_bis_nonmissing_malformed_values_rejected(value):
+    with pytest.raises(ValueError, match="malformed or nonfinite"):
+        parse_bis_eer_csv(bis_csv(value=value), "D.N.B.MX",
+                          "2020-01-01", "2020-02-01")
+
+
+def test_bis_duplicate_missing_dates_still_rejected():
+    raw = bis_csv(value="") + bis_csv(value="99.4").split(b"\n", 1)[1]
+    with pytest.raises(ValueError, match="duplicate"):
+        parse_bis_eer_csv(raw, "D.N.B.MX", "2020-01-01", "2020-02-01")
+
+
 def test_bis_duplicate_dates_rejected():
     raw = bis_csv() + b"dataflow,BIS:WS_EER(1.0),I,D,N,B,MX,2020-01-02,102.3\n"
     with pytest.raises(ValueError, match="duplicate"):
@@ -95,6 +136,37 @@ def test_bis_offline_acquisition_manifest(monkeypatch, tmp_path):
     assert json.loads((tmp_path / "source/manifest.json").read_text())["status"] == (
         "COMPLETE_SOURCE_DOWNLOAD"
     )
+
+
+def test_bis_acquisition_saves_missing_counts_and_only_finite_data(
+    monkeypatch, tmp_path,
+):
+    """A missing holiday must be reported, not retained as a zero or a NaN."""
+    class FakeResponse:
+        url = "https://stats.bis.org/api/v2/data/dataflow/BIS/WS_EER/1.0/D.N.B.MX"
+        content = bis_csv() + b"dataflow,BIS:WS_EER(1.0),I,D,N,B,MX,2020-01-03,\n"
+        def raise_for_status(self):
+            pass
+
+    class FakeSession:
+        def get(self, url, *, params, headers, timeout):
+            assert params["format"] == "csv"
+            return FakeResponse()
+        def close(self):
+            pass
+
+    monkeypatch.setattr("latent_risk.data.acquisition._session", FakeSession)
+    catalog = {"bis": [{"country": "MEX", "key": "D.N.B.MX",
+                        "role": "fx_effective_nominal_broad"}]}
+    result = acquire(catalog, start="2020-01-01", end="2020-02-01",
+                     snapshot=tmp_path / "source", sources={"bis"})
+    assert result["status"] == "COMPLETE_SOURCE_DOWNLOAD"
+    row = result["records"][0]
+    assert row["bis_source_rows_in_window"] == 2
+    assert row["bis_missing_observation_count"] == 1
+    assert row["bis_missing_first_dates"] == ["2020-01-03"]
+    assert row["bis_missing_fraction"] == pytest.approx(0.5)
+    assert len((tmp_path / "source/bis/D_N_B_MX.csv").read_text().splitlines()) == 2
 
 
 def test_bis_unknown_id_fails_before_network_or_snapshot(tmp_path):

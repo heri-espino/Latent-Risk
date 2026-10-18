@@ -517,6 +517,23 @@ def acquire(
                         response.raise_for_status()
                         url = response.url
                         data = parse_bis_eer_csv(response.content, identifier, start, end)
+                        # Report discarded *explicitly missing* provider rows
+                        # without storing raw response bytes or inventing data.
+                        metadata.update({
+                            "bis_response_sha256": sha256(response.content).hexdigest(),
+                            "bis_source_rows_in_window": data.attrs[
+                                "bis_source_rows_in_window"
+                            ],
+                            "bis_missing_observation_count": data.attrs[
+                                "bis_missing_observation_count"
+                            ],
+                            "bis_missing_first_dates": data.attrs[
+                                "bis_missing_first_dates"
+                            ],
+                            "bis_missing_fraction": data.attrs[
+                                "bis_missing_fraction"
+                            ],
+                        })
                     else:  # boj
                         url = "https://www.stat-search.boj.or.jp/api/v1/getDataCode"
                         last_day = date.fromisoformat(end) - timedelta(days=1)
@@ -550,7 +567,11 @@ def acquire(
                         "url": url,
                         "vintage_status": "LATEST_REVISED_SNAPSHOT_NOT_HISTORICAL_VINTAGE",
                     })
-                    print(f"[OK] {source:7} {identifier:18} rows={len(data)}")
+                    missing_note = (
+                        f" missing_source_rows={metadata['bis_missing_observation_count']}"
+                        if source == "bis" else ""
+                    )
+                    print(f"[OK] {source:7} {identifier:18} rows={len(data)}{missing_note}")
                 except Exception as exc:
                     # requests' nested errors can contain the full URL, including
                     # query-authenticated FRED_API_KEY; never persist or print it.

@@ -32,10 +32,14 @@ def parse_bis_eer_csv(body: bytes, series_id: str, start: str, end: str) -> pd.D
     ------
     ValueError
         On wrong series identity or dimension, malformed/truncated API data,
-        repeated dates, nonfinite values or an empty requested period.
+        repeated dates, malformed nonmissing/nonfinite values or no finite data in the period.
 
     Notes
     -----
+    Empty/missing OBS_VALUE cells are not fabricated, zero-filled or forwarded:
+    exclude them from the numeric CSV and record their dates/counts in
+    DataFrame.attrs for the immutable acquisition manifest. Reject malformed
+    nonmissing values, infinities, duplicate dates and wrong SDMX series.
     Daily BIS NEER rises on appreciation, unlike USD/local bilateral quotes.
     The data can be revised; TIME_PERIOD is not a release timestamp.
     """
@@ -43,7 +47,9 @@ def parse_bis_eer_csv(body: bytes, series_id: str, start: str, end: str) -> pd.D
     if series_id not in codes:
         raise ValueError("unsupported BIS broad daily nominal index")
     try:
-        raw = pd.read_csv(BytesIO(body), low_memory=False)
+        # Preserve missing-value markers literally. pandas' default NA parser
+        # otherwise conflates blank cells with malformed nonmissing numbers.
+        raw = pd.read_csv(BytesIO(body), low_memory=False, keep_default_na=False)
     except (UnicodeError, ValueError, pd.errors.ParserError) as exc:
         raise ValueError("BIS SDMX returned unparseable CSV") from exc
 
@@ -70,17 +76,35 @@ def parse_bis_eer_csv(body: bytes, series_id: str, start: str, end: str) -> pd.D
     dates = pd.to_datetime(dates_text, format="%Y-%m-%d", errors="raise")
     if dates.duplicated().any():
         raise ValueError("BIS SDMX has duplicate observation dates")
-    values = pd.to_numeric(raw["OBS_VALUE"], errors="coerce")
-    if values.isna().any() or not np.isfinite(values.to_numpy(dtype=float)).all():
-        raise ValueError("BIS SDMX has missing or nonfinite index values")
-    if (values <= 0).any():
+    within = (dates >= pd.Timestamp(start)) & (dates < pd.Timestamp(end))
+    if not within.any():
+        raise ValueError("BIS SDMX returned no rows in requested dates")
+    date_scope = dates[within]
+    tokens = raw.loc[within, "OBS_VALUE"].astype(str).str.strip()
+    # BIS can supply a calendar row for which no index level is published.
+    # Such a row is not a zero-valued index observation.
+    missing = tokens.str.lower().isin({"", ".", "..", "-", "na", "n/a", "nan", "null"})
+    values = pd.to_numeric(tokens, errors="coerce")
+    malformed = ~missing & (~np.isfinite(values.to_numpy(dtype=float)))
+    if malformed.any():
+        example_dates = date_scope.loc[malformed].dt.strftime("%Y-%m-%d").head(5)
+        raise ValueError(
+            "BIS SDMX has malformed or nonfinite nonmissing index values at "
+            + ", ".join(example_dates.tolist())
+        )
+    valid = ~missing
+    if not valid.any():
+        raise ValueError("BIS SDMX has no finite observations in requested dates")
+    if (values.loc[valid] <= 0).any():
         raise ValueError("BIS NEER index must be strictly positive")
 
-    subset = pd.DataFrame({"observation_date": dates, "value": values})
-    subset = subset.loc[
-        (subset["observation_date"] >= pd.Timestamp(start))
-        & (subset["observation_date"] < pd.Timestamp(end))
-    ]
-    if subset.empty:
-        raise ValueError("BIS SDMX has no index values in requested dates")
-    return subset.sort_values("observation_date").reset_index(drop=True)
+    subset = pd.DataFrame({
+        "observation_date": date_scope.loc[valid].to_numpy(),
+        "value": values.loc[valid].to_numpy(dtype=float),
+    }).sort_values("observation_date").reset_index(drop=True)
+    missing_dates = date_scope.loc[missing].dt.strftime("%Y-%m-%d")
+    subset.attrs["bis_source_rows_in_window"] = int(within.sum())
+    subset.attrs["bis_missing_observation_count"] = int(missing.sum())
+    subset.attrs["bis_missing_first_dates"] = missing_dates.head(10).tolist()
+    subset.attrs["bis_missing_fraction"] = float(missing.mean())
+    return subset
