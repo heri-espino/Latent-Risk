@@ -1,6 +1,12 @@
-# Research state (2026-10-17)
+# Research state (2026-10-18)
 
 **Status:** `IMPLEMENTED` baseline source-package infrastructure; CI `VERIFIED COMPUTATIONALLY` on commit `075f9027` (12 tests, Ruff, validator, Sphinx pass: https://github.com/heri-espino/Latent-Risk/actions/runs/38994859776). The international empirical evaluation remains `PROPOSED`, not completed.
+
+## Latest BIS download verified and versioned feature implementation (2026-10-18)
+
+**USER CLI VERIFICATION:** All five BIS daily broad NEER codes passed the official download in snapshot `20261018T145643915821Z`: 6,987 valid index levels each for 2000-01-03–2026-10-13, 2,796 explicit missing source observations each excluded. All **39/39** source CSVs pass the integrity audit, 0 failures, 1 historic signed-WTI warning. Across 8 raw manifests, 45 catalog series: **39 OK, 0 FAILED, 6 NEVER_REQUESTED**. The first BIS 0/5 failed parse is preserved in older manifest/journal; do not confuse it with present status. Evidence: `data/audits/2026-10-18-bis-five-series-live-success.md`.
+
+**IMPLEMENTED / SYNTHETIC CI VERIFIED, USER VM RUN PENDING:** `scripts/build_bis_market_pilot.py` creates a completely **new** ignored `data/processed/market_pilot_bis` version with equity and BIS NEER feature columns for all five economies (including US): depreciation-oriented `-Δlog NEER`, 21-observation volatility, exact-date five-equity-only and five-full-feature intersections, independent benchmarks, SHA256 source and output manifest. Legacy bilateral USD/DXY data/pilot remain unmodified. Code CI 95 tests green. BIS observation_date != public available_date; no model estimated.
 
 ## Initial data collection (2026-10-16)
 `IMPLEMENTED` source acquisition module: 14 daily Yahoo market tickers, 10 FRED macro/financial series and three optional Banxico token-based series in `data/source_catalog.json`. Local isolated UTC snapshots under `data/raw/downloads/` include CSVs, hashes, historical-coverage ranges and failures. `VERIFIED COMPUTATIONALLY`: 19 offline tests, Ruff, structure and Sphinx pass on `8fb85d0` (https://github.com/heri-espino/Latent-Risk/actions/runs/38998827014). **No live download has been run**, so coverage and actual provider success are `UNKNOWN`.

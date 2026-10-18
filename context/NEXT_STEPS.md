@@ -1,9 +1,15 @@
 # Next steps
 
+- [x] **LIVE VM BIS success:** all five daily broad nominal NEER `D.N.B.MX/US/GB/JP/XM` downloaded **5/5**, 6,987 numeric observations each from 2000-01-03 to 2026-10-13; 2,796 source-missing rows each recorded, not imputed. Catalog **39 OK, 0 FAILED, 6 NEVER_REQUESTED**; raw QA **39/39 PASS**, only WTI warning.
+- [x] **VERSIONED BIS feature builder CODED & TESTED:** `scripts/build_bis_market_pilot.py` creates new `data/processed/market_pilot_bis/` with country NEER features, separate equity-only and all-five equity+NEER intersections, stress indices held separately and source hashes. Legacy market_pilot/ unchanged. CI 95 passed.
+- [ ] **Next user VM action:** `git pull --ff-only origin main`; `python scripts/build_bis_market_pilot.py`; report country FX completeness and exact-date five-country complete sample. New code NOT yet run on VM actual raw BIS bytes.
+- [ ] Examine whether BIS release lags, revisions and cross-country market session timing permit a genuine point-in-time data panel; compare NEER vs USD-bilateral FX specifications *without* retroactively replacing earlier outputs.
+
+
 - [x] **USER BIS first live attempt**: all five daily broad NEER BIS series failed with the same missing/nonfinite observation error. Seven-manifest catalog: **34 OK, 5 BIS FAILED, 6 NEVER_REQUESTED**; preexisting source QA still 34/34 PASS.
 - [x] **Parser repaired offline** to exclude *explicitly missing* SDMX observation rows (not arbitrary bad numeric values), preserving no-fill rules and recording missing count/first dates/fraction in successful new manifest. 88 tests, Ruff, structure and Sphinx green. No real BIS retry yet.
-- [ ] **Next VM command:** `git pull --ff-only origin main`; `python scripts/download_data.py --start 2000-01-01 --end 2026-10-18 --sources bis`; `python scripts/audit_downloads.py`; `python scripts/audit_source_quality.py`. Inspect BIS actual kept row counts/missing source counts/dates. If still failing, inspect a bounded raw SDMX snippet before altering scientific validation further.
-- [ ] After verified BIS success, create new **versioned** BIS-based effective FX feature panel with 5-country depreciation and vol, keeping original bilateral FX/DXY as robustness.
+- [x] BIS download rerun completed successfully 5/5; latest source QA 39/39 PASS, one WTI signed-price warning.
+- [x] Implemented independent, versioned BIS-based market features; local derived output not yet generated.
 
 
 - [x] Verified official BIS five-country daily broad nominal NEER series codes `D.N.B.MX`, `D.N.B.US`, `D.N.B.GB`, `D.N.B.JP`, `D.N.B.XM`; same family/methodology, appreciation-positive (USD/USD zero-variance removed).

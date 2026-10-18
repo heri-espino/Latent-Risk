@@ -413,3 +413,46 @@ raw SDMX `OBS_VALUE` markers and dates before changing validation further.
 Do not assume new successful BIS series or that `TIME_PERIOD` implies the
 value was published contemporaneously. Evidence:
 [audit of the failed first BIS request](audits/2026-10-17-bis-first-live-failure.md).
+
+## BIS acquisition VERIFIED; versioned market-feature build (2026-10-18)
+
+The fixed BIS provider downloader ran on the user's VM. Five broad daily
+nominal effective exchange-rate indices were downloaded, **6,987** valid
+observations each from 2000-01-03 through 2026-10-13, with **2,796** explicitly
+missing source rows per series excluded without imputation. The user's
+`audit_downloads.py` verified **39 OK, 0 FAILED, 6 NEVER_REQUESTED** across
+45 codes and eight snapshot manifests. The user's `audit_source_quality.py`
+reported **39/39 PASS**, one unrelated historical WTI negative-price warning.
+See [source audit](audits/2026-10-18-bis-five-series-live-success.md).
+
+A **separately versioned**, retrospective market-feature pipeline is now
+available (no new download and no change to older CSV or manifests):
+
+```powershell
+git pull --ff-only origin main
+python scripts/build_bis_market_pilot.py
+```
+
+It writes a new timestamped folder in Git-ignored
+`data/processed/market_pilot_bis/`, distinct from the legacy
+`data/processed/market_pilot/` that used bilateral USD FX and omitted US FX.
+The new files are `country_bis_market_features.csv`,
+`five_country_common_equity_dates.csv`,
+`five_country_complete_neer_equity_dates.csv`,
+`external_stress_references.csv`, and `manifest.json`. Each country,
+**including the United States**, now has independently constructed BIS
+nominal effective depreciation `-Δlog(NEER)`, and realized 21-observation
+volatility on actual reported BIS observations. Merges and country-wide
+intersections use **exact dates**; missing BIS observations are NEVER
+imputed. The common equity-only calendar remains separate from the fully
+available five-country equity-and-NEER calendar.
+
+Outputs will show empirical row counts and per-country missingness only when
+the new builder is run on real local saved series. It has passed synthetic
+unit tests (95 passing at
+https://github.com/heri-espino/Latent-Risk/actions/runs/39138567174)
+but **has not yet been executed on the user's actual saved BIS data**.
+BIS historical trade-weight revisions and delayed public releases mean that
+these features are *retrospective observation-date calculations*, **not**
+verified available-date forecast covariates. No financial-stress model or
+forecast is fitted by this builder.
