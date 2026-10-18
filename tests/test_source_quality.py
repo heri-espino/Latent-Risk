@@ -81,6 +81,19 @@ def test_negative_wti_futures_close_is_reviewable_not_corruption(tmp_path):
     assert any("log returns" in warning for warning in result["warnings"])
 
 
+def test_legacy_wti_manifest_without_price_domain_is_reviewable(tmp_path):
+    """Older raw manifests remain immutable but must use WTI price semantics."""
+    snapshot = tmp_path / "20261017"
+    record = _make_record(snapshot, kind="market", filename="CL_F",
+                          values=(18.27, -37.63))
+    record.update({"id": "CL=F", "role": "global_oil"})
+    assert "price_domain" not in record
+    result = inspect_source_file(snapshot, record)
+    assert result["status"] == "PASS"
+    assert result["price_domain"] == "signed"
+    assert result["warnings"]
+
+
 def test_zero_wti_futures_close_is_allowed_with_warning(tmp_path):
     snapshot = tmp_path / "20261017"
     record = _make_record(snapshot, kind="market", filename="CL_F",
