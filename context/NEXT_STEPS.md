@@ -79,3 +79,12 @@
 - [ ] Freeze the pilot test years, crisis windows, quiet controls, horizons and primary evaluation metrics before running confirmation.
 - [ ] Complete bibliography/Docling annotations only after verifying source availability and rights.
 - [ ] Discuss authorship and prior-work citation with the earlier U.S. latent-risk collaborators.
+
+## Event-study preregistration gate (agent/crisis-hypotheses, 2026-10-18)
+- [x] Write independently sourced event/citation manifest and distinguish documented public-action dates from uncertain economic onset/end dates; mark Mexico 1994 out of coverage.
+- [x] Specify separate descriptive association, concurrent detection and prospective early-warning hypotheses with time-matured surprise scores, frozen earlier-only cutoff, FPR, placebo, cluster and matched controls.
+- [x] Implement synthetic-only matured-score/rank/lead primitives and regression tests without editing other engines.
+- [ ] **BLOCKER:** coordinator review and freeze event-manifest version/hash, post-event and clean pre-event windows and common observable outcome before looking at event scores.
+- [ ] Audit historical actual publication timestamps and revisions, maturity calendars and pre-2007 calibration availability by country; classify any infeasible events as not evaluable.
+- [ ] Run GitHub draft-PR CI and reconcile shared handoff/journal/state files with concurrent branches; the contributor could not run a direct local checkout.
+- [ ] Only then evaluate out-of-sample events against volatility/drawdown and reference-index controls with calm false alarms, censored misses and episode-level uncertainty; record negative outcomes.
