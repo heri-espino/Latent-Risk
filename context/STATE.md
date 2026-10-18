@@ -54,6 +54,12 @@ Transcribed provenance in `data/audits/2026-10-17-user-vm-coverage.md` and CSV; 
 
 **IMPLEMENTED/OFFLINE VERIFIED:** new `scripts/audit_market_pilot.py` reports exact country and FX missingness, reference same-day overlap, source/output hashes and five-market data consistency; uses no fitted models, provides no claim of historical release dates. Synthetic checks passed in CI; waiting for VM run.
 
+## Real descriptive market diagnosis and exploratory CISS benchmark code (2026-10-17)
+
+**USER VM RUN:** `scripts/audit_market_pilot.py` completed on the existing derived pilot (`20261018T003625232736Z`). Market 31,383 rows; five-way exact equity intersection 4,293 dates (2007-07-05–2026-10-16); external ECB/FRED benchmark 23,785 observations. MEX FX 5,720/6,664 present; GBR 5,743/6,706; JPN 6,466/6,498; EA 4,814/4,839. US FX N/A by design. Same-date CISS overlaps EA 4,838, US 6,675, UK 6,705; weekly FRED 1,338 each. See `data/audits/2026-10-17-market-diagnostics-complete.md`. Historical release vintages and common intraday clocks remain unverified.
+
+**IMPLEMENTED, OFFLINE CI VERIFIED; NOT EXECUTED ON REAL CISS**: preliminary EXP-0002 uses ECB CISS histories as *observed targets* only, models persistence, AR(1) and one-sided EWMA with past-only horizon-specific nested CV gains. Fixes observation-index horizons 1,5,21, evaluation start 2008-01-01 and 21-observation strides. No factor index, PLS smoother, crisis early-warning or pseudo-real-time inference is produced. See `experiments/EXP-0002.md`.
+
 ## Research question
 When and why do forecasts based on smoothed country financial-risk indices fail during financial disturbances? Are unusually large forecast errors informative beyond volatility changes and conventional benchmarks?
 

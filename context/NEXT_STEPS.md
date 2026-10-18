@@ -1,8 +1,14 @@
 # Next steps
 
+- [x] User ran the **real derivative pilot diagnostic** on local `20261018T003625232736Z`: 31,383 country-date rows; 4,293 five-country equity dates; 23,785 benchmark rows. Country FX present/missing: MEX 5,720/944, GBR 5,743/963, JPN 6,466/32, EA 4,814/25; US FX N/A. CISS same-date overlaps EA 4,838, US 6,675, UK 6,705; FRED weekly references 1,338 each.
+- [x] Implement exploratory ECB CISS **observation-index** matched-origin benchmark EXP-0002 with persistence, AR1 and h-specific nested-CV causal EWMA, offline tests and provenance. **Not yet run on actual VM CISS history.**
+- [ ] **Next VM action:** `git pull --ff-only origin main` then `python scripts/run_ciss_baselines.py --start 2008-01-01 --horizons 1,5,21 --stride 21`; report score counts and RMSE/MAE. Treat as engineering/retrospective evidence only.
+- [ ] The main scientific EXP-0001 still needs a source-release-time-aware index and forecast-origin protocol, second-difference penalized smoother and additional credit/bank/funding domains before confirmatory prediction claims.
+
+
 - [x] **REAL USER VM PREPARATION** `python scripts/build_market_pilot.py` succeeded: **31,383** long five-country market rows (2000-03-30 to 2026-10-16), **4,293** exact common equity sessions (2007-07-05 to 2026-10-16), **23,785** external references (2000-01-03 to 2026-10-15).
 - [x] Implemented read-only saved-derivative diagnostic `scripts/audit_market_pilot.py`, verifying hashes, FX missingness by country, common panel identities, same-date reference overlap and tests. **Not yet run against actual VM outputs**.
-- [ ] **Next VM action:** `git pull --ff-only origin main`; `python scripts/audit_market_pilot.py`; share summary counts and FX coverage, no raw CSVs/tokens in Git.
+- [x] Actual market-pilot diagnostic completed on VM and country/FX/benchmark coverage reported; see `data/audits/2026-10-17-market-diagnostics-complete.md`.
 - [ ] Decide forecast-origin clock and CISS reporting vintages; define an exploratory observed-target protocol without claiming actual past release-time predictive signals. Only then fit reference forecasting baselines / smoothing.
 
 

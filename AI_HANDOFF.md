@@ -1,8 +1,8 @@
 # AI handoff — Latent Risk
 
 **Last updated:** 2026-10-17  
-**Latest dated journal entry:** [2026-10-17-market-pilot-diagnostics.md](journal/2026-10/2026-10-17-market-pilot-diagnostics.md)  
-**Current research stage:** user CLI now confirms 14 market + 5 ECB + 3 Banxico + **12 FRED** success via official FRED API. Six-manifest catalog audit **34 OK, 0 FAILED, 6 NEVER_REQUESTED**. User VM source integrity re-audit: **34/34 PASS, zero failed, one signed WTI warning**. One CL=F nonpositive close on 2020-04-20 at −37.630001068115234 (matches documented −37.63). No models fitted. User successfully prepared the market panel: 31,383 country/date feature rows; 4,293 common five-equity dates (2007-07-05 to 2026-10-16); 23,785 separately held-out ECB/FRED reference rows. No forecasting experiment executed.
+**Latest dated journal entry:** [2026-10-17-market-diagnostics-and-ciss-baselines.md](journal/2026-10/2026-10-17-market-diagnostics-and-ciss-baselines.md)  
+**Current research stage:** user CLI now confirms 14 market + 5 ECB + 3 Banxico + **12 FRED** success via official FRED API. Six-manifest catalog audit **34 OK, 0 FAILED, 6 NEVER_REQUESTED**. User VM source integrity re-audit: **34/34 PASS, zero failed, one signed WTI warning**. One CL=F nonpositive close on 2020-04-20 at −37.630001068115234 (matches documented −37.63). No models fitted. User successfully prepared the market panel: 31,383 country/date feature rows; 4,293 common five-equity dates (2007-07-05 to 2026-10-16); 23,785 separately held-out ECB/FRED reference rows. Exploratory CISS forecasting benchmark EXP-0002 code implemented and CI tested but **not run on user's actual CISS files**; full latent-risk EXP-0001 remains proposed/unexecuted.
 
 ## Project identity and objective
 International assessment of when smoothed forecasts of financial-risk indicators fail and whether exceedances add information about financial stress beyond ordinary time-varying volatility. Mexico is a core country. The early U.S.-only repository is antecedent work, not validated evidence transferred here.
@@ -32,12 +32,17 @@ How should estimated factor uncertainty enter predictive intervals? What common 
 
 - `IMPLEMENTED` / offline tests: `src/latent_risk/data/market_features.py` and `python scripts/build_market_pilot.py` prepare exact-date, past-only 5-country equity+4-FX descriptive features and separate stress benchmarks (3 ECB CISS and 2 FRED indices); save ignored dated CSVs and SHA256 manifest. **Run successfully by user on VM**, producing the above three CSVs in a dated ignored directory. No fitted model or true point-in-time panel.
 
-- `IMPLEMENTED` and offline CI verified (57 passed): `python scripts/audit_market_pilot.py` checks existing derivatives' hashes, per-country FX/market coverage, strict five-equity calendar/value matching and *separate* ECB/FRED benchmark same-date overlaps; it writes ignored `results/runs/market_diagnostics/summary.json`. **Not yet run on actual VM generated panel.**
+- `IMPLEMENTED` and offline CI verified (57 passed): `python scripts/audit_market_pilot.py` checks existing derivatives' hashes, per-country FX/market coverage, strict five-equity calendar/value matching and *separate* ECB/FRED benchmark same-date overlaps; it writes ignored `results/runs/market_diagnostics/summary.json`. **Succeeded on user VM**, with diagnostic results above.
+
+- `IMPLEMENTED / CI VERIFIED`: exploratory `EXP-0002` three-series ECB CISS *direct forecast* baselines, persistence vs AR1 vs nested historical CV-selected one-sided EWMA, horizons 1/5/21 CISS observation steps. Run `python scripts/run_ciss_baselines.py --start 2008-01-01 --horizons 1,5,21 --stride 21` on VM. Neither real-time first-release CISS nor the desired penalized second-difference local-linear trend; not yet run on VM.
 
 ## Proposed but unimplemented algorithms
 - `PROPOSED`: country-specific Gaussian DFM, robust factors, Markov-switching index variants.
 - `PROPOSED`: constrained local-linear-trend **marginal** MLE/REML with Kalman filtering.
 - `PROPOSED`: rolling-origin pseudo-real-time cross-country evaluation and calibrated forecast exceedance analysis.
+
+## Completed real VM market-pilot diagnostic (reported 2026-10-17)
+- `python scripts/audit_market_pilot.py` finished for timestamp `20261018T003625232736Z`: 31,383 market rows, 4,293 common equity dates (2007-07-05–2026-10-16), 23,785 benchmark values. FX complete/missing: MEX 5,720/944, GBR 5,743/963, JPN 6,466/32, EA 4,814/25. US FX deliberately N/A. Same-date CISS overlap EA 4,838, US 6,675, UK 6,705; weekly STLFSI4 and NFCI 1,338 each. See `data/audits/2026-10-17-market-diagnostics-complete.md`. Descriptive coverage, **no model yet**.
 
 ## Actual VM derived dataset (reported 2026-10-17)
 - `python scripts/build_market_pilot.py` returned **31,383** country-market rows, **4,293** exact five-country equity dates (2007-07-05 to 2026-10-16) and **23,785** separate reference observations. Preparation-only; no models fitted. Source: `data/audits/2026-10-17-market-pilot-built.md`. `scripts/audit_market_pilot.py` now exists for numerical coverage verification; still pending VM run.
@@ -81,7 +86,7 @@ How should estimated factor uncertainty enter predictive intervals? What common 
 
 ## Exact next actions
 0. Review [proposed indicator priorities](data/indicator_priorities.md); M1/M2/M4 no longer assumed core stress factors. Core candidate feature domains are market/equity downside, FX volatility, funding/credit spread and banking stress; BIS credit gap/DSR is a different longer-horizon vulnerability experiment. ECB CISS for EA/US/UK and Banxico IEMF are reference comparisons, not factor input variables. US ICE credit-spread FRED data limited to ~3 years since April 2026, not suitable for historical 2008 tests without other sources.
-1. Do **NOT** redownload ECB/FRED sources. **Next user VM action: `git pull --ff-only origin main`; `python scripts/audit_market_pilot.py`** and inspect country FX missingness and benchmark overlaps; then pilot a labeled market/CISS study with strict information-set rules; bank/credit/funding domains needed for systemic stress index. Banxico/BoE/BoJ six never-requested records optional. Keep user raw data and tokens private.
+1. Do **NOT** redownload ECB/FRED sources. **Next user VM action: `git pull --ff-only origin main`; `python scripts/run_ciss_baselines.py --start 2008-01-01 --horizons 1,5,21 --stride 21`**. This is an observation-index exploratory method check, **not** real-time CISS or user-made latent-index evidence; then work on strict information-set rules; bank/credit/funding domains needed for systemic stress index. Banxico/BoE/BoJ six never-requested records optional. Keep user raw data and tokens private.
 2. The alternate official FRED API succeeded; leave website graph failures recorded but do not block. Build a point-in-time country indicator catalog; start with Mexico, USA.
 3. Implement and test likelihood-based trend smoothing, then index candidates, without reading future observations.
 4. Freeze event windows and a common external target before confirming outcomes.

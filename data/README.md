@@ -302,3 +302,31 @@ were publicly available before that day's close; those comparisons are
 **descriptive overlap only**.
 
 Evidence: [VM market-feature preparation record](audits/2026-10-17-market-pilot-built.md).
+
+## Descriptive feature coverage and first CISS forecasting-method test (2026-10-17)
+
+The user ran `python scripts/audit_market_pilot.py` successfully on saved
+pilot `20261018T003625232736Z`. Market rows 31,383; exactly matched
+five-country equity dates 4,293 (2007-07-05 through 2026-10-16);
+external reference rows 23,785. MEX/GBR equity histories contain
+944/963 FX-unmatched dates, predominantly due to later FX-series starts.
+JPN/EA gaps are 32/25. The US intentionally lacks a USD/USD FX feature.
+The market panel is **retrospective** and no factor/forecast model was fitted.
+
+An **independent exploratory CISS forecasting-baseline implementation** is
+now registered as [EXP-0002](../experiments/EXP-0002.md). It consumes only
+the separately held-out ECB CISS reference histories to test origin/horizon
+alignment and nested past-only hyperparameter selection, not the market
+features or a latent index. It uses today's reconstructed CISS values and
+never asserts historic same-day publication availability. On an activated VM:
+
+```powershell
+git pull --ff-only origin main
+python scripts/run_ciss_baselines.py --start 2008-01-01 --horizons 1,5,21 --stride 21
+```
+
+The program saves `origin_predictions.csv`, `matched_model_scores.csv` and
+`manifest.json` in a fresh, ignored `results/runs/EXP-0002/<timestamp>`
+folder. This is distinct from EXP-0001, the intended country latent-risk
+measurement and PLS smoothing study. No CISS forecast metrics have been
+verified on the user's empirical files yet.

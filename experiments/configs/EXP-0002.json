@@ -1,0 +1,40 @@
+{
+  "id": "EXP-0002",
+  "status": "IMPLEMENTED_UNEXECUTED_EXPLORATORY",
+  "target": "ECB CISS currently revised observation values (not real-time vintages)",
+  "series": [
+    "CISS.D.U2.Z0Z.4F.EC.SS_CIN.IDX",
+    "CISS.D.US.Z0Z.4F.EC.SS_CIN.IDX",
+    "CISS.D.GB.Z0Z.4F.EC.SS_CIN.IDX"
+  ],
+  "start_origin_date": "2008-01-01",
+  "horizons_CISS_observations": [
+    1,
+    5,
+    21
+  ],
+  "outer_stride_observations": 21,
+  "minimum_training_observations": 504,
+  "models": [
+    "persistence",
+    "ar1_ols",
+    "ewma_nested_cv"
+  ],
+  "ewma_gain_grid": [
+    0.05,
+    0.1,
+    0.25,
+    0.5,
+    0.85,
+    1
+  ],
+  "ewma_inner_window": 504,
+  "ewma_inner_min_train": 252,
+  "ewma_inner_stride": 21,
+  "ewma_prediction_window": 252,
+  "ar1_fit_window": 504,
+  "seed": null,
+  "output": "results/runs/EXP-0002/<timestamp>",
+  "case": "EXPLORATORY_NO_POINT_IN_TIME_NO_LATENT_FACTOR_NO_PLS",
+  "results": null
+}
