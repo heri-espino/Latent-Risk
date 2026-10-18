@@ -1,3 +1,5 @@
+> **PARALLEL AGENT BRANCH ONLY — 2026-10-18 (index-models):** Draft [PR #1](https://github.com/heri-espino/Latent-Risk/pull/1) adds train-only signed composite/PCA and optional two-stage Gaussian AR(1) filtered state-space candidate through a typed, country-specific DatetimeIndex interface; original baseline APIs preserved. Source-free synthetic tests and diagnostics, no real-data index fit. The state-space model is **not jointly optimized DFM ML**; reported SE is conditional on fixed estimated parameters. Publication-release vintages and meaningful systemic-stress prediction remain UNKNOWN. CISS/STLFSI4/NFCI input guards; no BIS integration. See [methods memo](notes/results/index_models.md) and [dated agent journal](journal/2026-10/2026-10-18-index-models.md). **Integrator must reconcile this shared-file change with any newer main history; PR is draft and not merged.**
+
 # AI handoff — Latent Risk
 
 **Last updated:** 2026-10-17  

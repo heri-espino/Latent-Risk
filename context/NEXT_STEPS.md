@@ -1,3 +1,10 @@
+## Agent/index-models branch-only handoff — 2026-10-18
+
+- [x] Draft PR #1 created with additive country index-model interface, source-free stress/no-stress tests, leakage and diagnostic checks, and memo.
+- [ ] Coordinator: review CI, identification/missingness policies and factor target/availability contract before merging; reconcile branch-only updates to shared handoff/journal files with concurrent main work.
+- [ ] Research: freeze factor-vintage and cross-refit alignment policy; validate feature publishing times and matching clocks; add credit, bank and funding proxies before systemic-index language.
+- [ ] Quantitative: compare candidates on SAME historical information sets against a common independently observed outcome; separately assess real-world convergence/uncertainty after audited sources become available. No real-data performance claims yet.
+
 # Next steps
 
 - [x] **USER BIS first live attempt**: all five daily broad NEER BIS series failed with the same missing/nonfinite observation error. Seven-manifest catalog: **34 OK, 5 BIS FAILED, 6 NEVER_REQUESTED**; preexisting source QA still 34/34 PASS.
