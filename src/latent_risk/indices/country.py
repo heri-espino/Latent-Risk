@@ -283,14 +283,14 @@ def fit_country_index(
     uncertainty: pd.Series | None = None
     metadata: dict[str, object] = {
         "input_columns": list(panel.columns),
-        "train_mean": dict(zip(panel.columns, mean.tolist())),
-        "train_std_ddof0": dict(zip(panel.columns, std.tolist())),
+        "train_mean": dict(zip(panel.columns, mean.tolist(), strict=True)),
+        "train_std_ddof0": dict(zip(panel.columns, std.tolist(), strict=True)),
         "economic_directions": directions.copy(),
         "missing_policy": "composite available-case; PCA training-mean; state-space absent update",
         "source_availability_verification": "CALLER_RESPONSIBILITY_NOT_VERIFIED",
         "external_benchmarks_excluded": list(_BLOCKED_REFERENCES),
         "training_rows": len(training),
-        "training_missing_fraction": dict(zip(panel.columns, missing_fraction.tolist())),
+        "training_missing_fraction": dict(zip(panel.columns, missing_fraction.tolist(), strict=True)),
         "factor_target": "feature-specific constructed market factor; not systemic stress",
     }
     diagnostics: dict[str, object] = {
@@ -379,7 +379,7 @@ def fit_country_index(
                 "state_transition": "AR(1)",
                 "state_phi": phi,
                 "state_innovation_variance": q,
-                "observation_variance": dict(zip(panel.columns, obs_var.tolist())),
+                "observation_variance": dict(zip(panel.columns, obs_var.tolist(), strict=True)),
                 "loading_interpretation": "observation equation loadings on state factor",
                 "uncertainty_scope": "conditional_on_frozen_estimated_parameters",
                 "smoothed_estimates": "not computed; would use future observations",
