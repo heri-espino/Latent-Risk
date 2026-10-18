@@ -23,7 +23,7 @@ import requests
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
-from latent_risk.data.bis import parse_bis_eer_csv
+from latent_risk.data.bis import parse_bis_eer_csv, summarize_bis_payload
 from latent_risk.data.official import boe_date, parse_boe_csv, parse_boj_json, parse_ecb_csv
 
 
@@ -516,11 +516,19 @@ def acquire(
                         )
                         response.raise_for_status()
                         url = response.url
-                        data = parse_bis_eer_csv(response.content, identifier, start, end)
+                        # The response hash is useful even when validation fails.
+                        # Only bounded statistics are saved, not vendor CSV bytes.
+                        metadata["bis_response_sha256"] = sha256(response.content).hexdigest()
+                        try:
+                            data = parse_bis_eer_csv(response.content, identifier, start, end)
+                        except (ValueError, TypeError):
+                            metadata["bis_failure_diagnostics"] = summarize_bis_payload(
+                                response.content, identifier, start, end
+                            )
+                            raise
                         # Report discarded *explicitly missing* provider rows
                         # without storing raw response bytes or inventing data.
                         metadata.update({
-                            "bis_response_sha256": sha256(response.content).hexdigest(),
                             "bis_source_rows_in_window": data.attrs[
                                 "bis_source_rows_in_window"
                             ],
