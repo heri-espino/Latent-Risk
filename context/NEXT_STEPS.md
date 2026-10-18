@@ -1,8 +1,14 @@
 # Next steps
 
+- [x] User VM quality run inspected 34 source series: **33 PASS, `CL=F` FAIL** exclusively for market positivity rule. Do not treat WTI futures negative closes as automatically corrupt (CFTC confirms 2020-04-20 negative settlement).
+- [x] Correct WTI `CL=F` to signed price domain, retaining hard finite/hash/calendar checks, nonpositive observations in data, warning/count/minimum/date, and positivity of unmarked equity/FX; test legacy source manifests.
+- [ ] **Next VM action:** `git pull --ff-only origin main` then `python scripts/audit_source_quality.py`, inspect WTI exact dates and minimum from local report. Expect 34 PASS + WTI warning if no other issues; NOT YET VERIFIED on VM.
+- [ ] Define admissible oil futures features as past-only signed differences or economically justified transforms; audit front-contract rolls and never log-transform through zero.
+
+
 - [x] User completed the official FRED API second request: **8/8 OK**. Cumulative catalog (six manifests) **34 OK / 0 FAILED / 6 NEVER_REQUESTED**; eight new monthly histories recorded in `data/audits/2026-10-17-fred-catalog-complete.md`.
 - [x] Added read-only CSV SHA256, row/date/value integrity gate: `python scripts/audit_source_quality.py`, with seven offline tests. **Not yet run on real downloaded files.**
-- [ ] **Next VM action:** run `python scripts/audit_source_quality.py` and report PASS/FAIL warnings. Do not upload raw/vendor data to Git.
+- [x] First VM read-only quality check executed: 33/34 passed; WTI signed-price domain corrected, rerun pending. Do not upload vendor data to Git.
 - [ ] Determine appropriate five-country market price/FX calendar alignment, beginning no earlier than common coverage in 2007, then implement past-only trailing market features.
 - [ ] Keep CISS/STLFSI4/NFCI as external comparison references and choose first exploratory forecast target/chronological evaluation protocol.
 - [ ] Missing banking/credit/funding dimensions remain a limitation for full systemic-risk claims.

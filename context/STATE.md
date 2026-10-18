@@ -36,6 +36,12 @@ Transcribed provenance in `data/audits/2026-10-17-user-vm-coverage.md` and CSV; 
 
 **IMPLEMENTED / TESTED OFFLINE:** `scripts/audit_source_quality.py` selects the latest success per series, checks local immutable CSV hash/row/date/numeric integrity and market close positivity. It writes only an ignored local report. **Not yet run on user's actual raw series.** Do not assert data quality until result is supplied. The remaining scientific hurdles are revisions and availability dates, market calendar matching, transformations, banking/credit/funding domains, external validation and held-out chronological forecasting.
 
+## Initial quality audit WTI exception (2026-10-17)
+
+**USER-REPORTED:** `scripts/audit_source_quality.py` inspected 34 successful source files; **33 PASS and only `CL=F` FAIL (6,566 records)** on the overly universal rule `market close prices must be strictly positive`. CFTC and EIA confirm negative WTI futures settlements are possible (notably −$37.63/b on 2020-04-20), but the user's negative CL=F dates and values have not yet been examined. Signed WTI metadata and an old-immutable-manifest fallback now permit nonpositive CL=F closes **with mandatory warning and exact dates/count/minimum**, and retain positivity for unmarked equity/FX. All other SHA256/date/finite checks remain strict.
+
+**IMPLEMENTED, offline-tested; rerun still needed on VM.** This is an instrument-domain correction, not empirical evidence for the stress forecasting hypothesis. Ordinarily logged returns on CL=F are invalid if negative/zero price ratios; raw data must not be modified to hide the episode. See `data/audits/2026-10-17-source-quality-wti.md` and ADR-0006.
+
 ## Research question
 When and why do forecasts based on smoothed country financial-risk indices fail during financial disturbances? Are unusually large forecast errors informative beyond volatility changes and conventional benchmarks?
 

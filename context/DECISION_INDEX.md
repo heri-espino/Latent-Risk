@@ -7,5 +7,6 @@
 | [ADR-0003](../journal/decisions/ADR-0003.md) | 2026-10-16 | Immutable raw vendor snapshots precede release-date audit and chronologically valid panels | Accepted |
 | [ADR-0004](../journal/decisions/ADR-0004.md) | 2026-10-17 | Official ECB, BoE and BoJ acquisition; preserve distinct monetary aggregate definitions | Accepted |
 | [ADR-0005](../journal/decisions/ADR-0005.md) | 2026-10-17 | Market-stress-first indicator selection and separation of official external benchmarks | Proposed |
+| [ADR-0006](../journal/decisions/ADR-0006.md) | 2026-10-17 | Instrument-aware signed WTI futures prices; audit warnings without mutating history | Accepted |
 
 Follow the latest dated journal entry for changes to this index.

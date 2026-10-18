@@ -60,3 +60,14 @@ External published indices can share components with our factor. **Concordance w
 2. Inspect VM success/failure manifest before promising full coverage; FRED failed previously.
 3. Identify and license sufficiently long corporate/sovereign credit-spread histories and interbank funding series; do not rely on 3-year US credit spreads for 2008.
 4. Freeze target definition, factor anchors, index transformations, matched times and available-date rules before experimenting.
+
+## Signed oil-futures price domain (2026-10-17 correction)
+
+WTI `CL=F` can have nonpositive settlements: CFTC records −$37.63/b for the
+May 2020 contract on 2020-04-20 (https://www.cftc.gov/PressRoom/PressReleases/8315-20).
+No primary latent-factor model should silently compute ordinary log returns
+on this series or replace negative futures prices by absolute values. If oil
+enters as an optional global shock control, first verify the actual local
+nonpositive dates, a continuous-contract roll rule, and a past-only scale for
+any signed price-change transform. See ADR-0006 and
+`data/audits/2026-10-17-source-quality-wti.md`.

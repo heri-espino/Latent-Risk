@@ -200,3 +200,40 @@ Only proceed to rolling-origin feature engineering after checking
 the report's exceptions and adjusting an auditable data policy.
 
 Source evidence: [user-reported FRED completion](audits/2026-10-17-fred-catalog-complete.md).
+
+## WTI futures negative-close exception (quality audit 2026-10-17)
+
+The user's initial source-quality audit checked all 34 retrieved source files:
+**33 PASS, 1 FAIL** on Yahoo `CL=F` (6,566 rows), because the previous
+checker imposed positive closes on **every** market instrument. This is not
+a correct invariant for deliverable WTI futures. The U.S. CFTC and EIA
+confirm that the May 2020 WTI futures contract settled at **−$37.63/b on
+2020-04-20** (references: [CFTC](https://www.cftc.gov/PressRoom/PressReleases/8315-20),
+[EIA](https://www.eia.gov/TODAYINENERGY/detail.php?id=43495)). The user's
+actual CL=F dates/values were **not** supplied, so the identified source
+exception is still subject to verification.
+
+The catalog now declares `CL=F` with `price_domain="signed"`. Because raw
+snapshots must not be altered, the checker recognizes older manifests
+with `id=CL=F` and `role=global_oil` even if `price_domain` is absent.
+It permits finite nonpositive WTI closes as **PASS with explicit WARNINGS**;
+reports `nonpositive_close_count`, up to 10
+`nonpositive_close_first_dates`, `minimum_close` and
+`minimum_close_date`. Hash, date, row count, numeric completeness and
+all unmarked equity/FX positivity checks remain strict.
+
+Rerun (no redownload) on activated VM:
+
+```powershell
+git pull --ff-only origin main
+python scripts/audit_source_quality.py
+# Show WTI audit fields, without exposing raw market observations:
+$audit = Get-Content results/runs/source_quality/report.json -Raw | ConvertFrom-Json
+$audit.series | Where-Object id -eq 'CL=F' | Format-List status,warnings,nonpositive_close_count,nonpositive_close_first_dates,minimum_close,minimum_close_date
+```
+
+Never alter the historical negative price to make the audit pass.
+Conventional log-price changes/returns are invalid through sign crossings;
+continuous front-month futures can also jump from contract rolls. This
+series remains an **optional global control** until its price transformation,
+roll convention, and historical observation dates are independently reviewed.
