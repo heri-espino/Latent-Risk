@@ -67,6 +67,50 @@ def test_nonpositive_market_close_fails(tmp_path):
     assert any("strictly positive" in issue for issue in result["errors"])
 
 
+def test_negative_wti_futures_close_is_reviewable_not_corruption(tmp_path):
+    snapshot = tmp_path / "20261017"
+    record = _make_record(snapshot, kind="market", filename="CL_F",
+                          values=(18.27, -37.63))
+    record.update({"id": "CL=F", "role": "global_oil", "price_domain": "signed"})
+    result = inspect_source_file(snapshot, record)
+    assert result["status"] == "PASS"
+    assert result["nonpositive_close_count"] == 1
+    assert result["minimum_close"] == -37.63
+    assert result["minimum_close_date"] == "2020-01-02"
+    assert result["nonpositive_close_first_dates"] == ["2020-01-02"]
+    assert any("log returns" in warning for warning in result["warnings"])
+
+
+def test_zero_wti_futures_close_is_allowed_with_warning(tmp_path):
+    snapshot = tmp_path / "20261017"
+    record = _make_record(snapshot, kind="market", filename="CL_F",
+                          values=(18.27, 0.0))
+    record.update({"id": "CL=F", "role": "global_oil", "price_domain": "signed"})
+    result = inspect_source_file(snapshot, record)
+    assert result["status"] == "PASS"
+    assert result["nonpositive_close_count"] == 1
+    assert result["warnings"]
+
+
+def test_negative_unmarked_equity_close_remains_failure(tmp_path):
+    snapshot = tmp_path / "20261017"
+    record = _make_record(snapshot, kind="market", filename="GSPC",
+                          values=(100.0, -2.0))
+    result = inspect_source_file(snapshot, record)
+    assert result["status"] == "FAIL"
+    assert "market close prices must be strictly positive" in result["errors"]
+
+
+def test_invalid_market_price_domain_fails(tmp_path):
+    snapshot = tmp_path / "20261017"
+    record = _make_record(snapshot, kind="market", filename="CL_F",
+                          values=(1.0, 2.0))
+    record["price_domain"] = "unrestricted_and_unreviewed"
+    result = inspect_source_file(snapshot, record)
+    assert result["status"] == "FAIL"
+    assert any("price_domain" in error for error in result["errors"])
+
+
 def test_bad_manifest_count_fails(tmp_path):
     snapshot = tmp_path / "20261017"
     record = _make_record(snapshot)

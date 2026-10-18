@@ -136,8 +136,30 @@ def inspect_source_file(snapshot: Path, record: dict) -> dict:
 
     is_price = record.get("source") == "market"
     if is_price and not bad_values.any():
-        if (values <= 0).any():
-            errors.append("market close prices must be strictly positive")
+        domain = record.get("price_domain", "strictly_positive")
+        result["price_domain"] = domain
+        if domain not in {"strictly_positive", "signed"}:
+            errors.append(f"unknown market close price_domain: {domain}")
+        nonpositive = values <= 0
+        result["nonpositive_close_count"] = int(nonpositive.sum())
+        if nonpositive.any():
+            positions = np.flatnonzero(nonpositive.to_numpy())
+            result["nonpositive_close_first_dates"] = [
+                dates.iloc[int(i)].strftime("%Y-%m-%d") if not pd.isna(dates.iloc[int(i)])
+                else str(data.iloc[int(i)]["observation_date"])
+                for i in positions[:10]
+            ]
+            minimum_index = values.idxmin()
+            result["minimum_close"] = float(values.loc[minimum_index])
+            result["minimum_close_date"] = str(data.loc[minimum_index, "observation_date"])
+            if domain == "signed":
+                warnings.append(
+                    f"{result['nonpositive_close_count']} nonpositive signed futures "
+                    f"closes; first dates {', '.join(result['nonpositive_close_first_dates'])}; "
+                    "verify contract rolls/vendor adjustments; never apply ordinary log returns"
+                )
+            else:
+                errors.append("market close prices must be strictly positive")
         role = result["role"]
         if role in {"local_equity", "regional_equity"} or role.startswith("fx_"):
             if (values > 0).all():
@@ -183,6 +205,7 @@ def audit_source_integrity(snapshots: Path) -> dict:
         "warnings": sum(bool(row["warnings"]) for row in records),
         "limitations": [
             "Integrity verification does not establish historical availability dates.",
+            "Nonpositive signed futures prices can be genuine; they require contract-roll review and forbid ordinary log returns.",
             "Missing trading sessions, revisions and corporate adjustments need separate audits.",
             "Different country source definitions are not necessarily comparable.",
             "Published CISS and STLFSI4/NFCI remain external reference indices.",
