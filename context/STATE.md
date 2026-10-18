@@ -30,6 +30,12 @@ Transcribed provenance in `data/audits/2026-10-17-user-vm-coverage.md` and CSV; 
 
 **Scientific interpretation:** live transport success does not establish point-in-time financial conditions/stress vintages. The source snapshot includes currently available FRED revisions; NFCI is financial conditions, not identical to STLFSI4/CISS stress. User raw CSV/hash content not independently audited. First method pilot can proceed without the eight monetary/reserve histories; true five-country systemic factor still lacks banking, corporate credit and funding components.
 
+## Completion of initial FRED catalog and file integrity phase (2026-10-17)
+
+**USER REPORTED:** An additional FRED official API request for the remaining eight monetary/reserve/legacy records returned **8/8 OK**, snapshot `20261018T000222516029Z` (UTC), and `audit_downloads.py` now reports six local manifests, **34/40 OK, 0 FAILED, 6 NEVER_REQUESTED**. The unrequested six are two Banxico M1/M2, two BoE and two BoJ. The older Mexico FRED M2 stops May 2017, older M1 December 2018. These source counts are not scientific evidence of stress predictability. See `data/audits/2026-10-17-fred-catalog-complete.md`.
+
+**IMPLEMENTED / TESTED OFFLINE:** `scripts/audit_source_quality.py` selects the latest success per series, checks local immutable CSV hash/row/date/numeric integrity and market close positivity. It writes only an ignored local report. **Not yet run on user's actual raw series.** Do not assert data quality until result is supplied. The remaining scientific hurdles are revisions and availability dates, market calendar matching, transformations, banking/credit/funding domains, external validation and held-out chronological forecasting.
+
 ## Research question
 When and why do forecasts based on smoothed country financial-risk indices fail during financial disturbances? Are unusually large forecast errors informative beyond volatility changes and conventional benchmarks?
 

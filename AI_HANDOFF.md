@@ -1,8 +1,8 @@
 # AI handoff — Latent Risk
 
 **Last updated:** 2026-10-17  
-**Latest dated journal entry:** [2026-10-17-fred-api-live-success.md](journal/2026-10/2026-10-17-fred-api-live-success.md)  
-**Current research stage:** user CLI confirms 14 market + 5 ECB + 3 Banxico + 4 official FRED API successful series. Combined five-manifest source audit: **26 OK, 8 FAILED (previous graph backend), 6 NEVER_REQUESTED**. Raw bytes not independently inspected; no forecasting experiment executed.
+**Latest dated journal entry:** [2026-10-17-fred-catalog-complete.md](journal/2026-10/2026-10-17-fred-catalog-complete.md)  
+**Current research stage:** user CLI now confirms 14 market + 5 ECB + 3 Banxico + **12 FRED** success via official FRED API. Six-manifest catalog audit **34 OK, 0 FAILED, 6 NEVER_REQUESTED**. Read-only file integrity audit implemented/offline-tested, but not yet executed on VM raw bytes. No forecasting experiment executed.
 
 ## Project identity and objective
 International assessment of when smoothed forecasts of financial-risk indicators fail and whether exceedances add information about financial stress beyond ordinary time-varying volatility. Mexico is a core country. The early U.S.-only repository is antecedent work, not validated evidence transferred here.
@@ -26,12 +26,15 @@ How should estimated factor uncertainty enter predictive intervals? What common 
 
 - `IMPLEMENTED`: optional official FRED API v1 backend `--fred-backend api`, requiring `FRED_API_KEY`, with `--only` identifier filtering and secret redaction. **VERIFIED BY USER'S LIVE VM COMMAND OUTPUT** for DGS2, DGS10, STLFSI4 and NFCI: all four fetched via `api.stlouisfed.org`; not independently inspected as raw CSVs. Default Graph CSV remains unchanged.
 
+- `IMPLEMENTED` and **CI VERIFIED**: `python scripts/audit_source_quality.py` checks local saved CSV SHA256, manifest alignment, date ordering, finite numeric values and market close integrity, without modifying raw files. It emits local ignored `results/runs/source_quality/report.json`. **NOT YET RUN on real user CSVs**.
+
 ## Proposed but unimplemented algorithms
 - `PROPOSED`: country-specific Gaussian DFM, robust factors, Markov-switching index variants.
 - `PROPOSED`: constrained local-linear-trend **marginal** MLE/REML with Kalman filtering.
 - `PROPOSED`: rolling-origin pseudo-real-time cross-country evaluation and calibrated forecast exceedance analysis.
 
 ## Observed VM download status (user-reported 2026-10-17)
+- **Latest SIXTH manifest**: eight more FRED API monthly series downloaded (8/8). Six-manifest audit now **34 OK, 0 FAILED, 6 NEVER_REQUESTED** out of 40. Older Mexican FRED M2 `MYAGM2MXM189N` ends 2017-05 (209 rows), older M1 `MANMM101MXM189S` ends 2018-12 (228 rows). Six not requested are Banxico money 2, Bank of England 2, Bank of Japan 2. See [completion note](data/audits/2026-10-17-fred-catalog-complete.md). Older per-run status descriptions below remain historical evidence, not current state.
 - **Latest fifth manifest (20261017T235600038504Z)**: official FRED API with personal key: **4/4 successful**. DGS2/DGS10 each 6,700 rows (2000-01-03 to 2026-10-15); STLFSI4/NFCI each 1,397 rows (2000-01-07 to 2026-10-09). Combined 40 catalog codes: **26 OK / 8 FAILED / 6 NEVER_REQUESTED**. Eight FRED failures are older website Graph CSV attempts and were not tested using new API. Reference: [record](data/audits/2026-10-17-fred-api-live-success.md).
 - New fourth manifest: all **12** FRED Graph CSV requests failed, with `RemoteDisconnected` or `ReadTimeoutError` errors; 40 expected series now **22 OK, 12 FAILED, 6 NEVER_REQUESTED**. Previously successful market/Banxico/ECB snapshots unchanged. Official FRED API alternative newly implemented, but NOT live-tested. Earlier three-manifest transcription remains historically accurate for its run.
 - Three local manifests, 40 expected: **22 OK, 10 failed (FRED), 8 never requested**. ECB all 5 OK; new three CISS series each 6,997 dates Jan 2000–Oct 15 2026, and M1/M2 each 320 monthly dates. Banxico FIX/CETES/reserves 3 OK, newer M1/M2 not requested. All 14 Yahoo tickers OK (Euro Stoxx 50 starts 2007-03-30; several FX tickers start 2003-12-01). BoE/BoJ not requested. Complete statuses/dates: [transcription](data/audits/2026-10-17-user-vm-coverage.md).
@@ -62,7 +65,7 @@ How should estimated factor uncertainty enter predictive intervals? What common 
 
 ## Exact next actions
 0. Review [proposed indicator priorities](data/indicator_priorities.md); M1/M2/M4 no longer assumed core stress factors. Core candidate feature domains are market/equity downside, FX volatility, funding/credit spread and banking stress; BIS credit gap/DSR is a different longer-horizon vulnerability experiment. ECB CISS for EA/US/UK and Banxico IEMF are reference comparisons, not factor input variables. US ICE credit-spread FRED data limited to ~3 years since April 2026, not suitable for historical 2008 tests without other sources.
-1. ECB collection already succeeded on VM; do **not** insist on redownloading it. Prototype a clearly labeled exploratory market-based / CISS methodological study using saved local data; separately source credit/bank/funding domains before a full systemic latent-index claim. Optionally collect new Banxico monetary and BoE/BoJ macro data only if motivated by a separate macro research question. Keep user raw data/token private.
+1. Do **NOT** redownload ECB/FRED sources. **Next user VM action: `python scripts/audit_source_quality.py`**; inspect errors/warnings and `results/runs/source_quality/report.json`. Then prototype a labeled exploratory market-based / CISS study on validated saved local data; bank/credit/funding domains needed for systemic stress index. Banxico/BoE/BoJ six never-requested records optional. Keep user raw data and tokens private.
 2. The alternate official FRED API succeeded; leave website graph failures recorded but do not block. Build a point-in-time country indicator catalog; start with Mexico, USA.
 3. Implement and test likelihood-based trend smoothing, then index candidates, without reading future observations.
 4. Freeze event windows and a common external target before confirming outcomes.

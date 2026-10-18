@@ -160,3 +160,43 @@ Source: official FRED
 The user ran the four-series `--fred-backend api --only DGS2,DGS10,STLFSI4,NFCI` test on the activated Conda VM. **All four returned OK**; the combined catalog now reports **26 OK, 8 FAILED, 6 NEVER_REQUESTED** across five local snapshots. The eight remaining FRED failures are **older website Graph CSV failures** and have not been retried with the working API hostname. This live result is transcribed in [the 2026-10-17 audit](audits/2026-10-17-fred-api-live-success.md); original manifests and raw CSV files remain on the VM.
 
 For a complete optional source archive, enter the FRED key privately as explained above, then run the **eight remaining, not primary financial-stress series** using `--fred-backend api --only M1SL,M2SL,TRESEGUSM052N,TRESEGMXM052N,TRESEGGBM052N,TRESEGJPM052N,MYAGM2MXM189N,MANMM101MXM189S`. Some older series are discontinued and may have short coverage; do not assume a full 2000–2026 span. The first market/CISS pilot need not await these macro series.
+
+
+## Initial 34-series acquisition milestone (2026-10-17)
+
+The user's activated VM now reports **six source manifests**, and the
+catalog has **34 OK, 0 FAILED, 6 NEVER_REQUESTED** series. All 12 FRED
+codes have been retrieved via the official key-authenticated backend.
+The six unrequested series are two Banxico monetary aggregates, two
+Bank of England indicators and two Bank of Japan monetary aggregates.
+These are optional for the initial market-stress pilot.
+
+Do **not** interpret the six as source failures or require another FRED
+download. Mexico's legacy FRED money M2 ends 2017-05, M1 ends 2018-12.
+The official API downloaded currently revised values, not historical
+point-in-time release vintages.
+
+### Next VM command: physical source-file quality
+
+```powershell
+git pull --ff-only origin main
+python scripts/audit_source_quality.py
+```
+
+This is a **read-only source integrity gate**, not a forecast-model run.
+It chooses each provider/ID's newest *successful* downloaded source
+snapshot, verifies the CSV file SHA256 against the manifest, checks
+row count, sorted unique ISO dates, finite numeric values, the recorded
+first/last date range and positive market close prices. It counts
+large daily equity/FX log-return moves as warnings for manual review.
+No prices, keys or raw CSVs are uploaded to Git.
+
+The report is saved to
+`results/runs/source_quality/report.json` (ignored by Git);
+the program returns nonzero if any integrity check fails. It does
+not identify unobserved market holidays, revisions, future data leaks,
+source licensing restrictions or compatible factor identification.
+Only proceed to rolling-origin feature engineering after checking
+the report's exceptions and adjusting an auditable data policy.
+
+Source evidence: [user-reported FRED completion](audits/2026-10-17-fred-catalog-complete.md).

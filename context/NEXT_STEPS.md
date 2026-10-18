@@ -1,9 +1,17 @@
 # Next steps
 
+- [x] User completed the official FRED API second request: **8/8 OK**. Cumulative catalog (six manifests) **34 OK / 0 FAILED / 6 NEVER_REQUESTED**; eight new monthly histories recorded in `data/audits/2026-10-17-fred-catalog-complete.md`.
+- [x] Added read-only CSV SHA256, row/date/value integrity gate: `python scripts/audit_source_quality.py`, with seven offline tests. **Not yet run on real downloaded files.**
+- [ ] **Next VM action:** run `python scripts/audit_source_quality.py` and report PASS/FAIL warnings. Do not upload raw/vendor data to Git.
+- [ ] Determine appropriate five-country market price/FX calendar alignment, beginning no earlier than common coverage in 2007, then implement past-only trailing market features.
+- [ ] Keep CISS/STLFSI4/NFCI as external comparison references and choose first exploratory forecast target/chronological evaluation protocol.
+- [ ] Missing banking/credit/funding dimensions remain a limitation for full systemic-risk claims.
+
+
 - [x] User retried all 12 FRED graph CSV series on 2026-10-17: **0/12**, all `RemoteDisconnected` or `ReadTimeoutError`. Four manifests total: **22 OK, 12 FAILED, 6 NEVER_REQUESTED**; no loss of earlier market/Banxico/ECB snapshots.
 - [x] Implement an **opt-in official FRED API v1 backend** at `api.stlouisfed.org` using `FRED_API_KEY`, `--fred-backend api`, optional `--only` for short probes, safe exception redaction and synthetic offline tests.
 - [x] User verified `api.stlouisfed.org` reachability and downloaded **4/4** FRED series (`DGS2`, `DGS10`, `STLFSI4`, `NFCI`) with key via official API. Five-manifest status now **26 OK, 8 FAILED, 6 NEVER_REQUESTED**, per user CLI (not inspected raw CSVs).
-- [ ] Optional: collect other eight FRED money/reserves series using official API; NOT a prerequisite to equity/FX/CISS methodological pilot.
+- [x] The other eight FRED money/reserves series have been acquired via official API and saved; not mandated inputs to the equity/FX/CISS methodological pilot.
 - [ ] Distinguish FRED's now-working official API from the failed website Graph CSV endpoint in any diagnosis.
 
 - [x] User-reported first full download audit: 3 VM manifests, 40 catalog sources = **22 OK (market 14, Banxico 3, ECB 5), 10 FAILED (FRED), 8 NEVER_REQUESTED**. Transcribed non-sensitive statuses in `data/audits/2026-10-17-user-vm-coverage.md`; raw files still on user's VM, not independently checked.
@@ -22,7 +30,7 @@
 - [x] Implement an initial candidate source catalog and downloader with 19 offline tests passing, Ruff, structure and Sphinx pass (https://github.com/heri-espino/Latent-Risk/actions/runs/38998827014); **no live data have been retrieved yet**.
 - [x] Add ECB M1/M2, BoE M4/SONIA, BOJ M1/M2 and Banxico modern M1/M2 to the audited catalog; add independent source parsers and local multi-snapshot auditor (all new live-provider fetches `UNVERIFIED`).
 - [ ] Run expanded downloader (`--sources ecb,boe,boj` and again `--sources banxico` for the new M1/M2), inspect all manifests with `scripts/audit_downloads.py`, preserve SHA256 provenance and report missing or short series.
-- [ ] Diagnose and repair ten FRED VM `ConnectionError` failures; do not consider US rates/M1/M2/reserves downloaded yet.
+- [x] FRED Graph CSV website `ConnectionError` bypassed with **official** FRED API: all 12 requested series acquired. Original graph failure remains in historic manifests.
 - [x] Identify Banxico current money aggregates as M1 `SF311408`, M2 `SF311418` (modern methodology). Independently confirm API metadata and observed coverage on VM.
 - [ ] Identify comparable money aggregates and rates for all five study geographies; UK M4, BoJ M2, ECB M2 have different definitions. Audit historical release dates and revisions.
 - [ ] Establish a source/availability-date catalog for Mexico, USA, UK, Japan and euro area. Prefer a small comparable core indicator panel.

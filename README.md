@@ -57,3 +57,14 @@ Earlier U.S. source is [Estimation of Latent Risk in the U.S. Market Using Repre
 ## Attribution and publication
 
 Original U.S. pilot materials name additional collaborators. Confirm authorship and permissions before transferring original manuscript or source data. External source licenses and publication rights must be respected.
+
+## Raw-data quality gate after first live source collection
+
+The user reported 34/40 catalog series downloaded across six local snapshots; the six other series are not requested, not failed. Before constructing any factor, run in an already activated Conda environment:
+
+```powershell
+git pull --ff-only origin main
+python scripts/audit_source_quality.py
+```
+
+The command verifies raw CSV hashes, date integrity and numeric structure against historical download manifests. It writes `results/runs/source_quality/report.json` (Git-ignored) and never modifies source data. This does **not** prove real-time publication-date correctness, cross-country indicator comparability or stress prediction. See `data/README.md` and `experiments/EXP-0001.md`.
