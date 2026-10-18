@@ -98,3 +98,7 @@ The old U.S. DFM input series were logged VIX, WTI, GLD and DXY. The run used 20
 ## Linked prior resources
 - Legacy risk project: https://github.com/heri-espino/Estimation-of-latent-risk-in-the-U.S.-market-using-representative-variables
 - Smoothing-methods theory: https://github.com/heri-espino/Trend-Estimation
+
+
+## 2026-10-18 — trend likelihood implementation and documentation coordination
+A concurrent agent committed `src/latent_risk/trends/gaussian.py`, package exports and `tests/test_trends_gaussian.py` on `agent/trend-likelihood` (source commit observed as `f943229114d001b7d6c9abe7bb9b33102b74d500`). The documentation branch `agent/trend-likelihood-docs-20261018` inherits these commits without modifying the other agent's owned files; it adds `notes/results/trend_likelihood.md` and a new journal entry. **PROVEN analytically:** nullspace of dimension 2, penalized SDP normal equations, Gaussian diffuse REML and origin filter equations under stated assumptions. **UNKNOWN / NEEDS CI:** numerical validity and test results of the remote agent code; independently developed *local alternative* passed 81 synthetic tests and must not be conflated. No real fixed-index country study or first-release vintage experiment is completed. Distinguish earlier data-acquisition status from this separate modeling stage.
