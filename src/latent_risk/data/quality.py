@@ -136,7 +136,16 @@ def inspect_source_file(snapshot: Path, record: dict) -> dict:
 
     is_price = record.get("source") == "market"
     if is_price and not bad_values.any():
-        domain = record.get("price_domain", "strictly_positive")
+        # Old immutable download manifests predate the explicit catalog field.
+        # Their metadata must remain untouched, so apply a narrowly scoped
+        # historical instrument policy for the known signed WTI futures series.
+        domain = record.get("price_domain")
+        if domain is None:
+            domain = (
+                "signed"
+                if result["id"] == "CL=F" and result["role"] == "global_oil"
+                else "strictly_positive"
+            )
         result["price_domain"] = domain
         if domain not in {"strictly_positive", "signed"}:
             errors.append(f"unknown market close price_domain: {domain}")
