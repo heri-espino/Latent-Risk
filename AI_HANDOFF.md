@@ -1,7 +1,7 @@
 # AI handoff — Latent Risk
 
-**Last updated:** 2026-10-17  
-**Latest dated journal entry:** [2026-10-17-bis-missing-observations-correction.md](journal/2026-10/2026-10-17-bis-missing-observations-correction.md)  
+**Last updated:** 2026-10-18 (crisis-hypotheses agent branch; merge reconciliation pending)  
+**Latest dated journal entry (this branch):** [2026-10-18-crisis-hypotheses.md](journal/2026-10/2026-10-18-crisis-hypotheses.md); previous BIS record preserved  
 **Current research stage:** user CLI now confirms 14 market + 5 ECB + 3 Banxico + **12 FRED** success via official FRED API. Six-manifest catalog audit **34 OK, 0 FAILED, 6 NEVER_REQUESTED**. User VM source integrity re-audit: **34/34 PASS, zero failed, one signed WTI warning**. One CL=F nonpositive close on 2020-04-20 at −37.630001068115234 (matches documented −37.63). No models fitted. User successfully prepared the market panel: 31,383 country/date feature rows; 4,293 common five-equity dates (2007-07-05 to 2026-10-16); 23,785 separately held-out ECB/FRED reference rows. Exploratory CISS forecasting benchmark EXP-0002 code implemented and CI tested but **not run on user's actual CISS files**; full latent-risk EXP-0001 remains proposed/unexecuted.
 
 ## Project identity and objective
@@ -101,3 +101,9 @@ How should estimated factor uncertainty enter predictive intervals? What common 
 
 ## Important files to inspect next
 `AGENTS.md`, journal (in prescribed order), `experiments/EXP-0001.md`, `notes/definitions.md`, `paper/main.tex`, `src/latent_risk/`.
+
+## Crisis-hypotheses agent branch (2026-10-18; integration proposed)
+- **PROPOSED** dated primary-source event/citation manifest: [crisis_protocol.md](notes/literature/crisis_protocol.md), covering GFC phases, 2020 pandemic and national episodes. Documented intervention end is not equivalent to crisis end; Mexico 1994 is archived but currently out-of-coverage.
+- **PROPOSED** falsifiable association/detection/early-warning protocol: [event_study_design.md](notes/results/event_study_design.md). Genuine warning requires a *matured forecast error already observable strictly before* the independently documented event anchor, an earlier-only threshold, matched calm false-alarm denominator and independent episode clustering.
+- **IMPLEMENTED, NOT YET CI VERIFIED** pure synthetic helper [events/scores.py](src/latent_risk/events/scores.py) and [test_events_scores.py](tests/test_events_scores.py); no real CISS, latent risk or crises evaluated. Direct checkout not available to agent; draft PR CI pending. No forecasting/index/downloader engines changed.
+- Shared-file modifications are on **agent/crisis-hypotheses** only; integrator must reconcile journal/LATEST, AI_HANDOFF and context updates with other PR branches.
