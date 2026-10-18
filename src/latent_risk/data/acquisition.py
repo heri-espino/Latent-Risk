@@ -23,6 +23,7 @@ import requests
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
+from latent_risk.data.bis import parse_bis_eer_csv
 from latent_risk.data.official import boe_date, parse_boe_csv, parse_boj_json, parse_ecb_csv
 
 
@@ -298,13 +299,13 @@ def acquire(
     Parameters
     ----------
     catalog : dict
-        Source catalog with market, fred, banxico, ecb, boe and boj arrays.
+        Source catalog with market, fred, banxico, ecb, boe, boj and bis arrays.
     start, end : str
         Beginning and exclusive end of requested observations (ISO dates).
     snapshot : pathlib.Path
         A new snapshot directory; must not already exist.
     sources : set of str
-        Subset of `market`, `fred`, `banxico`, `ecb`, `boe`, and `boj`.
+        Subset of `market`, `fred`, `banxico`, `ecb`, `boe`, `boj`, and `bis`.
     banxico_token : str, optional
         Private token for Banxico via HTTP header; never written to metadata.
     fred_api_key : str, optional
@@ -331,9 +332,9 @@ def acquire(
         If the snapshot already exists.
     """
     _parse_dates(start, end)
-    allowed = {"market", "fred", "banxico", "ecb", "boe", "boj"}
+    allowed = {"market", "fred", "banxico", "ecb", "boe", "boj", "bis"}
     if not sources or not sources <= allowed:
-        raise ValueError("sources must be a nonempty subset of market,fred,banxico,ecb,boe,boj")
+        raise ValueError("sources must be a nonempty subset of market,fred,banxico,ecb,boe,boj,bis")
     if "banxico" in sources and not banxico_token:
         raise ValueError("Banxico requires BANXICO_TOKEN in the environment")
     if fred_backend not in {"graph", "api"}:
@@ -345,7 +346,7 @@ def acquire(
             raise ValueError("only_ids may not be empty")
         available = {
             (row["symbol"] if source == "market"
-             else row["key"] if source == "ecb"
+             else row["key"] if source in {"ecb", "bis"}
              else row["series"])
             for source in sources
             for row in catalog[source]
@@ -370,6 +371,7 @@ def acquire(
             "FRED Graph CSV and official observations API are current-vintage histories,"
             " not original publication vintages.",
             "No historical available_date column is fabricated for any macro source.",
+            "BIS daily NEER values are current-vintage and issued in later weekly updates.",
             "ECB, BoE and BOJ monthly observation labels are NOT public release dates.",
             "Market timestamps are daily trade dates; intraday availability is not established.",
             "All series are vendor-provided and licensing/republication is not automatically granted.",
@@ -378,13 +380,13 @@ def acquire(
     }
     client = _session()
     try:
-        for source in ("market", "fred", "banxico", "ecb", "boe", "boj"):
+        for source in ("market", "fred", "banxico", "ecb", "boe", "boj", "bis"):
             if source not in sources:
                 continue
             for entry in catalog[source]:
                 identifier = (
                     entry["symbol"] if source == "market"
-                    else entry["key"] if source == "ecb"
+                    else entry["key"] if source in {"ecb", "bis"}
                     else entry["series"]
                 )
                 if only_ids is not None and identifier not in only_ids:
@@ -494,6 +496,27 @@ def acquire(
                         response.raise_for_status()
                         url = response.url
                         data = parse_boe_csv(response.content, start, end, identifier)
+                    elif source == "bis":
+                        url = (
+                            "https://stats.bis.org/api/v2/data/dataflow/"
+                            f"BIS/WS_EER/1.0/{identifier}"
+                        )
+                        response = client.get(
+                            url,
+                            params={
+                                "format": "csv",
+                                "labels": "id",
+                                "startPeriod": start,
+                                "endPeriod": (
+                                    date.fromisoformat(end) - timedelta(days=1)
+                                ).isoformat(),
+                            },
+                            headers={"Accept": "text/csv"},
+                            timeout=90,
+                        )
+                        response.raise_for_status()
+                        url = response.url
+                        data = parse_bis_eer_csv(response.content, identifier, start, end)
                     else:  # boj
                         url = "https://www.stat-search.boj.or.jp/api/v1/getDataCode"
                         last_day = date.fromisoformat(end) - timedelta(days=1)
@@ -572,7 +595,7 @@ def main() -> int:
     parser.add_argument("--end", required=True, help="Exclusive ISO end date, e.g. 2026-10-17")
     parser.add_argument(
         "--sources", default="market,fred",
-        help="Comma-separated subset: market,fred,banxico,ecb,boe,boj",
+        help="Comma-separated subset: market,fred,banxico,ecb,boe,boj,bis",
     )
     parser.add_argument("--catalog", type=Path, default=Path(__file__).resolve().parents[3] / "data/source_catalog.json")
     parser.add_argument("--output", type=Path, default=Path("data/raw/downloads"))

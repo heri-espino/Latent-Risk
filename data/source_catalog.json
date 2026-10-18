@@ -234,7 +234,8 @@
     "This revision adds ECB BSI, Bank of England IADB and BOJ official data, none yet verified by a live VM download.",
     "Historical release/availability dates and revisions remain unaudited for all macro sources.",
     "Source licenses and reproducibility need auditing; raw downloaded data must not be committed.",
-    "FRED ICE BofA credit OAS history is restricted to ~3 years from April 2026 on FRED; do NOT use it for a 2008-2026 test without another licensed source."
+    "FRED ICE BofA credit OAS history is restricted to ~3 years from April 2026 on FRED; do NOT use it for a 2008-2026 test without another licensed source.",
+    "BIS broad daily NEER is catalogued as a comparable candidate FX measurement for all five economies but has not yet been downloaded live on the user's VM. Keep legacy USD bilateral FX and DXY for sensitivity/robustness; do not silently change past derived market-pilot snapshots."
   ],
   "ecb": [
     {
@@ -322,6 +323,68 @@
       "role": "money_m2",
       "units": "100 million JPY",
       "source_reference": "https://www.stat-search.boj.or.jp/ssi/mtshtml/md02_m_1_en.html"
+    }
+  ],
+  "bis": [
+    {
+      "country": "MEX",
+      "name": "BIS daily broad nominal effective exchange rate, Mexican peso",
+      "key": "D.N.B.MX",
+      "frequency": "daily",
+      "role": "fx_effective_nominal_broad",
+      "unit": "Index (2020=100)",
+      "currency_appreciates_when_index_rises": true,
+      "dataset": "BIS WS_EER 1.0",
+      "source_reference": "https://data.bis.org/topics/EER/BIS%2CWS_EER%2C1.0/D.N.B.MX",
+      "note": "BIS daily series are updated on a later release cycle; observation date is NOT available_date. Historical trade weights and values can be revised."
+    },
+    {
+      "country": "USA",
+      "name": "BIS daily broad nominal effective exchange rate, US dollar",
+      "key": "D.N.B.US",
+      "frequency": "daily",
+      "role": "fx_effective_nominal_broad",
+      "unit": "Index (2020=100)",
+      "currency_appreciates_when_index_rises": true,
+      "dataset": "BIS WS_EER 1.0",
+      "source_reference": "https://data.bis.org/topics/EER/BIS%2CWS_EER%2C1.0/D.N.B.US",
+      "note": "BIS daily series are updated on a later release cycle; observation date is NOT available_date. Historical trade weights and values can be revised."
+    },
+    {
+      "country": "GBR",
+      "name": "BIS daily broad nominal effective exchange rate, Pound sterling",
+      "key": "D.N.B.GB",
+      "frequency": "daily",
+      "role": "fx_effective_nominal_broad",
+      "unit": "Index (2020=100)",
+      "currency_appreciates_when_index_rises": true,
+      "dataset": "BIS WS_EER 1.0",
+      "source_reference": "https://data.bis.org/topics/EER/BIS%2CWS_EER%2C1.0/D.N.B.GB",
+      "note": "BIS daily series are updated on a later release cycle; observation date is NOT available_date. Historical trade weights and values can be revised."
+    },
+    {
+      "country": "JPN",
+      "name": "BIS daily broad nominal effective exchange rate, Japanese yen",
+      "key": "D.N.B.JP",
+      "frequency": "daily",
+      "role": "fx_effective_nominal_broad",
+      "unit": "Index (2020=100)",
+      "currency_appreciates_when_index_rises": true,
+      "dataset": "BIS WS_EER 1.0",
+      "source_reference": "https://data.bis.org/topics/EER/BIS%2CWS_EER%2C1.0/D.N.B.JP",
+      "note": "BIS daily series are updated on a later release cycle; observation date is NOT available_date. Historical trade weights and values can be revised."
+    },
+    {
+      "country": "EA",
+      "name": "BIS daily broad nominal effective exchange rate, Euro area",
+      "key": "D.N.B.XM",
+      "frequency": "daily",
+      "role": "fx_effective_nominal_broad",
+      "unit": "Index (2020=100)",
+      "currency_appreciates_when_index_rises": true,
+      "dataset": "BIS WS_EER 1.0",
+      "source_reference": "https://data.bis.org/topics/EER/BIS%2CWS_EER%2C1.0/D.N.B.XM",
+      "note": "BIS daily series are updated on a later release cycle; observation date is NOT available_date. Historical trade weights and values can be revised."
     }
   ]
 }

@@ -35,7 +35,7 @@ def audit(catalog: dict, manifests: list[tuple[str, dict]]) -> list[dict]:
             records[(str(row.get("source")), str(row.get("id")))].append(item)
 
     output = []
-    for source in ("market", "fred", "banxico", "ecb", "boe", "boj"):
+    for source in ("market", "fred", "banxico", "ecb", "boe", "boj", "bis"):
         for entry in catalog.get(source, []):
             identifier = entry.get("symbol", entry.get("key", entry.get("series")))
             history = records.get((source, identifier), [])
