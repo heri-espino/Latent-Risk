@@ -42,6 +42,7 @@ def run(frame=None, *, families=None, settings=None):
     return run_backtest(
         fixture() if frame is None else frame,
         country="USA", target_id="synthetic_CISS_proxy",
+        dataset_vintage="synthetic_seed_812",
         target_scale="synthetic_index_level_v1",
         families=baseline_families() if families is None else families,
         config=config() if settings is None else settings,
