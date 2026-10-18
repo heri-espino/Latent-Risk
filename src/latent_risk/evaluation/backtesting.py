@@ -219,6 +219,7 @@ def run_backtest(
     country: str,
     target_id: str,
     target_scale: str,
+    dataset_vintage: str,
     families: tuple[ForecastFamily, ...],
     config: BacktestConfig | None = None,
 ) -> pd.DataFrame:
@@ -229,8 +230,8 @@ def run_backtest(
     observations : pandas.DataFrame
         Sorted unique observation_date/value; in provided_release_dates mode,
         also available_date. Dates use ISO YYYY-MM-DD at end-of-day.
-    country, target_id, target_scale : str
-        Nonempty target identity; factor scale and vintage MUST remain explicit.
+    country, target_id, target_scale, dataset_vintage : str
+        Nonempty identity, latent scale and exact input snapshot identifier.
     families : tuple of ForecastFamily
         Every candidate is a *new* estimator at every fit. No full-sample
         normalizations or externally prefitted factor/smoother parameters.
@@ -259,8 +260,8 @@ def run_backtest(
     families = tuple(families)
     config = BacktestConfig() if config is None else config
     _check(config, families)
-    if any(not x or not x.strip() for x in (country, target_id, target_scale)):
-        raise ValueError("country, target_id and target_scale must be explicit")
+    if any(not x or not x.strip() for x in (country, target_id, target_scale, dataset_vintage)):
+        raise ValueError("country, target_id, target_scale and dataset_vintage must be explicit")
     data = _observations(observations, config.vintage_policy)
     first_date = pd.Timestamp(config.first_origin)
     last_h = max(config.horizons)
@@ -288,6 +289,7 @@ def run_backtest(
                     "country": country,
                     "target_id": target_id,
                     "target_scale": target_scale,
+                    "dataset_vintage": dataset_vintage,
                     "vintage_mode": config.vintage_policy,
                     "origin_date": as_of.strftime("%Y-%m-%d"),
                     "target_date": target["date"].strftime("%Y-%m-%d"),
