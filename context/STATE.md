@@ -104,3 +104,7 @@ The old U.S. DFM input series were logged VIX, WTI, GLD and DXY. The run used 20
 ## Linked prior resources
 - Legacy risk project: https://github.com/heri-espino/Estimation-of-latent-risk-in-the-U.S.-market-using-representative-variables
 - Smoothing-methods theory: https://github.com/heri-espino/Trend-Estimation
+
+
+## 2026-10-18 — trend likelihood documentation integration
+A concurrent agent implemented `src/latent_risk/trends/gaussian.py`, exports and `tests/test_trends_gaussian.py` on `agent/trend-likelihood`. The separate `agent/trend-likelihood-docs-20261018` branch inherits these commits without editing the other agent's owned files, and adds `notes/results/trend_likelihood.md` plus a dated journal. **PROVEN analytically under stated iid Gaussian and diffuse conditions:** affine two-dimensional nullspace, SPD normal equations, r/q ratio, valid Gaussian restricted likelihood and causal filter forecasts. **VERIFIED COMPUTATIONALLY on GitHub Actions:** [run 39139452901](https://github.com/heri-espino/Latent-Risk/actions/runs/39139452901), commit `711c2c6`, 104 tests passed, Ruff/structure/Sphinx/PR protocol passed; a distinct local alternative implementation independently passed 81 synthetic tests. No financial-stress forecast study or historical first-release index has been completed by this modeling branch. Preserve separate later BIS acquisition findings.

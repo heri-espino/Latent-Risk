@@ -1,3 +1,5 @@
+- [ ] **2026-10-18 trend modeling:** Review [`notes/results/trend_likelihood.md`](../notes/results/trend_likelihood.md) and reconcile occupied `agent/trend-likelihood` source branch with the documentation draft PR. Remote CI passed 104 tests plus Ruff, structure, Sphinx and PR protocol on `711c2c6` ([run 39139452901](https://github.com/heri-espino/Latent-Risk/actions/runs/39139452901)). Coordinator must still inspect REML ratio limits, initial-state identifiability, parameter refitting at origin and forecast invariance before integration. No observed-crisis or vintage claims.
+
 # Next steps
 
 - [x] **LIVE VM BIS success:** all five daily broad nominal NEER `D.N.B.MX/US/GB/JP/XM` downloaded **5/5**, 6,987 numeric observations each from 2000-01-03 to 2026-10-13; 2,796 source-missing rows each recorded, not imputed. Catalog **39 OK, 0 FAILED, 6 NEVER_REQUESTED**; raw QA **39/39 PASS**, only WTI warning.
