@@ -1,8 +1,12 @@
 # AI handoff — Latent Risk
 
-**Last updated:** 2026-10-17  
-**Latest dated journal entry:** [2026-10-17-bis-missing-observations-correction.md](journal/2026-10/2026-10-17-bis-missing-observations-correction.md)  
+**Last updated:** 2026-10-18 (agent/forecast-evaluation draft branch)  
+**Latest dated journal entry in this draft branch:** [2026-10-18-agent-forecast-evaluation.md](journal/2026-10/2026-10-18-agent-forecast-evaluation.md)  
 **Current research stage:** user CLI now confirms 14 market + 5 ECB + 3 Banxico + **12 FRED** success via official FRED API. Six-manifest catalog audit **34 OK, 0 FAILED, 6 NEVER_REQUESTED**. User VM source integrity re-audit: **34/34 PASS, zero failed, one signed WTI warning**. One CL=F nonpositive close on 2020-04-20 at −37.630001068115234 (matches documented −37.63). No models fitted. User successfully prepared the market panel: 31,383 country/date feature rows; 4,293 common five-equity dates (2007-07-05 to 2026-10-16); 23,785 separately held-out ECB/FRED reference rows. Exploratory CISS forecasting benchmark EXP-0002 code implemented and CI tested but **not run on user's actual CISS files**; full latent-risk EXP-0001 remains proposed/unexecuted.
+
+## Agent forecast-evaluation update — draft branch, 2026-10-18
+
+**IMPLEMENTED, SYNTHETIC TESTS PENDING CI**: `src/latent_risk/evaluation/backtesting.py`, `baselines.py`, `scoring.py` support fresh-fit nested chronological origin evaluation, strict target-vintage/scale matched loss scoring, block-bootstrap metric intervals and exploratory DM-style HAC loss-differential inference. `experiments/EXP-0003.md` and its JSON config are preregistration only; **not executed** on any real CISS, Mexico, Japan, or fitted latent-risk series. No actual historical first-release vintage data verified. Existing EXP-0002 baseline unchanged. Coordinator must review model adapter interface and reconcile shared-file conflicts before merge. See latest draft journal.
 
 ## Project identity and objective
 International assessment of when smoothed forecasts of financial-risk indicators fail and whether exceedances add information about financial stress beyond ordinary time-varying volatility. Mexico is a core country. The early U.S.-only repository is antecedent work, not validated evidence transferred here.
