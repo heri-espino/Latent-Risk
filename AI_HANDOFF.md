@@ -1,7 +1,7 @@
 # AI handoff — Latent Risk
 
 **Last updated:** 2026-10-17  
-**Latest dated journal entry:** [2026-10-17-bis-neer-acquisition.md](journal/2026-10/2026-10-17-bis-neer-acquisition.md)  
+**Latest dated journal entry:** [2026-10-17-bis-missing-observations-correction.md](journal/2026-10/2026-10-17-bis-missing-observations-correction.md)  
 **Current research stage:** user CLI now confirms 14 market + 5 ECB + 3 Banxico + **12 FRED** success via official FRED API. Six-manifest catalog audit **34 OK, 0 FAILED, 6 NEVER_REQUESTED**. User VM source integrity re-audit: **34/34 PASS, zero failed, one signed WTI warning**. One CL=F nonpositive close on 2020-04-20 at −37.630001068115234 (matches documented −37.63). No models fitted. User successfully prepared the market panel: 31,383 country/date feature rows; 4,293 common five-equity dates (2007-07-05 to 2026-10-16); 23,785 separately held-out ECB/FRED reference rows. Exploratory CISS forecasting benchmark EXP-0002 code implemented and CI tested but **not run on user's actual CISS files**; full latent-risk EXP-0001 remains proposed/unexecuted.
 
 ## Project identity and objective
@@ -36,12 +36,17 @@ How should estimated factor uncertainty enter predictive intervals? What common 
 
 - `IMPLEMENTED / CI VERIFIED`: exploratory `EXP-0002` three-series ECB CISS *direct forecast* baselines, persistence vs AR1 vs nested historical CV-selected one-sided EWMA, horizons 1/5/21 CISS observation steps. Run `python scripts/run_ciss_baselines.py --start 2008-01-01 --horizons 1,5,21 --stride 21` on VM. Neither real-time first-release CISS nor the desired penalized second-difference local-linear trend; not yet run on VM.
 
-- `IMPLEMENTED, OFFLINE CI VERIFIED`: BIS daily broad NEER downloader via `python scripts/download_data.py --start 2000-01-01 --end 2026-10-18 --sources bis`, five canonical codes MX/US/GB/JP/XM; SDMX v2 CSV strict identity/parser; audit included. BIS key-free official API but **NO live VM download** yet. Uses revised current-vintage observations; old USD bilateral and DXY untouched. 79 tests green at https://github.com/heri-espino/Latent-Risk/actions/runs/39088582188. **NOT YET integrated into a new market feature pilot**.
+- `IMPLEMENTED, OFFLINE CI VERIFIED`: BIS daily broad NEER downloader via `python scripts/download_data.py --start 2000-01-01 --end 2026-10-18 --sources bis`, five canonical codes MX/US/GB/JP/XM; SDMX v2 CSV strict identity/parser; audit included. BIS key-free official API **first LIVE attempt 0/5 (parser rejected missing values); corrected offline, live retry PENDING**. Uses revised current-vintage observations; old USD bilateral and DXY untouched. 79 tests green at https://github.com/heri-espino/Latent-Risk/actions/runs/39088582188. **NOT YET integrated into a new market feature pilot**.
+
+- `IMPLEMENTED` / offline verified, NOT live-retested: revised BIS SDMX `OBS_VALUE` parser accepts narrowly defined missing *rows* with NO zero-fill/imputation and logs source missing counts/dates/rate + response SHA256 in new successful snapshot manifests; rejects unknown malformed/nonfinite values, duplicate dates, wrong dimensions and empty observations. Correction green **88 tests** on `7e700297`: https://github.com/heri-espino/Latent-Risk/actions/runs/39089446309 . See first failed live attempt below.
 
 ## Proposed but unimplemented algorithms
 - `PROPOSED`: country-specific Gaussian DFM, robust factors, Markov-switching index variants.
 - `PROPOSED`: constrained local-linear-trend **marginal** MLE/REML with Kalman filtering.
 - `PROPOSED`: rolling-origin pseudo-real-time cross-country evaluation and calibrated forecast exceedance analysis.
+
+## First real BIS download failed on user VM (2026-10-17)
+- `python scripts/download_data.py --start 2000-01-01 --end 2026-10-18 --sources bis` first yielded **0/5**, all `BIS SDMX has missing or nonfinite index values`. Failed snapshot `20261018T021112030837Z`. **Seven manifests**: **34 OK, 5 FAILED, 6 NEVER_REQUESTED** of 45. Older raw QA **34/34 PASS / 1 WTI warning**, expected because BIS did not save a success. The original parser rejected all NA cells; revised parser recognizes explicit missing rows while preserving strict nonmissing validation. This is a hypothesized fix to verify with a new VM retry, NOT a confirmed five-series download. Audit: `data/audits/2026-10-17-bis-first-live-failure.md`.
 
 ## Completed real VM market-pilot diagnostic (reported 2026-10-17)
 - `python scripts/audit_market_pilot.py` finished for timestamp `20261018T003625232736Z`: 31,383 market rows, 4,293 common equity dates (2007-07-05–2026-10-16), 23,785 benchmark values. FX complete/missing: MEX 5,720/944, GBR 5,743/963, JPN 6,466/32, EA 4,814/25. US FX deliberately N/A. Same-date CISS overlap EA 4,838, US 6,675, UK 6,705; weekly STLFSI4 and NFCI 1,338 each. See `data/audits/2026-10-17-market-diagnostics-complete.md`. Descriptive coverage, **no model yet**.
@@ -89,7 +94,7 @@ How should estimated factor uncertainty enter predictive intervals? What common 
 
 ## Exact next actions
 0. Review [proposed indicator priorities](data/indicator_priorities.md); M1/M2/M4 no longer assumed core stress factors. Core candidate feature domains are market/equity downside, FX volatility, funding/credit spread and banking stress; BIS credit gap/DSR is a different longer-horizon vulnerability experiment. ECB CISS for EA/US/UK and Banxico IEMF are reference comparisons, not factor input variables. US ICE credit-spread FRED data limited to ~3 years since April 2026, not suitable for historical 2008 tests without other sources.
-1. Do **NOT** redownload ECB/FRED sources. **Next user VM action (priority changed per request): `git pull --ff-only origin main`; `python scripts/download_data.py --start 2000-01-01 --end 2026-10-18 --sources bis`; `python scripts/audit_downloads.py`; `python scripts/audit_source_quality.py`.** Existing CISS EXP-0002 code remains available to run later. This is an observation-index exploratory method check, **not** real-time CISS or user-made latent-index evidence; then work on strict information-set rules; bank/credit/funding domains needed for systemic stress index. Banxico/BoE/BoJ six never-requested records optional. Keep user raw data and tokens private.
+1. Do **NOT** redownload ECB/FRED sources. **Next user VM action: `git pull --ff-only origin main`; rerun `python scripts/download_data.py --start 2000-01-01 --end 2026-10-18 --sources bis`; then `python scripts/audit_downloads.py` and `python scripts/audit_source_quality.py`.** First BIS 0/5 attempt is fully recorded, parser corrected offline only. Existing CISS EXP-0002 code remains available to run later. This is an observation-index exploratory method check, **not** real-time CISS or user-made latent-index evidence; then work on strict information-set rules; bank/credit/funding domains needed for systemic stress index. Banxico/BoE/BoJ six never-requested records optional. Keep user raw data and tokens private.
 2. The alternate official FRED API succeeded; leave website graph failures recorded but do not block. Build a point-in-time country indicator catalog; start with Mexico, USA.
 3. Implement and test likelihood-based trend smoothing, then index candidates, without reading future observations.
 4. Freeze event windows and a common external target before confirming outcomes.

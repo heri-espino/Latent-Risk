@@ -1,8 +1,14 @@
 # Next steps
 
+- [x] **USER BIS first live attempt**: all five daily broad NEER BIS series failed with the same missing/nonfinite observation error. Seven-manifest catalog: **34 OK, 5 BIS FAILED, 6 NEVER_REQUESTED**; preexisting source QA still 34/34 PASS.
+- [x] **Parser repaired offline** to exclude *explicitly missing* SDMX observation rows (not arbitrary bad numeric values), preserving no-fill rules and recording missing count/first dates/fraction in successful new manifest. 88 tests, Ruff, structure and Sphinx green. No real BIS retry yet.
+- [ ] **Next VM command:** `git pull --ff-only origin main`; `python scripts/download_data.py --start 2000-01-01 --end 2026-10-18 --sources bis`; `python scripts/audit_downloads.py`; `python scripts/audit_source_quality.py`. Inspect BIS actual kept row counts/missing source counts/dates. If still failing, inspect a bounded raw SDMX snippet before altering scientific validation further.
+- [ ] After verified BIS success, create new **versioned** BIS-based effective FX feature panel with 5-country depreciation and vol, keeping original bilateral FX/DXY as robustness.
+
+
 - [x] Verified official BIS five-country daily broad nominal NEER series codes `D.N.B.MX`, `D.N.B.US`, `D.N.B.GB`, `D.N.B.JP`, `D.N.B.XM`; same family/methodology, appreciation-positive (USD/USD zero-variance removed).
 - [x] Implemented `--sources bis` official SDMX CSV downloader, strict parser, per-series immutable audit records and 79-test CI; **not yet live-tested on user's VM**.
-- [ ] **Next user VM action:** `git pull --ff-only origin main` then `python scripts/download_data.py --start 2000-01-01 --end 2026-10-18 --sources bis`, `python scripts/audit_downloads.py`, `python scripts/audit_source_quality.py`. Report five BIS series counts/dates and any HTTP/CSV errors.
+- [x] First requested BIS VM attempt failed 0/5 on strict missing-value check; updated parser and tests; new retry remains pending.
 - [ ] After five BIS real series verified, implement a **new versioned market-pilot preprocessing** with country-specific appreciation/depreciation and trailing NEER volatility using only past values, retaining old bilateral series and DXY as alternatives. Do not rewrite previous 31,383-row pilot automatically.
 
 

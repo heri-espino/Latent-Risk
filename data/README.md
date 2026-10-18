@@ -376,3 +376,40 @@ Official sources: [BIS EER](https://data.bis.org/topics/EER),
 [BIS API v2](https://stats.bis.org/api-doc/v2/),
 [BIS publication/usage FAQ](https://data.bis.org/faq?stats-faqs=7),
 [BIS permitted use](https://www.bis.org/about/legal/permitted-use-statistics).
+
+## BIS first live attempt: missing observation rows (2026-10-17)
+
+The **first actual VM download** reached the BIS SDMX numeric parser for all
+five `D.N.B.*` series but rejected all five with
+`BIS SDMX has missing or nonfinite index values`. Its immutable failed-run
+manifest is `20261018T021112030837Z`. The seven-snapshot catalog reported
+**34 OK, 5 BIS FAILED, 6 NEVER_REQUESTED**; rechecking the older saved
+sources still gave **34/34 PASS**, with one WTI warning. This is **not** a
+successful BIS download.
+
+The parser has now been revised to distinguish explicitly missing observation
+rows from malformed nonmissing numeric values. It discards only recognized
+missing `OBS_VALUE` markers (blank, `.`, `..`, `-`, `NA`, `N/A`, `NaN`,
+`null`) within the requested date range; these are **not imputed as zero,
+forward-filled or interpolated**. It still validates correct SDMX country/
+frequency/type/basket, strict sorted unique dates, positive finite index
+levels, and nonempty numeric results. A successful BIS manifest now stores:
+`bis_source_rows_in_window`, `bis_missing_observation_count`,
+`bis_missing_first_dates` (up to ten), `bis_missing_fraction`, and
+`bis_response_sha256`. The original failed manifest is untouched.
+
+**Next action on VM:**
+
+```powershell
+git pull --ff-only origin main
+python scripts/download_data.py --start 2000-01-01 --end 2026-10-18 --sources bis
+python scripts/audit_downloads.py
+python scripts/audit_source_quality.py
+```
+
+The revised BIS parser passed 88 offline tests, but no real updated API
+response has been verified. If the retry still fails, inspect the specific
+raw SDMX `OBS_VALUE` markers and dates before changing validation further.
+Do not assume new successful BIS series or that `TIME_PERIOD` implies the
+value was published contemporaneously. Evidence:
+[audit of the failed first BIS request](audits/2026-10-17-bis-first-live-failure.md).

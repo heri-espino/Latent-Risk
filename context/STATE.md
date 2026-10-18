@@ -64,6 +64,12 @@ Transcribed provenance in `data/audits/2026-10-17-user-vm-coverage.md` and CSV; 
 
 `IMPLEMENTED / SYNTHETICALLY TESTED`: Official BIS SDMX v2 API daily broad nominal effective FX indices `D.N.B.MX`, `D.N.B.US`, `D.N.B.GB`, `D.N.B.JP`, `D.N.B.XM` (Euro area). All are 2020=100 indices with appreciation-positive direction. `scripts/download_data.py --sources bis` writes per-series immutable source CSVs/SHA256 manifests and integrates existing audits. BIS index historic observation dates are not release times; weight vintages/revisions unknown. Candidate future comparable FX feature: negative log difference of NEER, but **not yet added to the existing derived market pilot**. No live user VM download performed yet; offline GitHub CI 79 tests passed on `dd5e4909`. See ADR-0008 and latest journal. Five catalog additions raise expected total from 40 to **45**; existing 34 successful live downloads do not change until new requests are performed.
 
+## First BIS live download failed; numeric/missing data parser correction (2026-10-17)
+
+**USER-REPORTED:** first `--sources bis` on VM returned **0/5** with `BIS SDMX has missing or nonfinite index values`, snapshot `20261018T021112030837Z`; seven manifests **34 OK / 5 BIS FAILED / 6 NEVER_REQUESTED** of 45. Old raw source integrity remains **34/34 PASS, 1 WTI warning**. The failed BIS source responses never became successful archived CSVs. **Root cause hypothesis:** old strict BIS parser rejected explicitly blank/missing SDMX observation values, common in daily index histories. Actual BIS payload not supplied.
+
+**IMPLEMENTED and CI VERIFIED:** new BIS parser distinguishes explicit missing OBS_VALUE rows from malformed/nonfinite numeric tokens, drops missing rows without imputation and records source missing count/first dates/fraction in new successful manifest; rejects wrong SDMX dimensions, duplicate dates, all missing rows and bad numeric values. CI 88 tests/Ruff/structural validator/Sphinx pass on `7e700297`. **Live BIS retry remains pending**; do not claim actual five-source success or new latent index. See `data/audits/2026-10-17-bis-first-live-failure.md`.
+
 ## Research question
 When and why do forecasts based on smoothed country financial-risk indices fail during financial disturbances? Are unusually large forecast errors informative beyond volatility changes and conventional benchmarks?
 
