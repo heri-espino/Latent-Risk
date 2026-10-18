@@ -1,7 +1,7 @@
 # AI handoff — Latent Risk
 
 **Last updated:** 2026-10-17  
-**Latest dated journal entry:** [2026-10-17-market-diagnostics-and-ciss-baselines.md](journal/2026-10/2026-10-17-market-diagnostics-and-ciss-baselines.md)  
+**Latest dated journal entry:** [2026-10-17-bis-neer-acquisition.md](journal/2026-10/2026-10-17-bis-neer-acquisition.md)  
 **Current research stage:** user CLI now confirms 14 market + 5 ECB + 3 Banxico + **12 FRED** success via official FRED API. Six-manifest catalog audit **34 OK, 0 FAILED, 6 NEVER_REQUESTED**. User VM source integrity re-audit: **34/34 PASS, zero failed, one signed WTI warning**. One CL=F nonpositive close on 2020-04-20 at −37.630001068115234 (matches documented −37.63). No models fitted. User successfully prepared the market panel: 31,383 country/date feature rows; 4,293 common five-equity dates (2007-07-05 to 2026-10-16); 23,785 separately held-out ECB/FRED reference rows. Exploratory CISS forecasting benchmark EXP-0002 code implemented and CI tested but **not run on user's actual CISS files**; full latent-risk EXP-0001 remains proposed/unexecuted.
 
 ## Project identity and objective
@@ -36,6 +36,8 @@ How should estimated factor uncertainty enter predictive intervals? What common 
 
 - `IMPLEMENTED / CI VERIFIED`: exploratory `EXP-0002` three-series ECB CISS *direct forecast* baselines, persistence vs AR1 vs nested historical CV-selected one-sided EWMA, horizons 1/5/21 CISS observation steps. Run `python scripts/run_ciss_baselines.py --start 2008-01-01 --horizons 1,5,21 --stride 21` on VM. Neither real-time first-release CISS nor the desired penalized second-difference local-linear trend; not yet run on VM.
 
+- `IMPLEMENTED, OFFLINE CI VERIFIED`: BIS daily broad NEER downloader via `python scripts/download_data.py --start 2000-01-01 --end 2026-10-18 --sources bis`, five canonical codes MX/US/GB/JP/XM; SDMX v2 CSV strict identity/parser; audit included. BIS key-free official API but **NO live VM download** yet. Uses revised current-vintage observations; old USD bilateral and DXY untouched. 79 tests green at https://github.com/heri-espino/Latent-Risk/actions/runs/39088582188. **NOT YET integrated into a new market feature pilot**.
+
 ## Proposed but unimplemented algorithms
 - `PROPOSED`: country-specific Gaussian DFM, robust factors, Markov-switching index variants.
 - `PROPOSED`: constrained local-linear-trend **marginal** MLE/REML with Kalman filtering.
@@ -60,11 +62,12 @@ How should estimated factor uncertainty enter predictive intervals? What common 
 - **Do not claim data validated, point-in-time, or a completed index model.** Raw bytes/hashes not available to assistant; no independently confirmed provider vintages.
 
 ## Experimental results and limitations
-- `UNKNOWN`: no run of the international research design yet. Catalog now includes 14 Yahoo, 12 FRED (including STLFSI4/NFCI), 5 Banxico, 5 ECB (including 3 CISS), 2 BoE and 2 BoJ. Source status is independently detailed in user-reported coverage record. Mexico's historical FRED M2 ends in 2017.
+- `UNKNOWN`: no run of the international research design yet. Catalog now includes 14 Yahoo, 12 FRED (including STLFSI4/NFCI), 5 Banxico, 5 ECB (including 3 CISS), 2 BoE, 2 BoJ and **5 BIS broad daily NEER candidates not yet fetched live**. Source status is independently detailed in user-reported coverage record. Mexico's historical FRED M2 ends in 2017.
 - `PROPOSED`: point-in-time macro revisions/release-date audit, additional sovereign yields, financial-stress outcomes, and a complete balanced panel. UK M4 is NOT directly equivalent to US/EA/JP/MEX M2.
 - The original 2008 exercise reported very different validation and test RMSEs but used factor parameters/standardization estimated through 2026 and a smoothing choice inconsistent with a better refined candidate. See `context/STATE.md`; **do not treat this as an independent early-warning result**.
 
 ## Decisions
+- [ADR-0008](journal/decisions/ADR-0008.md): BIS five-country consistent NEER acquisition, preservation of old FX inputs.
 - [ADR-0007](journal/decisions/ADR-0007.md) (`PROPOSED`): first retrospective market features, exact-calendar matching and separate external stress references.
 - [ADR-0006](journal/decisions/ADR-0006.md): instrument-specific signed WTI futures price audit policy.
 - [ADR-0005](journal/decisions/ADR-0005.md) (`PROPOSED`): stress-first index measurements; separate official benchmark indices from raw factor inputs.
@@ -86,7 +89,7 @@ How should estimated factor uncertainty enter predictive intervals? What common 
 
 ## Exact next actions
 0. Review [proposed indicator priorities](data/indicator_priorities.md); M1/M2/M4 no longer assumed core stress factors. Core candidate feature domains are market/equity downside, FX volatility, funding/credit spread and banking stress; BIS credit gap/DSR is a different longer-horizon vulnerability experiment. ECB CISS for EA/US/UK and Banxico IEMF are reference comparisons, not factor input variables. US ICE credit-spread FRED data limited to ~3 years since April 2026, not suitable for historical 2008 tests without other sources.
-1. Do **NOT** redownload ECB/FRED sources. **Next user VM action: `git pull --ff-only origin main`; `python scripts/run_ciss_baselines.py --start 2008-01-01 --horizons 1,5,21 --stride 21`**. This is an observation-index exploratory method check, **not** real-time CISS or user-made latent-index evidence; then work on strict information-set rules; bank/credit/funding domains needed for systemic stress index. Banxico/BoE/BoJ six never-requested records optional. Keep user raw data and tokens private.
+1. Do **NOT** redownload ECB/FRED sources. **Next user VM action (priority changed per request): `git pull --ff-only origin main`; `python scripts/download_data.py --start 2000-01-01 --end 2026-10-18 --sources bis`; `python scripts/audit_downloads.py`; `python scripts/audit_source_quality.py`.** Existing CISS EXP-0002 code remains available to run later. This is an observation-index exploratory method check, **not** real-time CISS or user-made latent-index evidence; then work on strict information-set rules; bank/credit/funding domains needed for systemic stress index. Banxico/BoE/BoJ six never-requested records optional. Keep user raw data and tokens private.
 2. The alternate official FRED API succeeded; leave website graph failures recorded but do not block. Build a point-in-time country indicator catalog; start with Mexico, USA.
 3. Implement and test likelihood-based trend smoothing, then index candidates, without reading future observations.
 4. Freeze event windows and a common external target before confirming outcomes.

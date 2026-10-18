@@ -330,3 +330,49 @@ The program saves `origin_predictions.csv`, `matched_model_scores.csv` and
 folder. This is distinct from EXP-0001, the intended country latent-risk
 measurement and PLS smoothing study. No CISS forecast metrics have been
 verified on the user's empirical files yet.
+
+## BIS broad daily nominal effective exchange rates (2026-10-17)
+
+The original bilateral USD FX setup lacks a meaningful US USD/USD rate.
+BIS `WS_EER` provides **comparable daily nominal broad effective exchange
+rates** for each of the five economies as positive 2020=100 indices. An
+increase indicates currency appreciation (not automatically financial stress).
+The catalog registers MEX `D.N.B.MX`, USA `D.N.B.US`, GBR `D.N.B.GB`,
+JPN `D.N.B.JP`, and EA `D.N.B.XM` (BIS uses XM for euro area).
+
+The downloader uses the official key-free BIS SDMX v2 endpoint, validates
+frequency/type/basket/country dimensions, daily ISO dates, finite positive
+index values and exact time windows, and saves per-country raw CSV/manifest
+hashes under ignored `data/raw/downloads/<timestamp>/bis/`. Only its
+synthetic mock HTTP tests have run so far; **live BIS API response format
+and successful vendor retrieval have not yet been checked on VM**.
+
+Run these commands in the **already activated** `(latent-risk)` PowerShell:
+
+```powershell
+git pull --ff-only origin main
+python scripts/download_data.py --start 2000-01-01 --end 2026-10-18 --sources bis
+python scripts/audit_downloads.py
+python scripts/audit_source_quality.py
+```
+
+The requested `--end` date is exclusive, and the exact resulting coverage
+may stop earlier than October 17 due to BIS's periodic release cycle.
+If all five newly registered BIS sources succeed (and no other entries
+change), the expected catalog will have **45** registered series, with
+**39 OK, 0 FAILED, 6 NEVER_REQUESTED**. Do not assume these counts before
+checking the manifest. On a failure, inspect the BIS HTTP/CSV error; older
+raw snapshots remain untouched.
+
+BIS NEER is updated at a later publication date than its daily observations
+and can be revised with trade weights. We do **not** fabricate historical
+`available_date`, nor silently replace the legacy USD bilateral or DXY
+measurements inside the previously generated market-pilot snapshots. A
+future, separately versioned pipeline may compute `-Δlog(NEER)` for a
+uniform FX depreciation signal; retain legacy bilateral FX and DXY as
+robustness alternatives and check overlap with other risk features.
+
+Official sources: [BIS EER](https://data.bis.org/topics/EER),
+[BIS API v2](https://stats.bis.org/api-doc/v2/),
+[BIS publication/usage FAQ](https://data.bis.org/faq?stats-faqs=7),
+[BIS permitted use](https://www.bis.org/about/legal/permitted-use-statistics).

@@ -60,6 +60,10 @@ Transcribed provenance in `data/audits/2026-10-17-user-vm-coverage.md` and CSV; 
 
 **IMPLEMENTED, OFFLINE CI VERIFIED; NOT EXECUTED ON REAL CISS**: preliminary EXP-0002 uses ECB CISS histories as *observed targets* only, models persistence, AR(1) and one-sided EWMA with past-only horizon-specific nested CV gains. Fixes observation-index horizons 1,5,21, evaluation start 2008-01-01 and 21-observation strides. No factor index, PLS smoother, crisis early-warning or pseudo-real-time inference is produced. See `experiments/EXP-0002.md`.
 
+## BIS five-country nominal effective FX acquisition implemented (2026-10-17)
+
+`IMPLEMENTED / SYNTHETICALLY TESTED`: Official BIS SDMX v2 API daily broad nominal effective FX indices `D.N.B.MX`, `D.N.B.US`, `D.N.B.GB`, `D.N.B.JP`, `D.N.B.XM` (Euro area). All are 2020=100 indices with appreciation-positive direction. `scripts/download_data.py --sources bis` writes per-series immutable source CSVs/SHA256 manifests and integrates existing audits. BIS index historic observation dates are not release times; weight vintages/revisions unknown. Candidate future comparable FX feature: negative log difference of NEER, but **not yet added to the existing derived market pilot**. No live user VM download performed yet; offline GitHub CI 79 tests passed on `dd5e4909`. See ADR-0008 and latest journal. Five catalog additions raise expected total from 40 to **45**; existing 34 successful live downloads do not change until new requests are performed.
+
 ## Research question
 When and why do forecasts based on smoothed country financial-risk indices fail during financial disturbances? Are unusually large forecast errors informative beyond volatility changes and conventional benchmarks?
 

@@ -71,3 +71,19 @@ enters as an optional global shock control, first verify the actual local
 nonpositive dates, a continuous-contract roll rule, and a past-only scale for
 any signed price-change transform. See ADR-0006 and
 `data/audits/2026-10-17-source-quality-wti.md`.
+
+## Bilateral FX versus five-country BIS effective FX (2026-10-17)
+
+**New source candidate now IMPLEMENTED, not live-tested:** BIS daily broad
+nominal effective exchange rate, `WS_EER` keys `D.N.B.MX`, `D.N.B.US`,
+`D.N.B.GB`, `D.N.B.JP`, `D.N.B.XM`. Source methodology is consistent
+across all five economies and has appreciation-positive index orientation.
+A uniform depreciation-oriented transform is `-Δlog(E)` with trailing
+volatility calculated causally. Country partner baskets/weights differ, so
+uniform definition does not mean identical exposure to every partner.
+Daily observation labels are **not** BIS public release timestamps, and
+trade weights may be revised; no contemporaneous availability claim is made.
+Preserve existing bilateral USD FX and DXY as robustness candidates; avoid
+silently double-counting overlapping currency measures in the core factor.
+See ADR-0008 and `data/README.md`. BIS API docs:
+https://stats.bis.org/api-doc/v2/ .

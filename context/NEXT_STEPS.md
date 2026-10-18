@@ -1,5 +1,11 @@
 # Next steps
 
+- [x] Verified official BIS five-country daily broad nominal NEER series codes `D.N.B.MX`, `D.N.B.US`, `D.N.B.GB`, `D.N.B.JP`, `D.N.B.XM`; same family/methodology, appreciation-positive (USD/USD zero-variance removed).
+- [x] Implemented `--sources bis` official SDMX CSV downloader, strict parser, per-series immutable audit records and 79-test CI; **not yet live-tested on user's VM**.
+- [ ] **Next user VM action:** `git pull --ff-only origin main` then `python scripts/download_data.py --start 2000-01-01 --end 2026-10-18 --sources bis`, `python scripts/audit_downloads.py`, `python scripts/audit_source_quality.py`. Report five BIS series counts/dates and any HTTP/CSV errors.
+- [ ] After five BIS real series verified, implement a **new versioned market-pilot preprocessing** with country-specific appreciation/depreciation and trailing NEER volatility using only past values, retaining old bilateral series and DXY as alternatives. Do not rewrite previous 31,383-row pilot automatically.
+
+
 - [x] User ran the **real derivative pilot diagnostic** on local `20261018T003625232736Z`: 31,383 country-date rows; 4,293 five-country equity dates; 23,785 benchmark rows. Country FX present/missing: MEX 5,720/944, GBR 5,743/963, JPN 6,466/32, EA 4,814/25; US FX N/A. CISS same-date overlaps EA 4,838, US 6,675, UK 6,705; FRED weekly references 1,338 each.
 - [x] Implement exploratory ECB CISS **observation-index** matched-origin benchmark EXP-0002 with persistence, AR1 and h-specific nested-CV causal EWMA, offline tests and provenance. **Not yet run on actual VM CISS history.**
 - [ ] **Next VM action:** `git pull --ff-only origin main` then `python scripts/run_ciss_baselines.py --start 2008-01-01 --horizons 1,5,21 --stride 21`; report score counts and RMSE/MAE. Treat as engineering/retrospective evidence only.
