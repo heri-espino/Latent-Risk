@@ -220,7 +220,7 @@ def run_backtest(
     target_id: str,
     target_scale: str,
     families: tuple[ForecastFamily, ...],
-    config: BacktestConfig = BacktestConfig(),
+    config: BacktestConfig | None = None,
 ) -> pd.DataFrame:
     """Generate fully nested expanding- or rolling-origin level forecasts.
 
@@ -257,6 +257,7 @@ def run_backtest(
     release snapshots are separately established and supplied.
     """
     families = tuple(families)
+    config = BacktestConfig() if config is None else config
     _check(config, families)
     if any(not x or not x.strip() for x in (country, target_id, target_scale)):
         raise ValueError("country, target_id and target_scale must be explicit")
