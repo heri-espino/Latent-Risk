@@ -98,3 +98,7 @@ The old U.S. DFM input series were logged VIX, WTI, GLD and DXY. The run used 20
 ## Linked prior resources
 - Legacy risk project: https://github.com/heri-espino/Estimation-of-latent-risk-in-the-U.S.-market-using-representative-variables
 - Smoothing-methods theory: https://github.com/heri-espino/Trend-Estimation
+
+## QA interface contract proposal — 2026-10-18
+
+**PROPOSED:** `docs/architecture/interfaces.md` specifies a metadata-rich, source-hash-preserving data contract and separate factor, one-sided trend, forecast and event-score boundaries. **IMPLEMENTED tests:** new synthetic `tests/test_public_contracts.py` checks existing public imports, vendor-independent provenance and causal origin properties, with a test-local forecast stub. These tests are not evidence that a production one-sided risk/forecast engine exists. Unknown release times must remain unknown; the existing vintage API is timezone-naive/date-only. See `journal/2026-10/2026-10-18-library-qa-contracts.md` and its draft PR; coordinator approval is required for runtime API changes.
