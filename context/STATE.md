@@ -48,6 +48,12 @@ Transcribed provenance in `data/audits/2026-10-17-user-vm-coverage.md` and CSV; 
 
 **IMPLEMENTED, OFFLINE TESTS:** `src/latent_risk/data/market_features.py` computes five-country local equity daily returns, trailing 21-observation volatility and 63-observation drawdown; optional country FX depreciation and volatility for non-US markets, direction-aware, on present/past observations. `scripts/build_market_pilot.py` checks original source integrity, saves local descriptive market features and an exact matching equity-date panel, but keeps ECB CISS and FRED stress indices in a separate reference CSV. CLI has **not yet run on user's actual VM files**. No retrospective full-sample standardization, fitted stress index or forecast outcomes are claimed. Daily labels and international close times remain unaudited. See `data/audits/2026-10-17-integrity-complete.md` and proposed ADR-0007.
 
+## Derived market panel actually prepared on user VM (2026-10-17)
+
+**USER-REPORTED:** `scripts/build_market_pilot.py` finished: **31,383** country/observation-date features from 2000-03-30 to 2026-10-16, **4,293** exact common five-equity dates 2007-07-05 to 2026-10-16, and **23,785** separately held-out CISS/STLFSI4/NFCI observation rows. Output says **NO MODELS FITTED**. The user pasted a truncated local path; raw generated files remain only in their ignored local `data/processed/market_pilot` hierarchy. Counts/date spans only, not direct assistant-read CSV verification. See `data/audits/2026-10-17-market-pilot-built.md`.
+
+**IMPLEMENTED/OFFLINE VERIFIED:** new `scripts/audit_market_pilot.py` reports exact country and FX missingness, reference same-day overlap, source/output hashes and five-market data consistency; uses no fitted models, provides no claim of historical release dates. Synthetic checks passed in CI; waiting for VM run.
+
 ## Research question
 When and why do forecasts based on smoothed country financial-risk indices fail during financial disturbances? Are unusually large forecast errors informative beyond volatility changes and conventional benchmarks?
 

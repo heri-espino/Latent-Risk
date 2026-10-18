@@ -274,3 +274,31 @@ simultaneous availability of London/Tokyo/Mexico/New York closes. Today's
 revised historical CISS values cannot be used to demonstrate past published
 vintages. Missing FX dates are not interpolated; no model, scaler or forecast
 is fitted. The output is a technical precursor to EXP-0001.
+
+## First market-pilot data created on VM; diagnostics (2026-10-17)
+
+The user successfully ran `scripts/build_market_pilot.py` and obtained
+31,383 country/date market-feature rows, 4,293 five-equity common sessions
+(2007-07-05–2026-10-16) and 23,785 separately stored ECB/FRED benchmark
+observations. This is **PREPARATION ONLY**, not a forecasting result.
+
+The next step is a **read-only diagnostic** on that already-created local
+pilot; it does not download or regenerate data:
+
+```powershell
+git pull --ff-only origin main
+python scripts/audit_market_pilot.py
+```
+
+The script selects the newest timestamped `data/processed/market_pilot`
+output, validates its own derived-CSV hashes and values against the manifest,
+checks unique country dates, five-way exact equity intersection, quantitative
+country-vs-common feature equality, FX coverage/missingness by country, and
+same-date overlap with the separate published benchmark series.
+It writes an ignored `results/runs/market_diagnostics/summary.json` and prints
+key sample counts. To inspect another derived run, pass `--pilot-dir` with
+its full existing directory. Never assume same-date CISS/STLFSI4/NFCI values
+were publicly available before that day's close; those comparisons are
+**descriptive overlap only**.
+
+Evidence: [VM market-feature preparation record](audits/2026-10-17-market-pilot-built.md).

@@ -1,8 +1,8 @@
 # AI handoff — Latent Risk
 
 **Last updated:** 2026-10-17  
-**Latest dated journal entry:** [2026-10-17-market-feature-preparation.md](journal/2026-10/2026-10-17-market-feature-preparation.md)  
-**Current research stage:** user CLI now confirms 14 market + 5 ECB + 3 Banxico + **12 FRED** success via official FRED API. Six-manifest catalog audit **34 OK, 0 FAILED, 6 NEVER_REQUESTED**. User VM source integrity re-audit: **34/34 PASS, zero failed, one signed WTI warning**. One CL=F nonpositive close on 2020-04-20 at −37.630001068115234 (matches documented −37.63). No models fitted. No forecasting experiment executed.
+**Latest dated journal entry:** [2026-10-17-market-pilot-diagnostics.md](journal/2026-10/2026-10-17-market-pilot-diagnostics.md)  
+**Current research stage:** user CLI now confirms 14 market + 5 ECB + 3 Banxico + **12 FRED** success via official FRED API. Six-manifest catalog audit **34 OK, 0 FAILED, 6 NEVER_REQUESTED**. User VM source integrity re-audit: **34/34 PASS, zero failed, one signed WTI warning**. One CL=F nonpositive close on 2020-04-20 at −37.630001068115234 (matches documented −37.63). No models fitted. User successfully prepared the market panel: 31,383 country/date feature rows; 4,293 common five-equity dates (2007-07-05 to 2026-10-16); 23,785 separately held-out ECB/FRED reference rows. No forecasting experiment executed.
 
 ## Project identity and objective
 International assessment of when smoothed forecasts of financial-risk indicators fail and whether exceedances add information about financial stress beyond ordinary time-varying volatility. Mexico is a core country. The early U.S.-only repository is antecedent work, not validated evidence transferred here.
@@ -30,12 +30,17 @@ How should estimated factor uncertainty enter predictive intervals? What common 
 
 - `IMPLEMENTED`: WTI `CL=F` is a signed futures price domain, with nonpositive-close warnings and count/date/minimum report, legacy manifest fallback, and retained strict equity/FX positivity. Added `ADR-0006` and tests. Actual WTI nonpositive observation dates/values are still UNKNOWN; re-run audit in VM.
 
-- `IMPLEMENTED` / offline tests: `src/latent_risk/data/market_features.py` and `python scripts/build_market_pilot.py` prepare exact-date, past-only 5-country equity+4-FX descriptive features and separate stress benchmarks (3 ECB CISS and 2 FRED indices); save ignored dated CSVs and SHA256 manifest. **Not yet run on user VM actual source data.** No fitted model or true point-in-time panel.
+- `IMPLEMENTED` / offline tests: `src/latent_risk/data/market_features.py` and `python scripts/build_market_pilot.py` prepare exact-date, past-only 5-country equity+4-FX descriptive features and separate stress benchmarks (3 ECB CISS and 2 FRED indices); save ignored dated CSVs and SHA256 manifest. **Run successfully by user on VM**, producing the above three CSVs in a dated ignored directory. No fitted model or true point-in-time panel.
+
+- `IMPLEMENTED` and offline CI verified (57 passed): `python scripts/audit_market_pilot.py` checks existing derivatives' hashes, per-country FX/market coverage, strict five-equity calendar/value matching and *separate* ECB/FRED benchmark same-date overlaps; it writes ignored `results/runs/market_diagnostics/summary.json`. **Not yet run on actual VM generated panel.**
 
 ## Proposed but unimplemented algorithms
 - `PROPOSED`: country-specific Gaussian DFM, robust factors, Markov-switching index variants.
 - `PROPOSED`: constrained local-linear-trend **marginal** MLE/REML with Kalman filtering.
 - `PROPOSED`: rolling-origin pseudo-real-time cross-country evaluation and calibrated forecast exceedance analysis.
+
+## Actual VM derived dataset (reported 2026-10-17)
+- `python scripts/build_market_pilot.py` returned **31,383** country-market rows, **4,293** exact five-country equity dates (2007-07-05 to 2026-10-16) and **23,785** separate reference observations. Preparation-only; no models fitted. Source: `data/audits/2026-10-17-market-pilot-built.md`. `scripts/audit_market_pilot.py` now exists for numerical coverage verification; still pending VM run.
 
 ## Observed VM integrity results (user-reported 2026-10-17)
 - Corrected **latest** re-audit: 34/34 PASS, 0 fail, 1 WTI warning; one CL=F nonpositive close **2020-04-20, −37.630001068115234**. Matches historically documented −37.63; non-WTI data pass. Prior 33/34 result below is historical, not current. Evidence in `data/audits/2026-10-17-integrity-complete.md`.
@@ -76,7 +81,7 @@ How should estimated factor uncertainty enter predictive intervals? What common 
 
 ## Exact next actions
 0. Review [proposed indicator priorities](data/indicator_priorities.md); M1/M2/M4 no longer assumed core stress factors. Core candidate feature domains are market/equity downside, FX volatility, funding/credit spread and banking stress; BIS credit gap/DSR is a different longer-horizon vulnerability experiment. ECB CISS for EA/US/UK and Banxico IEMF are reference comparisons, not factor input variables. US ICE credit-spread FRED data limited to ~3 years since April 2026, not suitable for historical 2008 tests without other sources.
-1. Do **NOT** redownload ECB/FRED sources. **Next user VM action: `git pull --ff-only origin main`; `python scripts/build_market_pilot.py`** and inspect saved output row counts/sample dates; then pilot a labeled market/CISS study with strict information-set rules; bank/credit/funding domains needed for systemic stress index. Banxico/BoE/BoJ six never-requested records optional. Keep user raw data and tokens private.
+1. Do **NOT** redownload ECB/FRED sources. **Next user VM action: `git pull --ff-only origin main`; `python scripts/audit_market_pilot.py`** and inspect country FX missingness and benchmark overlaps; then pilot a labeled market/CISS study with strict information-set rules; bank/credit/funding domains needed for systemic stress index. Banxico/BoE/BoJ six never-requested records optional. Keep user raw data and tokens private.
 2. The alternate official FRED API succeeded; leave website graph failures recorded but do not block. Build a point-in-time country indicator catalog; start with Mexico, USA.
 3. Implement and test likelihood-based trend smoothing, then index candidates, without reading future observations.
 4. Freeze event windows and a common external target before confirming outcomes.

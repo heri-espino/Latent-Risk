@@ -1,8 +1,14 @@
 # Next steps
 
+- [x] **REAL USER VM PREPARATION** `python scripts/build_market_pilot.py` succeeded: **31,383** long five-country market rows (2000-03-30 to 2026-10-16), **4,293** exact common equity sessions (2007-07-05 to 2026-10-16), **23,785** external references (2000-01-03 to 2026-10-15).
+- [x] Implemented read-only saved-derivative diagnostic `scripts/audit_market_pilot.py`, verifying hashes, FX missingness by country, common panel identities, same-date reference overlap and tests. **Not yet run against actual VM outputs**.
+- [ ] **Next VM action:** `git pull --ff-only origin main`; `python scripts/audit_market_pilot.py`; share summary counts and FX coverage, no raw CSVs/tokens in Git.
+- [ ] Decide forecast-origin clock and CISS reporting vintages; define an exploratory observed-target protocol without claiming actual past release-time predictive signals. Only then fit reference forecasting baselines / smoothing.
+
+
 - [x] User reran corrected file audit: **34 PASS / 0 FAIL / 1 warning**. CL=F had exactly one nonpositive close, 2020-04-20, −37.630001068115234 (~−37.63); matches historical WTI futures settlement date.
 - [x] Implemented end-of-day, past-only market-feature preparation: five country equities, four FX quotes, exact dates, 21/63 observation trailing statistics, explicitly separate ECB/FRED benchmarks, source-hash provenance and tests.
-- [ ] **Next VM action:** `git pull --ff-only origin main` then `python scripts/build_market_pilot.py` and report per-output dates/row counts. It is data preparation, not a fitted model.
+- [x] User ran `scripts/build_market_pilot.py` and reported all three derived output row counts/spans. No models were fitted.
 - [ ] Inspect date-matched common panel, market/FX missingness, source adjustments, and cross-timezone close rules before model fitting.
 - [ ] Freeze first descriptive observed CISS target versus original inferred latent-factor estimand; do not label this dataset a valid pseudo-real-time panel.
 
