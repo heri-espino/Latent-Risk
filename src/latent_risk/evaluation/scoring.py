@@ -11,7 +11,7 @@ import numpy as np
 import pandas as pd
 from scipy.stats import norm
 
-GROUP = ["country", "target_id", "target_scale", "vintage_mode", "horizon", "horizon_unit"]
+GROUP = ["country", "target_id", "target_scale", "dataset_vintage", "vintage_mode", "horizon", "horizon_unit"]
 KEY = ["origin_date", "target_date"]
 REQUIRED = set(GROUP + KEY + ["model", "actual", "prediction"])
 
@@ -23,7 +23,7 @@ def _groups(frame: pd.DataFrame) -> Iterator[tuple[tuple, pd.DataFrame]]:
     if data[list(REQUIRED)].isna().any().any():
         raise ValueError("forecast-result fields must not be missing")
     if any(not data[x].map(lambda v: isinstance(v, str) and bool(v.strip())).all()
-           for x in ("country", "target_id", "target_scale", "vintage_mode",
+           for x in ("country", "target_id", "target_scale", "dataset_vintage", "vintage_mode",
                      "horizon_unit", "model", *KEY)):
         raise ValueError("invalid identity, date or model labels")
     if (not np.isfinite(data[["actual", "prediction"]].to_numpy(dtype=float)).all()
@@ -174,7 +174,7 @@ def hac_loss_differentials(
         n = len(errs[benchmark])
         if n < 8:
             raise ValueError("at least 8 paired forecast origins needed for HAC")
-        effective_lag = min(int(group[4]) - 1, n // 4) if lag is None else lag
+        effective_lag = min(int(group[5]) - 1, n // 4) if lag is None else lag
         if effective_lag >= n:
             raise ValueError("HAC lag must be < number of forecast origins")
         ref = errs[benchmark] ** 2
