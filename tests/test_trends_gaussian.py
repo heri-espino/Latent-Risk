@@ -126,6 +126,10 @@ def test_future_perturbation_cannot_change_origin_forecast():
     forecast2, fit2 = forecast_with_reml(future, 34, 3)
     assert forecast1 == forecast2
     assert fit1 == fit2
+    unknown_future = y.copy()
+    unknown_future[35:] = np.nan
+    assert forecast_at_origin(unknown_future, 34, 7, 1.3, 0.3) == original
+    assert forecast_with_reml(unknown_future, 34, 3) == (forecast1, fit1)
     assert not np.allclose(smooth_local_linear(y, 1.3, 0.3),
                            smooth_local_linear(future, 1.3, 0.3))
 
