@@ -1,8 +1,11 @@
 # AI handoff — Latent Risk
 
-**Last updated:** 2026-10-17  
-**Latest dated journal entry:** [2026-10-17-bis-missing-observations-correction.md](journal/2026-10/2026-10-17-bis-missing-observations-correction.md)  
+**Last updated:** 2026-10-18  
+**Latest dated journal entry:** [2026-10-18-trend-likelihood-documentation.md](journal/2026-10/2026-10-18-trend-likelihood-documentation.md)
 **Current research stage:** user CLI now confirms 14 market + 5 ECB + 3 Banxico + **12 FRED** success via official FRED API. Six-manifest catalog audit **34 OK, 0 FAILED, 6 NEVER_REQUESTED**. User VM source integrity re-audit: **34/34 PASS, zero failed, one signed WTI warning**. One CL=F nonpositive close on 2020-04-20 at −37.630001068115234 (matches documented −37.63). No models fitted. User successfully prepared the market panel: 31,383 country/date feature rows; 4,293 common five-equity dates (2007-07-05 to 2026-10-16); 23,785 separately held-out ECB/FRED reference rows. Exploratory CISS forecasting benchmark EXP-0002 code implemented and CI tested but **not run on user's actual CISS files**; full latent-risk EXP-0001 remains proposed/unexecuted.
+
+## 2026-10-18 trend likelihood note (parallel-agent coordination)
+**IMPLEMENTED on concurrent `agent/trend-likelihood` source branch, NOT yet verified by this documentation agent's CI:** `src/latent_risk/trends/gaussian.py` and `tests/test_trends_gaussian.py` add second-difference PLS, affine-nullspace EDF, diffuse innovations REML and filtered forecasts. The documentation branch `agent/trend-likelihood-docs-20261018` inherits those commits without editing another agent's files, and adds [the mathematical note](notes/results/trend_likelihood.md) with clear ML/REML/GCV/forecast-error distinctions. A *separate* locally authored implementation passed 81 synthetic tests; do **not** attribute that count to the GitHub code. Real risk-index experiments remain unrun; coordinator must reconcile branch and rerun tests/CI before acceptance.
 
 ## Project identity and objective
 International assessment of when smoothed forecasts of financial-risk indicators fail and whether exceedances add information about financial stress beyond ordinary time-varying volatility. Mexico is a core country. The early U.S.-only repository is antecedent work, not validated evidence transferred here.
