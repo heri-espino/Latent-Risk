@@ -1,3 +1,7 @@
+## Parallel agent contribution (2026-10-18; draft PR #1, NOT MERGED)
+
+**IMPLEMENTED on agent/index-models:** typed dated country-index family: economically signed observed-case mean, frozen training PCA and optional two-stage Gaussian AR(1) state-space forward filter. Explicit training and information cutoff; disclosed train-only mean imputation/missing observation handling, anchor sign, conditional state SE, descriptive serial/cross residual checks, PCA split-half stability. Existing composite/PCA remain supported. See notes/results/index_models.md. **VERIFIED COMPUTATIONALLY only to extent shown by PR CI;** no real country factor, no publication-vintage verification, no claim of systemic stress or crisis predictiveness. **Not a jointly fitted DFM**. This section is branch-local and must be reconciled by integrator.
+
 # Research state (2026-10-17)
 
 **Status:** `IMPLEMENTED` baseline source-package infrastructure; CI `VERIFIED COMPUTATIONALLY` on commit `075f9027` (12 tests, Ruff, validator, Sphinx pass: https://github.com/heri-espino/Latent-Risk/actions/runs/38994859776). The international empirical evaluation remains `PROPOSED`, not completed.
