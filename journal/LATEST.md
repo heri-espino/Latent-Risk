@@ -1,5 +1,5 @@
 # Latest research journal entry
 
-[2026-10-17 — BIS missing observation parser correction](2026-10/2026-10-17-bis-missing-observations-correction.md)
+[2026-10-18 — Library interface contracts and independent synthetic QA](2026-10/2026-10-18-library-qa-contracts.md)
 
 Older entries remain in `journal/2026-10/`. Read this entry before `AI_HANDOFF.md`.
