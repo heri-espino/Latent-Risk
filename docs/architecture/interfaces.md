@@ -1,3 +1,7 @@
+---
+orphan: true
+---
+
 # Integration interfaces — proposed contract v1
 
 **Status:** PROPOSED, not a new exported package API. **Owner:** library QA. **Reviewed against:** `pyproject.toml`, `src/latent_risk/data/vintages.py`, `data/market_features.py`, `indices/`, `evaluation/errors.py`, and CI as of 2026-10-18. Implementation of factor, trend, forecasting, and scoring boundaries requires coordinator approval.
