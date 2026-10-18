@@ -10,5 +10,6 @@
 | [ADR-0006](../journal/decisions/ADR-0006.md) | 2026-10-17 | Instrument-aware signed WTI futures prices; audit warnings without mutating history | Accepted |
 | [ADR-0007](../journal/decisions/ADR-0007.md) | 2026-10-17 | First descriptive end-of-day five-market feature panel and separate stress reference indices | Proposed |
 | [ADR-0008](../journal/decisions/ADR-0008.md) | 2026-10-17 | BIS daily nominal broad effective FX indices for all five economies, source acquisition only | Accepted / feature replacement proposed |
+| [ADR-0009](../journal/decisions/ADR-0009.md) | 2026-10-18 | Standalone versioned BIS NEER five-country equity+FX descriptive pilot, preserving old bilateral data | Accepted (descriptive only) |
 
 Follow the latest dated journal entry for changes to this index.

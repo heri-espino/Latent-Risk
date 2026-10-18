@@ -1,11 +1,17 @@
 # AI handoff — Latent Risk
 
-**Last updated:** 2026-10-18  
+**Last updated:** 2026-10-18
 **Latest dated journal entry:** [2026-10-18-trend-likelihood-documentation.md](journal/2026-10/2026-10-18-trend-likelihood-documentation.md)
 **Current research stage:** user CLI now confirms 14 market + 5 ECB + 3 Banxico + **12 FRED** success via official FRED API. Six-manifest catalog audit **34 OK, 0 FAILED, 6 NEVER_REQUESTED**. User VM source integrity re-audit: **34/34 PASS, zero failed, one signed WTI warning**. One CL=F nonpositive close on 2020-04-20 at −37.630001068115234 (matches documented −37.63). No models fitted. User successfully prepared the market panel: 31,383 country/date feature rows; 4,293 common five-equity dates (2007-07-05 to 2026-10-16); 23,785 separately held-out ECB/FRED reference rows. Exploratory CISS forecasting benchmark EXP-0002 code implemented and CI tested but **not run on user's actual CISS files**; full latent-risk EXP-0001 remains proposed/unexecuted.
 
+## Current user-verified BIS completion and new versioned pilot (2026-10-18)
+
+- **LIVE USER VM success:** `--sources bis` downloaded 5/5 series into immutable snapshot `20261018T145643915821Z`, each **6,987** values 2000-01-03 through 2026-10-13; **2,796** missing source-day rows each dropped without zero fill. Now eight manifests and catalog 45: **39 OK / 0 FAILED / 6 NEVER_REQUESTED**. `audit_source_quality.py`: **39/39 PASS**, one historic signed-WTI warning. Source record: `data/audits/2026-10-18-bis-five-series-live-success.md`. Earlier 0/5 BIS error remains historical.
+- **IMPLEMENTED / synthetic CI verified:** separate `python scripts/build_bis_market_pilot.py`, creates new `data/processed/market_pilot_bis/<timestamp>/`, retaining equity inputs, adding all five BIS NEER returns/rolling volatility (including meaningful US index), exact equity-only and fully observed equity+NEER 5-way panels, and separate published benchmark references. Old bilateral/USD FX pilot unchanged. **Not yet run on user's real saved BIS observations**. CI **95 passed**: https://github.com/heri-espino/Latent-Risk/actions/runs/39138567174 .
+- **Next VM command:** `git pull --ff-only origin main`; `python scripts/build_bis_market_pilot.py`. Report product row counts, date spans and country NEER coverage. No source re-download necessary. Neither this descriptive output nor contemporaneous observation_date is historical released available_date.
+
 ## 2026-10-18 trend likelihood note (parallel-agent coordination)
-**IMPLEMENTED on concurrent `agent/trend-likelihood` source branch, NOT yet verified by this documentation agent's CI:** `src/latent_risk/trends/gaussian.py` and `tests/test_trends_gaussian.py` add second-difference PLS, affine-nullspace EDF, diffuse innovations REML and filtered forecasts. The documentation branch `agent/trend-likelihood-docs-20261018` inherits those commits without editing another agent's files, and adds [the mathematical note](notes/results/trend_likelihood.md) with clear ML/REML/GCV/forecast-error distinctions. A *separate* locally authored implementation passed 81 synthetic tests; do **not** attribute that count to the GitHub code. Real risk-index experiments remain unrun; coordinator must reconcile branch and rerun tests/CI before acceptance.
+**IMPLEMENTED on concurrent `agent/trend-likelihood` source branch, NOT yet verified by this documentation agent's CI:** `src/latent_risk/trends/gaussian.py` and `tests/test_trends_gaussian.py` add second-difference PLS, affine-nullspace EDF, diffuse innovations REML and filtered forecasts. The documentation branch `agent/trend-likelihood-docs-20261018` inherits those commits without editing another agent's files and adds [the mathematical note](notes/results/trend_likelihood.md). A *separate* locally authored implementation passed 81 synthetic tests; do **not** attribute that count to the GitHub code. Real risk-index experiments remain unrun; coordinator must review and rerun all tests before acceptance.
 
 ## Project identity and objective
 International assessment of when smoothed forecasts of financial-risk indicators fail and whether exceedances add information about financial stress beyond ordinary time-varying volatility. Mexico is a core country. The early U.S.-only repository is antecedent work, not validated evidence transferred here.
@@ -75,6 +81,7 @@ How should estimated factor uncertainty enter predictive intervals? What common 
 - The original 2008 exercise reported very different validation and test RMSEs but used factor parameters/standardization estimated through 2026 and a smoothing choice inconsistent with a better refined candidate. See `context/STATE.md`; **do not treat this as an independent early-warning result**.
 
 ## Decisions
+- [ADR-0009](journal/decisions/ADR-0009.md): versioned all-five BIS-derived descriptive FX market panel; legacy USD variant retained.
 - [ADR-0008](journal/decisions/ADR-0008.md): BIS five-country consistent NEER acquisition, preservation of old FX inputs.
 - [ADR-0007](journal/decisions/ADR-0007.md) (`PROPOSED`): first retrospective market features, exact-calendar matching and separate external stress references.
 - [ADR-0006](journal/decisions/ADR-0006.md): instrument-specific signed WTI futures price audit policy.
