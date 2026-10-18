@@ -80,10 +80,17 @@ def test_bis_all_missing_rejected():
                           "2020-01-01", "2020-02-01")
 
 
-@pytest.mark.parametrize("value", ["inf", "-inf", "1e309", "abc", "101,2"])
+@pytest.mark.parametrize("value", ["inf", "-inf", "1e309", "abc"])
 def test_bis_nonmissing_malformed_values_rejected(value):
     with pytest.raises(ValueError, match="malformed or nonfinite"):
         parse_bis_eer_csv(bis_csv(value=value), "D.N.B.MX",
+                          "2020-01-01", "2020-02-01")
+
+
+def test_bis_malformed_extra_csv_field_rejected():
+    """A comma in an unquoted value breaks the SDMX row dimensions."""
+    with pytest.raises(ValueError, match="incorrect series dimensions"):
+        parse_bis_eer_csv(bis_csv(value="101,2"), "D.N.B.MX",
                           "2020-01-01", "2020-02-01")
 
 
