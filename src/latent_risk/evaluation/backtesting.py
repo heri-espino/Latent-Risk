@@ -19,7 +19,7 @@ VintagePolicy = Literal["current_vintage", "provided_release_dates"]
 
 
 class Forecaster(Protocol):
-    """Fit a fresh, unfitted estimator and predict a positive-step horizon.
+    """Fit a fresh, unfitted estimator at an explicit cutoff and predict a positive-step horizon.
 
     Every fit receives only a finite chronological one-dimensional history ending
     at or before its explicit cutoff. Factories must not retain global training
@@ -187,7 +187,7 @@ def _select(
 ) -> tuple[Candidate, int]:
     """Score inner candidates only on targets released by the outer origin."""
     inner_window = config.train_window if config.inner_window is None else config.inner_window
-    folds: list[tuple[np.ndarray, float]] = []
+    folds: list[tuple[np.ndarray, float, str]] = []
     for j in range(config.inner_min_train - 1, outer_index - horizon + 1,
                    config.inner_stride):
         as_of = data["date"].iloc[j]
@@ -196,7 +196,7 @@ def _select(
             continue
         history = _as_of(data, as_of, inner_window)
         if len(history) >= config.inner_min_train:
-            folds.append((history, float(target["value"])))
+            folds.append((history, float(target["value"]), as_of.strftime("%Y-%m-%d")))
     if len(folds) < 2:
         raise ValueError(
             f"insufficient *released* inner targets for {family.name} "
@@ -205,8 +205,8 @@ def _select(
     scored: list[tuple[float, str, Candidate]] = []
     for candidate in family.candidates:
         errors = [
-            (_fresh_forecast(candidate, past, horizon, as_of.strftime("%Y-%m-%d")) - actual) ** 2
-            for past, actual in folds
+            (_fresh_forecast(candidate, past, horizon, cutoff) - actual) ** 2
+            for past, actual, cutoff in folds
         ]
         scored.append((float(np.mean(errors)), candidate.key, candidate))
     winner = min(scored, key=lambda entry: (entry[0], entry[1]))
