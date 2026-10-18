@@ -231,9 +231,9 @@ def fit_reml(y: object) -> REMLFit:
         if fitted.success and np.isfinite(fitted.fun):
             candidates.append((float(fitted.fun), *np.exp(fitted.x), fitted.x, "interior"))
     for name in ("q_zero", "r_zero"):
-        def boundary_objective(logv):
+        def boundary_objective(logv, *, which=name):
             v = float(np.exp(logv))
-            r, q = (v, 0.0) if name == "q_zero" else (0.0, v)
+            r, q = (v, 0.0) if which == "q_zero" else (0.0, v)
             return filter_local_linear(standardized, r, q).reml_nll
 
         fitted = minimize_scalar(boundary_objective, method="bounded", bounds=bound)
