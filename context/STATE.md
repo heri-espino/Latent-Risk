@@ -1,6 +1,9 @@
-# Research state (2026-10-17)
+# Research state (2026-10-18, unmerged data-agent branch)
 
 **Status:** `IMPLEMENTED` baseline source-package infrastructure; CI `VERIFIED COMPUTATIONALLY` on commit `075f9027` (12 tests, Ruff, validator, Sphinx pass: https://github.com/heri-espino/Latent-Risk/actions/runs/38994859776). The international empirical evaluation remains `PROPOSED`, not completed.
+
+## Unmerged data acquisition agent changes (2026-10-18)
+**IMPLEMENTED; NOT LIVE VM VERIFIED:** new read-only local `scripts/audit_source_coverage.py` checks saved CSV integrity against manifest and reports exact observed spans, source identities, catalog-declared frequency/units, source hash and missing rows. New bounded BIS failure diagnostics and response SHA256 persist in failed manifests; rejected vendor bytes are not stored. `data/provider_metadata_contract.proposed.json` is a **PROPOSAL**, not an interface change. First live BIS request still 0/5; no new true historical first-release vintage, risk factor, model, or validated forecast. Audit note: `data/audits/2026-10-18-data-agent-status.md`. New tests were added; their CI outcome must be checked.
 
 ## Initial data collection (2026-10-16)
 `IMPLEMENTED` source acquisition module: 14 daily Yahoo market tickers, 10 FRED macro/financial series and three optional Banxico token-based series in `data/source_catalog.json`. Local isolated UTC snapshots under `data/raw/downloads/` include CSVs, hashes, historical-coverage ranges and failures. `VERIFIED COMPUTATIONALLY`: 19 offline tests, Ruff, structure and Sphinx pass on `8fb85d0` (https://github.com/heri-espino/Latent-Risk/actions/runs/38998827014). **No live download has been run**, so coverage and actual provider success are `UNKNOWN`.

@@ -1,5 +1,10 @@
 # Next steps
 
+- [x] **UNMERGED data agent branch:** implemented read-only per-series hash-gated coverage export with exact source-file observation spans and source unit/frequency declarations, plus bounded BIS failure response diagnostics with SHA256 and no raw payload logging. Added offline synthetic tests and a coordinator-gated provider metadata contract proposal; CI outcome still to check.
+- [ ] **User VM live verification:** after reviewing the agent branch and keeping all 34 prior source snapshots, retry **only BIS**: `python scripts/download_data.py --start 2000-01-01 --end 2026-10-18 --sources bis`; run `python scripts/audit_source_coverage.py` and `python scripts/audit_source_quality.py`, inspect five BIS status/rows/missing/date/hash fields and any failures. This has NOT happened yet.
+- [ ] Coordinator: review proposed metadata contract and short additional candidate shortlist under `data/audits/2026-10-18-data-agent-status.md`; do not add series blindly or claim first-release availability.
+
+
 - [x] **USER BIS first live attempt**: all five daily broad NEER BIS series failed with the same missing/nonfinite observation error. Seven-manifest catalog: **34 OK, 5 BIS FAILED, 6 NEVER_REQUESTED**; preexisting source QA still 34/34 PASS.
 - [x] **Parser repaired offline** to exclude *explicitly missing* SDMX observation rows (not arbitrary bad numeric values), preserving no-fill rules and recording missing count/first dates/fraction in successful new manifest. 88 tests, Ruff, structure and Sphinx green. No real BIS retry yet.
 - [ ] **Next VM command:** `git pull --ff-only origin main`; `python scripts/download_data.py --start 2000-01-01 --end 2026-10-18 --sources bis`; `python scripts/audit_downloads.py`; `python scripts/audit_source_quality.py`. Inspect BIS actual kept row counts/missing source counts/dates. If still failing, inspect a bounded raw SDMX snippet before altering scientific validation further.

@@ -108,3 +108,100 @@ def parse_bis_eer_csv(body: bytes, series_id: str, start: str, end: str) -> pd.D
     subset.attrs["bis_missing_first_dates"] = missing_dates.head(10).tolist()
     subset.attrs["bis_missing_fraction"] = float(missing.mean())
     return subset
+
+
+def summarize_bis_payload(body: bytes, series_id: str, start: str, end: str) -> dict:
+    """Summarize a BIS CSV response without retaining its licensed observations.
+
+    Parameters
+    ----------
+    body : bytes
+        BIS response bytes (kept only in memory).
+    series_id : str
+        Expected nominal broad daily EER key.
+    start, end : str
+        Inclusive start and exclusive end as ISO dates.
+
+    Returns
+    -------
+    dict
+        Bounded counts and up to five ISO dates per error class. Never raw
+        market values, HTTP credentials, complete rows, or payload contents.
+
+    Notes
+    -----
+    This is a diagnostic, not a substitute for strict series validation.
+    It cannot prove that a missing marker represents an officially justified
+    holiday without observing the vendor documentation and payload.
+    """
+    import csv
+    import math
+    from io import StringIO
+
+    report: dict = {
+        "diagnostic_kind": "BOUNDED_BIS_CSV_METADATA_NOT_RAW_PAYLOAD",
+        "response_bytes": len(body),
+        "rows_total": 0,
+        "rows_in_window": 0,
+        "explicit_missing_rows": 0,
+        "malformed_nonmissing_rows": 0,
+        "nonpositive_rows": 0,
+        "wrong_dimensions_or_row_width": 0,
+        "bad_date_rows": 0,
+        "first_missing_dates": [],
+        "first_malformed_dates": [],
+        "format_issue": None,
+    }
+    try:
+        content = body.decode("utf-8-sig")
+        reader = csv.DictReader(StringIO(content), strict=True)
+        required = {
+            "FREQ", "EER_TYPE", "EER_BASKET", "REF_AREA",
+            "TIME_PERIOD", "OBS_VALUE",
+        }
+        if not required.issubset(set(reader.fieldnames or [])):
+            report["format_issue"] = "missing_required_columns"
+            return report
+        for row in reader:
+            report["rows_total"] += 1
+            if None in row or any(value is None for value in row.values()):
+                report["wrong_dimensions_or_row_width"] += 1
+                continue
+            if (
+                row["FREQ"] != "D" or row["EER_TYPE"] != "N"
+                or row["EER_BASKET"] != "B"
+                or row["REF_AREA"] != series_id.rsplit(".", 1)[-1]
+            ):
+                report["wrong_dimensions_or_row_width"] += 1
+                continue
+            day = row["TIME_PERIOD"]
+            try:
+                parsed = pd.to_datetime(day, format="%Y-%m-%d", errors="raise")
+                if parsed.strftime("%Y-%m-%d") != day:
+                    raise ValueError("non-ISO date")
+            except (ValueError, TypeError):
+                report["bad_date_rows"] += 1
+                continue
+            if not start <= day < end:
+                continue
+            report["rows_in_window"] += 1
+            token = row["OBS_VALUE"].strip()
+            if token.lower() in {"", ".", "..", "-", "na", "n/a", "nan", "null"}:
+                report["explicit_missing_rows"] += 1
+                if len(report["first_missing_dates"]) < 5:
+                    report["first_missing_dates"].append(day)
+                continue
+            try:
+                value = float(token)
+                if not math.isfinite(value):
+                    raise ValueError("nonfinite")
+            except ValueError:
+                report["malformed_nonmissing_rows"] += 1
+                if len(report["first_malformed_dates"]) < 5:
+                    report["first_malformed_dates"].append(day)
+                continue
+            if value <= 0:
+                report["nonpositive_rows"] += 1
+    except (UnicodeError, csv.Error):
+        report["format_issue"] = "unparseable_csv"
+    return report

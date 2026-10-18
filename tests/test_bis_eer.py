@@ -6,7 +6,7 @@ import json
 import pytest
 
 from latent_risk.data.acquisition import acquire
-from latent_risk.data.bis import parse_bis_eer_csv
+from latent_risk.data.bis import parse_bis_eer_csv, summarize_bis_payload
 
 
 def bis_csv(code: str = "MX", *, date: str = "2020-01-02", value: str = "101.3") -> bytes:
@@ -183,3 +183,53 @@ def test_bis_unknown_id_fails_before_network_or_snapshot(tmp_path):
                 snapshot=tmp_path / "no", sources={"bis"},
                 only_ids={"D.N.B.FR"})
     assert not (tmp_path / "no").exists()
+
+
+def test_bis_failure_diagnostics_separate_missing_and_malformed_without_raw_values():
+    raw = (
+        bis_csv()
+        + b"dataflow,BIS:WS_EER(1.0),I,D,N,B,MX,2020-01-03,\n"
+        + b"dataflow,BIS:WS_EER(1.0),I,D,N,B,MX,2020-01-06,oops-secret-payload\n"
+        + b"dataflow,BIS:WS_EER(1.0),I,D,N,B,MX,2020-01-07,-12\n"
+    )
+    diag = summarize_bis_payload(raw, "D.N.B.MX", "2020-01-01", "2020-02-01")
+    assert diag["rows_total"] == 4
+    assert diag["rows_in_window"] == 4
+    assert diag["explicit_missing_rows"] == 1
+    assert diag["malformed_nonmissing_rows"] == 1
+    assert diag["nonpositive_rows"] == 1
+    assert diag["first_missing_dates"] == ["2020-01-03"]
+    assert diag["first_malformed_dates"] == ["2020-01-06"]
+    assert "oops-secret-payload" not in json.dumps(diag)
+
+
+def test_bis_failure_manifest_keeps_response_hash_and_bounded_diagnostics(
+    monkeypatch, tmp_path,
+):
+    """A rejected live-format payload must not be saved as a successful CSV."""
+    from hashlib import sha256
+
+    raw = bis_csv(value="not-a-number")
+    class FakeResponse:
+        url = "https://stats.bis.org/api/v2/data/dataflow/BIS/WS_EER/1.0/D.N.B.MX"
+        content = raw
+        def raise_for_status(self):
+            pass
+
+    class FakeSession:
+        def get(self, url, *, params, headers, timeout):
+            return FakeResponse()
+        def close(self):
+            pass
+
+    monkeypatch.setattr("latent_risk.data.acquisition._session", FakeSession)
+    catalog = {"bis": [{"country": "MEX", "key": "D.N.B.MX",
+                        "role": "fx_effective_nominal_broad"}]}
+    result = acquire(catalog, start="2020-01-01", end="2020-02-01",
+                     snapshot=tmp_path / "source", sources={"bis"})
+    record = result["records"][0]
+    assert result["counts"]["failure"] == 1
+    assert record["bis_response_sha256"] == sha256(raw).hexdigest()
+    assert record["bis_failure_diagnostics"]["malformed_nonmissing_rows"] == 1
+    assert record["status"] == "FAILED"
+    assert not (tmp_path / "source/bis/D_N_B_MX.csv").exists()
