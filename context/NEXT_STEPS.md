@@ -1,3 +1,5 @@
+- [ ] **2026-10-18 trend likelihood coordination:** review [`notes/results/trend_likelihood.md`](../notes/results/trend_likelihood.md) and source branch `agent/trend-likelihood`; combine overlapping agent branches without force-push. Run remote tests, Ruff, `scripts/validate_research.py`, change protocol, Sphinx; inspect Gaussian REML boundary diagnostics, n=3 nonidentifiability, origin-safe re-fitting and stress-index assumptions. No crisis or vintage claims.
+
 # Next steps
 
 - [x] **USER BIS first live attempt**: all five daily broad NEER BIS series failed with the same missing/nonfinite observation error. Seven-manifest catalog: **34 OK, 5 BIS FAILED, 6 NEVER_REQUESTED**; preexisting source QA still 34/34 PASS.
