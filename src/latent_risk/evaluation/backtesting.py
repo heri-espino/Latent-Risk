@@ -27,7 +27,7 @@ class Forecaster(Protocol):
     require a separately reviewed, origin-filtered adapter.
     """
 
-    def fit(self, history: np.ndarray) -> "Forecaster":
+    def fit(self, history: np.ndarray, *, cutoff: str) -> "Forecaster":
         """Refit all estimator parameters and transformations on history alone."""
         ...
 
@@ -167,10 +167,10 @@ def _as_of(data: pd.DataFrame, date: pd.Timestamp, window: int | None) -> np.nda
     return past if window is None else past[-window:]
 
 
-def _fresh_forecast(candidate: Candidate, history: np.ndarray, h: int) -> float:
+def _fresh_forecast(candidate: Candidate, history: np.ndarray, h: int, cutoff: str) -> float:
     model = candidate.factory()
     # Defensive private copy: avoid a mutating estimator changing shared data.
-    fitted = model.fit(history.copy())
+    fitted = model.fit(history.copy(), cutoff=cutoff)
     result = float(fitted.predict(h))
     if not np.isfinite(result):
         raise ValueError(f"nonfinite forecast from candidate {candidate.key}")
@@ -205,7 +205,7 @@ def _select(
     scored: list[tuple[float, str, Candidate]] = []
     for candidate in family.candidates:
         errors = [
-            (_fresh_forecast(candidate, past, horizon) - actual) ** 2
+            (_fresh_forecast(candidate, past, horizon, as_of.strftime("%Y-%m-%d")) - actual) ** 2
             for past, actual in folds
         ]
         scored.append((float(np.mean(errors)), candidate.key, candidate))
@@ -263,7 +263,7 @@ def run_backtest(
     data = _observations(observations, config.vintage_policy)
     first_date = pd.Timestamp(config.first_origin)
     last_h = max(config.horizons)
-    if len(data) <= config.min_train + last_h:
+    if len(data) < config.min_train + last_h:
         raise ValueError("insufficient series length")
     first = max(config.min_train - 1, int(data["date"].searchsorted(first_date)))
     rows: list[dict] = []
@@ -281,7 +281,7 @@ def run_backtest(
             target = data.iloc[i + h]
             for family in families:
                 selected, n_inner = _select(data, i, as_of, h, family, config)
-                predicted = _fresh_forecast(selected, past, h)
+                predicted = _fresh_forecast(selected, past, h, as_of.strftime("%Y-%m-%d"))
                 actual = float(target["value"])
                 rows.append({
                     "country": country,
