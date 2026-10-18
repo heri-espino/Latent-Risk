@@ -1,3 +1,7 @@
+---
+orphan: true
+---
+
 # Cross-agent integration checklist — QA review of 2026-10-18
 
 **Status:** PROPOSED interfaces and integration gates; not an assertion that EXP-0001 has been executed. Cross-check every item against the code and the current journal before changing ownership. No production engine modifications are authorized by this document.
