@@ -35,7 +35,7 @@ The existing package supports acquisition/audit, train-only PCA/composite scores
 
 ## Tests and reproducibility
 
-Synthetic, vendor-free test command: `python -m pytest -q tests/test_public_contracts.py`. Required full checks: `python -m pytest -q`; `ruff check .`; `python scripts/validate_research.py`; `sphinx-build -b html -W --keep-going docs docs/_build/html`; `python scripts/check_change_protocol.py --base-ref origin/main`. **Status when first authored:** results pending GitHub PR CI, no results asserted. CI's sole matrix is Ubuntu/Python 3.11, and the workflow installs all optional data dependencies. No wall-time or bottleneck measurements claimed.
+Synthetic, vendor-free test command: `python -m pytest -q tests/test_public_contracts.py`. Required full checks: `python -m pytest -q`; `ruff check .`; `python scripts/validate_research.py`; `sphinx-build -b html -W --keep-going docs docs/_build/html`; `python scripts/check_change_protocol.py --base-ref origin/main`. **Status when first authored:** no CI run was observable on the QA PR head in the GitHub Actions API immediately after draft PR creation; the test suite and full checks remain **NOT VERIFIED**. Draft PR: https://github.com/heri-espino/Latent-Risk/pull/5 . A subsequent PR-head check is required; no pass/fail results asserted. CI's sole matrix is Ubuntu/Python 3.11, and the workflow installs all optional data dependencies. No wall-time or bottleneck measurements claimed.
 
 ## Supported conclusions and next steps
 
