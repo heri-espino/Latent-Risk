@@ -2,4 +2,4 @@
 
 [2026-10-18 — Country-level index-model candidates](2026-10/2026-10-18-index-models.md)
 
-Main-branch latest entry at branch creation: [2026-10-17 — BIS missing observation parser correction](2026-10/2026-10-17-bis-missing-observations-correction.md). This agent update must be reconciled with concurrent journals at integration.
+At branch creation the main branch latest entry concerned the 2026-10-17 BIS missing-observation parser correction. Concurrent journal entries must be reconciled at integration. This file intentionally has one active dated journal pointer.
