@@ -29,3 +29,5 @@ Alternative: changing concurrent `agent/trend-likelihood` files or force-pushing
 **NOT RUN:** real five-economy latent-risk index, real vintage experiment, forecast disturbance evaluation.
 
 Coordinator should compare the source branch and this documentation branch, run tests + Ruff + validation + Sphinx against a single integrated head, check parameter recovery and extremes, verify actual CI, and merge only after review.
+## Subsequent CI verification (2026-10-18; documented correction)
+**VERIFIED COMPUTATIONALLY for the inherited GitHub source branch and the PR documentation:** GitHub Actions run [39139452901](https://github.com/heri-espino/Latent-Risk/actions/runs/39139452901) completed successfully on merge commit `711c2c6e8e1f298cdf6882419171e6f391683edc`: **104 tests passed in 9.05 s**, Ruff all checks passed, repository structural validator PASS, Sphinx build PASS, and scientific change-protocol PASS. This supersedes the preceding temporary `UNKNOWN` CI status. Later journal/notes wording edits do not alter those tested implementation files. No real country-index experiment or paper result was validated.
