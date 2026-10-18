@@ -57,7 +57,131 @@ Define `FeatureBatchV1` containing a single `country_id`, ordered feature names,
 
 If adapters are introduced, `Protocol` typing is suitable for interchangeable factor/trend/forecaster implementations; frozen dataclasses validate messages at runtime. Avoid a monolithic base engine or importing experimental scripts inside `latent_risk`. Numerical implementations should use stable factorizations/solvers, not explicit dense inverses for structured penalties.
 
-## 4. Precise invariants and test oracle
+
+## 4. Typed, non-exported interface sketch
+
+This illustrative Python 3.10+ signature block is **PROPOSED ONLY**. The classes do **not** exist in `src/latent_risk` and are not meant to be imported by the contract test suite. Runtime validators, provenance serialization and actual estimators must be agreed before implementation.
+
+```python
+from dataclasses import dataclass
+from datetime import date, datetime
+from typing import Literal, Protocol
+
+CountryID = Literal["MEX", "USA", "GBR", "JPN", "EA"]
+MissingReason = Literal[
+    "present", "provider_missing", "market_closed", "warmup",
+    "not_applicable", "not_yet_released",
+]
+
+
+@dataclass(frozen=True, slots=True)
+class FeatureObservationV1:
+    contract_version: Literal["1.0"]
+    country_id: CountryID
+    feature_name: str
+    observation_date: date
+    observation_timestamp: datetime | None   # verified UTC instant or null
+    verified_available_at: datetime | None    # null means UNKNOWN, never midnight
+    value: float | None
+    provider: str
+    source_id: str
+    transformation: str
+    units: str
+    frequency: str
+    snapshot_id: str
+    source_sha256: str
+    missing_reason: MissingReason
+    license: str
+    is_external_benchmark: bool
+    source_revision: str | None = None
+
+
+@dataclass(frozen=True, slots=True)
+class FeatureBatchV1:
+    country_id: CountryID
+    origin_utc: datetime
+    ordered_features: tuple[str, ...]
+    observations: tuple[FeatureObservationV1, ...]
+    contract_version: Literal["1.0"] = "1.0"
+
+
+@dataclass(frozen=True, slots=True)
+class FactorSnapshotV1:
+    country_id: CountryID
+    target_id: str
+    origin_utc: datetime
+    score_history: tuple[float, ...]
+    feature_order: tuple[str, ...]
+    anchor_feature: str
+    fixed_scale_id: str
+    lineage_sha256: tuple[str, ...]
+
+
+@dataclass(frozen=True, slots=True)
+class StateSnapshotV1:
+    target_id: str
+    origin_utc: datetime
+    state_mean: float
+    state_variance: float
+    fit_cutoff_utc: datetime
+    filter_version: str
+
+
+@dataclass(frozen=True, slots=True)
+class HorizonSpecV1:
+    steps: int
+    clock: Literal["calendar_days", "trading_sessions", "source_observations"]
+
+
+@dataclass(frozen=True, slots=True)
+class ForecastV1:
+    target_id: str
+    issued_at_utc: datetime
+    target_date: date
+    horizon: HorizonSpecV1
+    location: float
+    predictive_sd: float
+    calibration_cutoff_utc: datetime
+
+
+@dataclass(frozen=True, slots=True)
+class EventScoreV1:
+    target_id: str
+    target_date: date
+    scored_at_utc: datetime
+    standardized_departure: float
+    calibration_id: str
+    threshold_exceeded: bool
+
+
+class CountryFactor(Protocol):
+    def fit_as_of(
+        self, batch: FeatureBatchV1, *, origin_utc: datetime, seed: int
+    ) -> FactorSnapshotV1: ...
+
+
+class OneSidedTrend(Protocol):
+    def filter_as_of(
+        self, factor: FactorSnapshotV1, *, origin_utc: datetime
+    ) -> StateSnapshotV1: ...
+
+
+class Forecaster(Protocol):
+    def predict(
+        self, state: StateSnapshotV1, *, horizon: HorizonSpecV1
+    ) -> ForecastV1: ...
+
+
+class EventScorer(Protocol):
+    def score(
+        self, forecast: ForecastV1, realized: float,
+        *, realized_available_at: datetime, calibration_id: str
+    ) -> EventScoreV1: ...
+```
+
+Actual implementations must validate at runtime: UTC-aware timestamps (not merely annotated `datetime`); nonnegative uncertainty and strictly positive predictive SD; SHA256 format; aligned country/target IDs; anchor/scale identity; no benchmark inputs; no future origin/fit/calibration information; and strict missingness rules. The minimal `EventScorer` signature above does not identify the complete realization vintage/uncertainty and should be expanded through the evaluation-agent decision before becoming stable.
+
+## 5. Precise invariants and test oracle
 
 Let `I(o)` be the admissible, verified information set at origin `o`. For a deterministic seeded pipeline `A`, the forecast-origin invariance property is:
 
@@ -67,7 +191,7 @@ This is a **proposed contract property**, not a proof about an unimplemented eng
 
 A complete regression test should also check: (a) no benchmark as index feature or leakage target; (b) factor sign **and scale** anchoring across refits; (c) same feature order and units; (d) unchanged original raw hashes in the lineage; (e) explicit null/market-closure/date-only release semantics; (f) source-local trading calendars and UTC conversions; (g) forecast horizon/target identity alignment; (h) fixed seeds and tie-breaking; (i) offline tests without vendor credentials or raw files; and (j) test data never contaminated by tuning.
 
-## 5. Current adapters and gaps
+## 6. Current adapters and gaps
 
 | Stage | Status | Existing entry point | Unresolved integration point |
 | --- | --- | --- | --- |
