@@ -12,3 +12,5 @@
 | [ADR-0008](../journal/decisions/ADR-0008.md) | 2026-10-17 | BIS daily nominal broad effective FX indices for all five economies, source acquisition only | Accepted / feature replacement proposed |
 
 Follow the latest dated journal entry for changes to this index.
+
+**Coordinator decision pending (2026-10-18, crisis-hypotheses agent):** The proposed event anchors, exact time-availability semantics and thresholds are documented in `notes/literature/crisis_protocol.md` and `notes/results/event_study_design.md`. These are **not yet an accepted ADR or empirical results**. Before data scoring, decide whether to register a new ADR and pin the event-manifest hash; no pre-existing ADR was superseded.
