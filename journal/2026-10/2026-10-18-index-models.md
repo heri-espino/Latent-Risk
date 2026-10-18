@@ -28,6 +28,12 @@ The optional Gaussian model is calibrated via PCA and residual-moment estimates 
 - First observed GitHub CI run on commit b5c3e55, https://github.com/heri-espino/Latent-Risk/actions/runs/39138392594 : **106 passed, 1 failed**. Only failure: exact bitwise equality across PCA score prefixes, in which shape-dependent floating-point operations differed by at most 2.77555756e-17. It did not indicate leaked future data or a parameter change.
 - Fix on commit 326f2d1: use numerical absolute tolerance 1e-14 for this prefix comparison. Subsequent CI status is to be checked independently (do not infer passage before its logs complete).
 
+## Later CI evidence (same day)
+
+- On commit f3c2016, GitHub Actions run 39138756329 **passed 107 tests, Ruff, structural validation and Sphinx**. The change-protocol check alone failed because shared handoff files had not yet been updated. Those files were subsequently changed on this branch.
+- On commit 4d962a0, GitHub Actions run 39138821630 **passed unit tests and Ruff** but failed structural validation because journal/LATEST.md linked to two dated journal entries. The validator requires exactly one. Commit c9a2d95 corrected the pointer. End-to-end green CI on that later commit is **NOT YET VERIFIED**.
+- No failed test was deleted, no real data were downloaded, and no evidence of financial-crisis prediction is claimed.
+
 ## Validation commands
 
 CI steps: python -m pytest -q ; ruff check . ; python scripts/validate_research.py ; sphinx-build -b html docs docs/_build/html ; python scripts/check_change_protocol.py --base-ref origin/main (on PR). Local container cannot access github.com directly; tests are therefore verified through GitHub Actions, not falsely described as locally executed. Exact latest CI outcomes are in the PR Actions checks.
