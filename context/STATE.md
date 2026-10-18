@@ -98,3 +98,6 @@ The old U.S. DFM input series were logged VIX, WTI, GLD and DXY. The run used 20
 ## Linked prior resources
 - Legacy risk project: https://github.com/heri-espino/Estimation-of-latent-risk-in-the-U.S.-market-using-representative-variables
 - Smoothing-methods theory: https://github.com/heri-espino/Trend-Estimation
+
+## Agent crisis-event hypothesis design (2026-10-18, branch only)
+**PROPOSED / EMPIRICAL UNKNOWN:** Primary-source dated anchors across MX/US/UK/JP/EA and a falsifiable three-stage event protocol are in `notes/literature/crisis_protocol.md` and `notes/results/event_study_design.md`. Global exposure clusters must not be counted as independent events; interventions usually lag crisis onset, and end-of-operation is not end-of-crisis. Pre-2007 calibration may not have sufficient EA equity coverage; such tests must remain ineligible rather than tune on GFC. First-release historical vintages and genuine timing remain unverified. **IMPLEMENTED, synthetic only:** `src/latent_risk/events/scores.py` + `tests/test_events_scores.py` enforce finite standardized surprises, strictly earlier target availability for cutoff fitting, and exclude coincident/late alerts from positive lead. No actual experiment scored; no crisis predictive power shown. Local tests not run; draft PR CI required. Shared context merge reconciliation pending.
